@@ -1,0 +1,280 @@
+{% extends 'market/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ vendor }} checkout{% endblock %}
+{% block content %}
+
+
+<div class="container">
+    <div class="row screen">
+        <br>
+        <div class="col-lg-9">
+            <br>
+
+            <section>
+                <div class="cart-row d-md-flex d-none">
+                    <div style="flex:4;opacity: .7" class="mr-2">
+                        <h5 class="text-muted">ITEM</h5>
+                    </div>
+                    <div style="flex:4;opacity: .7"></div>
+                    <div style="flex:2;opacity: .7"></div>
+
+                    <div style="flex:4;opacity: .7"><h5 class="text-muted">PRICE</h5></div>
+                    <div style="flex:5;opacity: .7"><h5 class="text-muted">QUANTITY</h5></div>
+                    <div style="flex:4;opacity: .7">
+                        <h5 class="text-muted">TOTAL</h5>
+                    </div>
+                </div>
+
+                {% for item in items %}
+                <div class="box-element">
+                    <div class="cart">
+                        <div class="cart-body">
+                            <div class="cart-item">
+                                <div class="d-flex align-items-center text-left text-md-center row">
+                                    <div class="col-12 col-md-5">
+                                        <a class="cart-remove close mt-3 d-md-none update-cart" data-toggle="tooltip"
+                                           title="Remove from Cart" data-placement="left"
+                                           data-product="{{ item.product.id }}" data-action="delete" href="#">X</a>
+                                        <div class="d-flex align-items-center">
+                                            <a href="{% url 'product-detail' item.product.id %}">
+                                                <img height="70px" width="70px" src="{{ item.product.image.url }}" alt=""
+                                                     class="row-ima">
+                                            </a>
+                                            <div class="cart-title text-left">
+                                                <a class="text-dark link-animated"
+                                                   href="{% url 'product-detail' item.product.id %}">
+                                                    <strong>{{ item.product.name }}
+                                                    </strong>
+                                                </a>
+                                                <br>
+<!--                                                                                            <span class="text-muted text-sm">Description:-->
+<!--                                                                                            {{ item.product.description|safe|truncatewords:"4"|linebreaks }}-->
+<!--                                                                                            </span>-->
+                                                <div class="d-md-block d-none">
+                                                    <a href="tel:{{ item.product.vendor.phone_number }}"
+                                                       style="font-size: 11px"
+                                                       class="text-decoration-none">
+                                                        <p class="btn-call" onclick="off()">
+                                                            <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                                                 class="bi bi-telephone-outbound-fill"
+                                                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                                <path fill-rule="evenodd"
+                                                                      d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
+                                                            </svg>
+                                                            {{ item.product.vendor.phone_number }}
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <style>
+
+                                                .cart-title {
+                                                    margin-left: 1rem;
+
+                                                }
+                                                .text-left {
+                                                    text-align: left!important;
+                                                }
+                                                .cart-remove {
+                                                    color: #495057;
+                                                    font-size: .975rem;
+                                                    transition: .4s;
+                                                }
+                                                .cart-remove:hover {
+                                                    color: #495057;
+                                                    font-size: 1.2rem;
+
+                                                }
+                                                .link-animated {
+                                                    position: relative;
+                                                    text-decoration: none;
+                                                }
+                                                .text-dark {
+                                                    color: #212529!important;
+                                                }
+                                                .text-sm {
+                                                    font-size: .875rem;
+                                                }
+                                                .text-muted {
+                                                    color: #868e96!important;
+                                                }
+
+                                                .text-center {
+                                                    text-align: center!important;
+                                                }
+                                                .border-0 {
+                                                    border: 0!important;
+                                                }
+                                            </style>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 mt-md-0 col-12 col-md-7">
+                                        <div class="align-items-center row">
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                    <div class="d-md-none text-muted col-6">Price per item</div>
+                                                    <b class="text-right text-md-center col-6 col-md-12">
+                                                        ₦{{ item.product.price|floatformat:'2' }}
+                                                    </b>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="align-items-center row">
+                                                    <div class="text-muted d-md-none col-7 col-sm-9">Quantity</div>
+                                                    <div class="col-5 col-sm-3 col-md-12">
+                                                        <div class="d-flex align-items-center">
+                                                            <button data-product="{{ item.product.id }}"
+                                                                    data-action="add"
+                                                                    class="update-cart text-decoration-none btn-sm btn-info">
+                                                                <b>+</b>
+                                                            </button>
+                                                            <b class="text-center border-0 border-md input-items form-control">
+                                                                {{ item.quantity }}
+                                                            </b>
+
+                                                            <button data-product="{{ item.product.id }}"
+                                                                    data-action="remove"
+                                                                    class="text-decoration-none btn-sm btn-danger update-cart">
+                                                                <b>-</b>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                    <div class="d-md-none text-muted col-6">Total price</div>
+                                                    <b class="text-right text-md-center col-6 col-md-12">
+                                                        ₦{{ item.get_total|floatformat:'2' }}
+                                                    </b>
+                                                </div>
+                                            </div>
+                                            <div class="d-md-block d-none text-center col-2"
+                                                 data-toggle="tooltip" title="Remove from Cart" data-placement="top">
+                                                <a class="cart-remove text-muted update-cart"
+                                                   data-product="{{ item.product.id }}" data-action="delete">
+                                                    <svg width="2em" height="2em" viewBox="0 0 16 16"
+                                                         class="bi bi-trash"
+                                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                        <path fill-rule="evenodd"
+                                                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                            <hr>
+                                            <div class="col-lg-2 text-center line text-lg-center d-md-none">
+                                                <a href="tel:{{ item.product.seller.phone_number }}"
+                                                   class="btn btn-block btn-info">
+                                                    <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                                         class="bi bi-telephone-outbound-fill"
+                                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                        <path fill-rule="evenodd"
+                                                              d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
+                                                    </svg>
+                                                    Call to order
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
+            </section>
+        </div>
+        <div class="col-lg-3">
+            <br>
+            <div class="sticky-top" style="top: 9px">
+                <div class="box-element">
+                    <h4>Order Summary</h4>
+                    <style>
+                        .card-header:first-child {
+                                border-radius: 5px 5px 0 0;
+                            }
+                        .card-header {
+                            padding: .75rem 1.25rem;
+                            margin-bottom: 0;
+                            background-color: rgba(0,0,0,.03);
+                            border-bottom: 0 solid transparent;
+                        }
+                    </style>
+                    <table class="table table-hover">
+<!--                                            <tr>-->
+<!--                                                <th><h5>Items: </h5></th>-->
+<!--                                                <th><h5>{{ order.get_cart_items }}</h5></th>-->
+<!--                                            </tr>-->
+                        <tr>
+                            <th><h5 class="mt-2">Subtotal: </h5></th>
+                            <th><h5 class="mt-2">₦{{ order.get_cart_total|floatformat:2 }}</h5></th>
+                        </tr>
+                    </table>
+                    <hr>
+                    <li class="text-muted">Contact seller through their phone number</li>
+                    <li class="text-muted">Clicking complete order means you have contacted the seller and you want the
+                        product(s)
+                    </li>
+                    <li class="text-muted">Delivery takes {{ item.vendor.vendor_delivery_method }} days</li>
+                    <br>
+                    {% if items|length == 0 %}
+                    {% else %}
+                    <!--                <a href="" class="btn btn-info btn-block">-->
+                    <!--                    CONFIRM ORDER-->
+                    <!--                </a>-->
+                    <button id="make-payment" class="btn btn-block btn-info">
+                        <div class="spinner-border text-light hide" id="spinner" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <span id="button-text">CONFIRM ORDER</span>
+                    </button>
+                    <style>
+                        .spinner-border {
+                            width: 1.5rem;
+                            height: 1.5rem;
+                        }
+                    </style>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<style>
+    .hide {
+        display: none;
+    }
+</style>
+
+<style>
+.row-imagek {
+    height: 80px;
+    width: 80px;
+}
+@media only screen and (max-width: 1000px) {
+.row-imagek {
+    height: 100%;
+    width: 100%;
+}
+@media (min-width: 48em) {
+.line {
+    margin-top: 20px;
+}
+}
+.line {
+    margin-top: 1px;
+}
+@media only screen and (max-width: 700px) {
+.d{
+    display:none
+}
+}
+</style>
+
+{% endblock %}

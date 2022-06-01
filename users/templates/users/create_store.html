@@ -1,0 +1,105 @@
+{% extends 'market/base.html' %}
+{% block title %}Market{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+   .section {
+      background: #fd5631;
+      border-color: #fd5631;
+      color: #fff;
+      position: relative;
+
+   }
+   .search-category {
+        position: absolute;
+        top: 200px;
+        width: 84%;
+        background-color: #fff;
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<div class="section">
+    <div class="container py-5 mt-1">
+        <h3><b>Become A Vendor</b></h3>
+    </div>
+</div>
+<br>
+<div class="container mb-5">
+    <div class="row mb-5">
+        <div class="col-lg-9">
+            <form method="post" action="{% url 'create_store' %}">
+                {% csrf_token %}
+<!--                <h5><b>Details</b></h5>-->
+
+                <label>Full name</label>
+                {{ u_form.full_name }}
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label>Phone Number</label>
+                        {{ u_form.phone_number }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Location</label>
+                        {{ u_form.location }}
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label>About</label>
+                    {{ u_form.about }}
+                </div>
+
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label>Twitter URL</label>
+                        {{ u_form.twitter_url }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Instagram URL</label>
+                        {{ u_form.instagram_url }}
+                    </div>
+
+                </div>
+                <div class="form-row mt-3 mb-3">
+                    <div class="col-md-6">
+<!--                        <label>Education</label>-->
+                        {{ education_field|crispy }}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Skills</label>
+                        {{ u_form.skills }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
+                        <label class="form-check-label" for="invalidCheck2">
+                            Agree to terms and conditions
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-block" type="submit">Submit Form</button>
+            </form>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+</div>
+{% endblock %}

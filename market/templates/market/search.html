@@ -1,0 +1,403 @@
+{% extends 'market/base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %} "{{ request.GET.q }}" | CONNECT Search {% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <br>
+    {% if submitbutton == 'Search' and request.GET.q != '' %}
+    {% if result_user or result_product %}
+
+    <h3 class="mt-2">Results for <strong>"{{ request.GET.q }}"</strong></h3>
+    <div class="tab row p-2 d-none mt-1">
+        <div class="col-lg-6 col-6">
+            <a class="tablinks d-none" onclick="openCity(event, 'Post')" id="defaultOpen">
+                <b>Post</b>
+            </a>
+        </div>
+    </div>
+
+    <a onclick="openCity(event, 'People')" class="text-info product" id="show-vendor" style="cursor:pointer">
+        <h6><b>Search Vendors containing "{{ request.GET.q }}"?</b></h6>
+    </a>
+    <a class="text-info" onclick="openCity(event, 'Post')" id="product" style="cursor:pointer">
+        <h6><b>Search Gigs containing "{{ request.GET.q }}"?</b></h6>
+    </a>
+    <script>
+        $("#show-vendor").click(function(){
+          $("#product").css("display", "block");
+          $("#show-vendor").css("display", "none");
+        });
+
+        $("#product").click(function(){
+          $("#product").css("display", "none");
+          $("#show-vendor").css("display", "block");
+        });
+
+    </script>
+    <style>
+        #product{display: none}
+
+    </style>
+    <br>
+    <div id="Post" class="tabcontent">
+        {% if result_product|length > 0 %}
+        <div class="row p-2">
+            {% for product in result_product %}
+            <div class="col-lg-3 col-md-4 col-sm-4 col-6">
+                <style>
+                    .col-6 {
+                        padding: 6px;
+                    }
+
+                </style>
+                <a href="{{ product.get_absolute_url }}">
+                    <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                         class="thumbnail-product">
+                    <style>
+                        .thumbnail-product{
+                            width: 100%;
+                            height: 200px;
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                            transition: .3s
+                        }
+                        .col-lg-3{transition: .3s}
+                        .col-lg-3:hover{
+                            width: 100%;
+                            height: 200px;
+                            transform: translateY(-6px);
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                        }
+
+
+                    </style>
+                </a>
+
+                <div class="card p-2 shadow">
+                <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
+                    <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                    <div class="media">
+                        <h5 class="mt-1"><b>₦{{ product.price|floatformat:2 }}</b></h5>
+                        <div class="media-body ">
+                            <div class="float-right  badge badge-warning alert alert-warning py-2">
+                                <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                </svg>
+                                <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                            </div>
+                        </div>
+                    </div>
+
+                </a>
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
+                        <img src="{{ product.vendor.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                            <h6 class="mt-1">{{ product.vendor }}</h6></a>
+
+                    </li>
+                </ul>
+            </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <br>
+        <div align="center" class="failed_search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor"
+                 class="bi bi-search"
+                 viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            <h3><b>We didn't find any results for your search: "{{ request.GET.q }}".</b></h3>
+            <h5>To find what you need, simply check the spelling of your typed search and try again.</h5>
+            <a href="javascript:history.go(-1)" class="btn btn-lg">
+                GO BACK?
+            </a>
+
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="People" class="tabcontent">
+        <!--        <a  class="text-info" onclick="openCity(event, 'Post')" style="cursor:pointer">Search Gigs containing "{{ request.GET.q }}"</a>-->
+        {% if result_user|length > 0 %}
+        <div class="row">
+            {% for result in result_user %}
+            <div class="col-lg-4">
+                <div class="box-element border-0">
+                    <div align="center" class="customer-profile">
+                        <br>
+                        <a href="{% url 'vendor' result %}" class="text-dark text-decoration-none">
+                            <img width="120" height="120" background="#fff" color="#fff"
+                                 class="rounded-circle customer-image " src="{{ result.image.url }}">
+
+                            <h5>
+                                {% if result.display_name %}
+                                {{ result.display_name }}
+                                {% else %}
+                                {{ result }}
+                                {% endif %}
+                                {% if result.is_verified %}
+                                <img width="20px" height="20px" class="mb-1"
+                                     src="{% static 'images/verify.png' %}" alt="">
+                                {% endif %}
+                            </h5>
+                        </a>
+                        <p>{{ result.about|truncatewords:10 }}</p>
+                        <hr>
+                        <div class="d-block">
+                            <b>{{ result.following.count }} </b> Following |
+                            <b class="ml-2 _result_following"> {{ result.follower.count }} </b> Followers
+                        </div>
+                        {% if result.location %}
+                        <p class="mt-2">
+                            <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
+                            {{ result.location }}
+                        </p>
+                        {% else %}
+                        <p class="mt-2">
+                            <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
+                            Not specified by vendor
+                        </p>
+                        {% endif %}
+                        <div class="d-md-block mt-2">
+                            <a href="tel:{{ user.phone_number }}"
+                               class="text-decoration-none category-link">
+                                <p class="btn-call" onclick="off()">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                         class="bi mr-2 bi-telephone-outbound-fill"
+                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
+                                    </svg>
+                                    {{result.phone_number }}
+                                </p>
+                            </a>
+                            <style>
+                            .category-link {color: #000;}
+                            .category-link:hover{
+                                color: #db3717;
+                                }
+                            </style>
+                        </div>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                 class="bi bi-calendar3 mr-2" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            </svg>
+                            Joined {{ result.date_joined|time }} &bull; {{ result.date_joined|date }}
+                        </p>
+                    </div>
+                    <br>
+
+                    {% if request.user == result %}
+                    <a class="btn-block btn btn-outline-info"
+                       href="">Edit
+                        profile
+                    </a>
+                    {% elif result in request.user.following.all %}
+                    <a data-href="{% url 'follower_vendor' result %}"
+                       class="btn follow-btn text-light btn-block">Following
+                    </a>
+                    {% elif request.user in result.following.all %}
+                    <a data-href="{% url 'follower_vendor' result %}"
+                       class="btn  follow-btn text-light btn-block">Follow back
+                    </a>
+                    {% else %}
+                    <a data-href="{% url 'follower_vendor' result %}"
+                       class="btn follow-btn text-light btn-block">Follow
+                    </a>
+                    {% endif %}
+                </div>
+                <br>
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+        {% else %}
+        <br>
+        <div align="center" class="failed_search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor"
+                 class="bi bi-search"
+                 viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            <h3><b>We didn't find any results for your search: "{{ request.GET.q }}".</b></h3>
+            <h5>To find what you need, simply check the spelling of your typed search and try again.</h5>
+            <a href="javascript:history.go(-1)" class="btn btn-lg">
+                GO BACK?
+            </a>
+
+        </div>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <div align="center" class="failed_search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor" class="bi bi-search"
+             viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+        <h3><b>We didn't find any results for your search: "{{ request.GET.q }}".</b></h3>
+        <h5>To find what you need, simply check the spelling of your typed search and try again.</h5>
+        <a href="javascript:history.go(-1)" class="btn btn-lg">
+            GO BACK?
+        </a>
+
+    </div>
+    <style>
+        .failed_search{
+            display: block;
+            align-items: center;
+            text-align: center;
+            height: 50vh;
+            margin-top: 5rem;
+        }
+
+
+    </style>
+
+    {% endif %}
+    {% endif %}
+</div>
+
+
+<style>
+
+/*the container must be positioned relative:*/
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+  cursor: pointer;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+/*when hovering an item:*/
+.autocomplete-items div:hover {
+  background-color: #e9e9e9;
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+
+
+</style>
+<style>
+
+/* Style the tab */
+.tab {
+  overflow: auto;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: .3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-colo: #007bff !important;
+  color: #17a2b8 !important;
+  border-bottom: 3px solid #17a2b8;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  border-top: none;
+}
+
+
+
+
+</style>
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+
+
+</script>
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+
+
+</script>
+{% endblock %}

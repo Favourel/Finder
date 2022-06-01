@@ -1,0 +1,183 @@
+{% extends 'market/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ user }} Notification{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row gx-3">
+        <div class="col-lg-3 phone_size">
+            <div class="sticky-top" style="top: 80px">
+                <div class="card border-0">
+                    <div align="center" class="customer-profile">
+                        <br>
+                        <img width="120" height="120" background="#fff" color="#fff"
+                             class="rounded-circle customer-image " src="{{ user.image.url }}">
+
+                        <h5>
+                            {% if user.display_name %}
+                            {{ user.display_name }}
+                            {% else %}
+                            {{ user }}
+                            {% endif %}
+                            {% if vendor.is_verified %}
+                            <img width="20px" height="20px" class="mb-1"
+                                 src="{% static 'images/verify.png' %}" alt="">
+                            {% endif %}
+                        </h5>
+                        <p>{{ user.about }}</p>
+                    </div>
+                    <hr>
+                    <div class="d-block">
+                        <b>{{ user.following.count }} </b> Following |
+                        <b class="_result_following"> {{ user.follower.count }} </b> Followers
+                    </div>
+                    <br>
+                    <div class="row gx-3">
+                        <div class="col">
+                            {% if request.user == user %}
+                            <a class="btn-block btn btn-outline-info"
+                               href="">Edit
+                                profile
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-block">
+                                Notification
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                     class="bi bi-bell-slash" viewBox="0 0 16 16">
+                                    <path d="M5.164 14H15c-.299-.199-.557-.553-.78-1-.9-1.8-1.22-5.12-1.22-6 0-.264-.02-.523-.06-.776l-.938.938c.02.708.157 2.154.457 3.58.161.767.377 1.566.663 2.258H6.164l-1 1zm5.581-9.91a3.986 3.986 0 0 0-1.948-1.01L8 2.917l-.797.161A4.002 4.002 0 0 0 4 7c0 .628-.134 2.197-.459 3.742-.05.238-.105.479-.166.718l-1.653 1.653c.02-.037.04-.074.059-.113C2.679 11.2 3 7.88 3 7c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0c.942.19 1.788.645 2.457 1.284l-.707.707zM10 15a2 2 0 1 1-4 0h4zm-9.375.625a.53.53 0 0 0 .75.75l14.75-14.75a.53.53 0 0 0-.75-.75L.625 15.625z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <p>
+                        <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
+                        {{ user.location }}
+                    </p>
+                    <div class="d-md-block">
+                        <a href="tel:{{ user.phone_number }}"
+                           class="text-decoration-none category-link">
+                            <p class="btn-call" onclick="off()">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                     class="bi mr-2 bi-telephone-outbound-fill"
+                                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                {{user.phone_number }}
+                            </p>
+                        </a>
+                        <style>
+                            .category-link {color: #000;}
+                            .category-link:hover{
+                                color: #db3717;
+                                }
+
+
+
+                        </style>
+                    </div>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                             class="bi bi-calendar3 mr-2" viewBox="0 0 16 16">
+                            <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                            <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                        </svg>
+                        Joined {{ user.date_joined|time }} &bull; {{ user.date_joined|date }}
+                    </p>
+                    {% if request.user == vendor %}
+                    <a href="{% url 'create' %}" class="btn ">
+                        Create Gig
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-9 col-md-9 mt-3">
+            <h3><b>Notifications</b></h3>
+            <br>
+            {% if notification_list|length > 0 %}
+            {% for notification in notification_list %}
+            {% if notification.notification_type == 2 %}
+            <a href="{% url 'vendor' notification.sender %}" class="text-decoration-none text-dark">
+            <div class="box-element">
+                <div class="media">
+                    <img class="rounded-circle" style="width:50px;height:50px" src="{{ notification.sender.image.url }}"
+                         alt="">
+                    <div class="media-body ml-2">
+                        <div class="small text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                                 fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                            </svg>
+                            {{ notification.date_posted }}
+                        </div>
+                        <a href="{% url 'vendor' notification.sender %}" class="text-decoration-none text-dark">
+                            <strong class="account-heading ">
+                                {{notification.sender}}
+                                {% if notification.sender.is_verified %}
+                                <img width="15px" height="15px" class="mb-1"
+                                     src="{% static 'images/verify.png' %}" alt="">
+                                {% endif %} has now started following you!
+                            </strong>
+                        </a>
+                    </div>
+                </div>
+            </div></a>
+            <br>
+            {% elif notification.notification_type == 3 %}
+            <a href="{% url 'product-detail' notification.product.id %}" class="text-decoration-none text-dark">
+                <div class="box-element">
+                    <div class="media">
+                        <img class="rounded-circle" style="width:50px;height:50px"
+                             src="{{ notification.sender.image.url }}"
+                             alt="">
+                        <div class="media-body ml-2">
+                            <div class="small text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                                     fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                                </svg>
+                                {{ notification.date_posted }}
+                            </div>
+                            <a href="{% url 'product-detail' notification.product.id %}"
+                               class="text-decoration-none text-dark">
+                                <strong class="account-heading ">
+                                    {{notification.sender}}
+                                    {% if notification.sender.is_verified %}
+                                    <img width="15px" height="15px" class="mb-1"
+                                         src="{% static 'images/verify.png' %}" alt="">
+                                    {% endif %} just uploaded a Gig!
+                                </strong>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <br>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <div class="box-element">
+                <h5><b>Nothing to see here because no notifications yet.</b></h5></div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .col-6 {
+        padding: 6px;
+    }
+
+</style>
+
+{% endblock %}

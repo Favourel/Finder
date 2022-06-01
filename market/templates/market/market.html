@@ -1,0 +1,144 @@
+{% extends 'market/base.html' %}
+{% block title %}Market{% endblock %}
+{% load static %}
+{% block content %}
+<style>
+   .section {
+      background: #fd5631;
+      border-color: #fd5631;
+      color: #fff;
+      position: relative;
+
+   }
+   .search-category {
+        position: absolute;
+        top: 200px;
+        width: 84%;
+        background-color: #fff;
+   }
+
+</style>
+<div class="section">
+    <div class="container py-5 mt-1">
+        <h3><b>Market Category</b></h3>
+    </div>
+</div>
+<div class="container">
+    <div class="search-category">
+        <div class="box-element">
+            <div class="row">
+                <div class="col-lg-10">
+                    <form action="" class="d-flex" autocomplete="off" method="GET" value="{{request.GET.q}}">
+                        <input style="border-radius: 2px; height: 50px" type="text" name="q" value="{{request.GET.q}}"
+                               class="form-control"
+                               placeholder="Search Connect?"/>
+                        <input style="border-radius: 24px; display: none"  type="submit" name="submit" value="Search"  class="ml-0 btn btn-warning">
+
+
+                    </form>
+                </div>
+                <div class="col-lg-2">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            Categories
+                        </button>
+                        <script>
+                            $(".dropdown-toggle").click(function(){
+                              $(".dropdown-menu-list").toggle();
+                            });
+
+                        </script>
+
+                        <ul class="dropdown-menu-list dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="/market/?category_id=">All category</a>
+                            </li>
+                            {% for category in categories %}
+                            <li><a class="dropdown-item" href="/market/?category_id={{ category.id }}">{{category}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+<div class="container">
+    {% if products|length > 0 %}
+    <div class="row p-2">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-4 col-6">
+            <style>
+                .col-6 {
+                    padding: 6px;
+                }
+            </style>
+            <a href="{{ product.get_absolute_url }}">
+                <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                     class="thumbnail-product">
+                <style>
+                    .thumbnail-product{
+                        width: 100%;
+                        height: 200px;
+                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                        transition: .3s;
+
+                    }
+                    .col-lg-3{transition: .3s}
+                    .col-lg-3:hover{
+                        width: 100%;
+                        height: 200px;
+                        transform: translateY(-6px);
+                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                    }
+
+                </style>
+            </a>
+
+            <div class="card p-2 shadow">
+                <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
+                    <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                    <div class="media">
+                        <h5 class="mt-1"><b>₦{{ product.price|floatformat:2 }}</b></h5>
+                        <div class="media-body ">
+                            <div class="float-right  badge badge-warning alert alert-warning py-2">
+                                <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                </svg>
+                                <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                            </div>
+                        </div>
+                    </div>
+
+                </a>
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
+                        <img src="{{ product.vendor.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                            <h6 class="mt-1">{{ product.vendor }}</h6></a>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="container" id="product" align="center" style="opacity: 0.7" fill="#000">
+        <img class="img-fluid" src="{% static 'images/product-icon-png-19.jpg' %}" style="opacity: 0.8" alt="">
+        <h3 class="font-weight-strong">No product here!</h3><br>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

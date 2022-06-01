@@ -1,0 +1,165 @@
+{% extends 'market/base.html' %}
+{% block title %}Market{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+   .section {
+      background: #fd5631;
+      border-color: #fd5631;
+      color: #fff;
+      position: relative;
+
+   }
+   .search-category {
+        position: absolute;
+        top: 200px;
+        width: 84%;
+        background-color: #fff;
+   }
+
+
+
+
+
+
+
+
+
+
+</style>
+<div class="section">
+    <div class="container py-5 mt-1">
+        <h3><b>Update {{product}}</b></h3>
+    </div>
+</div>
+<br><br>
+<div class="container mb-5">
+    <div class="row mb-5">
+        <div class="col-lg-9">
+            <form method="post" action="{% url 'product-update' product.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h5><b>Upload file</b></h5>
+                <label >
+                    File types supported: PNG, JPG, GIF, WEBP, MP3 or MP4. Max size: 100kb
+                </label>
+                <div id="wrapper">
+                    <div align="center" class="file">
+                        <br>
+                        <p>Upload fle</p>
+<!--                        <input type="file" name="images" multiple>-->
+                        {{ imageset.image }}
+                        <br>
+                    </div>
+                </div>
+                <style>
+                    #wrapper {
+                        border: 1px solid #000;
+                        border-radius: 15px;
+                        background-size: 30rem;
+                        height: 10rem;
+
+                    }
+                    .file{
+                        align-items: center;
+                        display: block;
+                        justify-content: center;
+                        padding: 10px;
+                        }
+                </style>
+                <br><br>
+                <h5><b>Details</b></h5>
+
+                <label>Product name</label>
+                {{ form.name }}
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        {{ category_field|crispy }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Price</label>
+                        {{ form.price }}
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    <label>Delivery period</label>
+                    {{ form.delivery_period }}
+                </div>
+                <button class="btn btn-block" type="submit">Submit Form</button>
+            </form>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+            <br><br><br>
+            <div class="sticky-top" style="top: 9px">
+                <h5 class="mb-4"><b>Preview</b></h5>
+
+                <style>
+                        .col-6 {
+                            padding: 6px;
+                        }
+                </style>
+                <a href="{{ product.get_absolute_url }}">
+                    <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                         class="thumbnail-product">
+                    <style>
+                    .thumbnail-product{
+                        width: 100%;
+                        height: 200px;
+                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                        transition: .3s
+                    }
+                    .col-lg-3{transition: .3s}
+                    .col-lg-3:hover{
+                        width: 100%;
+                        height: 200px;
+                        transform: translateY(-6px);
+                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                    }
+
+
+
+
+                    </style>
+                </a>
+
+                <div class="card p-2 shadow">
+                    <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
+                        <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                        <div class="article-content">{{ product.description|truncatewords:10 }}</div>
+                        <style>
+                            .article-content {
+                                white-space: pre-line;
+                                word-wrap: break-word;
+                                display: block:
+                                flex-direction: column;
+                            }
+                        </style>
+                        <h4><b>₦{{ product.price|floatformat:2 }}</b></h4>
+                    </a>
+                    <hr>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
+                                <img src="{{ product.vendor.image.url }}" width="30" height="30"
+                                     class="rounded-circle" alt="">
+                                <h6 class="mt-1">{{ product.vendor }}</h6></a>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
