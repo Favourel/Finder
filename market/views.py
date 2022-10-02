@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions, serializers
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -22,12 +23,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 def home(request):
     categories = Category.objects.all()
     products = Product.objects.all().order_by("-id")[:4]
-    # c = Product.objects.last()  # Get the last content
 
-    q = []
-    for q in Product.objects.all():
-        q
-    print(q.get_most_used_words(15))  # Get the top 10 most used words
     context = {
         "categories": categories,
         "products": products,
@@ -43,7 +39,23 @@ def market_view(request):
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     categories = Category.objects.all()
-    products = Product.objects.all()
+    product_list = Product.objects.all()
+
+    products = Paginator(product_list, 4)
+    first_page = products.page(1).object_list
+    page_range = products.page_range
+    # page_number = request.GET.get('page')
+    # products = paginator.get_page(page_number)
+
+    if request.method == 'POST':
+        # getting page number
+        page_no = request.POST.get('page_no', None)
+        results = list(products.page(page_no).object_list.values('name', 'price', 'image',
+                                                                 "product_purchase", "vendor__username", "vendor__image", "pk"))
+        return JsonResponse({"results": results})
+    # else:
+    #     return render(request, 'market/search.html', )
+
     if request.GET.get('category_id'):
         filterProduct = Product.getProductByFilter(request.GET['category_id']).order_by('-id')
         filter_category_product = filterProduct.all().order_by('-id')
@@ -55,7 +67,9 @@ def market_view(request):
                                                       "notification": notification
                                                       })
     context = {
-        "products": products,
+        # "products": first_page,
+        "products": product_list,
+        "page_range": page_range,
         "categories": categories,
         "notification_count": notification_count,
         "notification": notification
@@ -106,7 +120,7 @@ def create_view(request):
     if Vendor.objects.filter(user=request.user).exists():
         notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-        product = Product.objects.get(id=2)
+        product = Product.objects.last()
         if request.method == "POST":
             form = CreateProductForm(request.POST, request.FILES)
             education_field = CategoryField(request.POST)
@@ -355,10 +369,29 @@ def add_to_checkout(request, pk):
         user=user,
         product=product,
         complete=False,
-        quantity=1
     )
+    create_object.quantity = (create_object.quantity + 1)
+    create_object.price = (create_object.quantity * create_object.product.price)
     create_object.save()
+    if create_object.quantity > 1:
+        messages.success(request, f'"{product}" quantity has been updated!')
+    else:
+        messages.success(request, f'"{product}" has been added to your cart!')
     return redirect("checkout")
+
+
+@login_required
+def remove_from_checkout(request, pk):
+    customer = request.user
+    product = get_object_or_404(Product, pk=pk)
+    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product)
+    if Checkout.objects.filter(user=customer, product=product).exists():
+        orderItem.delete()
+        messages.success(request, f"'{product.name}' has been removed from your cart")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        messages.error(request, "Product doesn't exists")
+        return redirect('checkout')
 
 
 @login_required

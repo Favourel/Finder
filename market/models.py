@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from datetime import datetime, date
 from django.shortcuts import reverse
+import uuid
 
 
 # Create your models here.
@@ -69,6 +70,14 @@ class Category(models.Model):
         return Category.objects.all()
 
 
+class MyUUIDModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=90)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
@@ -93,17 +102,6 @@ class Product(models.Model):
             return Product.objects.filter(category=category_id)
         else:
             return Product.objects.all()
-
-    def get_most_used_words(self, count):
-        words = {}
-        description = self.description.split()
-        for word in description:
-            if word in words:
-                words[word] += 1
-            else:
-                words[word] = 1
-        top_10_words = sorted(words.items(), key=lambda x: -x[1])[:count]
-        return top_10_words
 
 
 class ProductImage(models.Model):

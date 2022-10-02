@@ -185,7 +185,6 @@
                         .col-6 {
                             padding: 6px;
                         }
-
                     </style>
                     <a href="{{ product.get_absolute_url }}">
                         {% if product.productimage_set.all %}
@@ -204,22 +203,7 @@
                         <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
                              class="thumbnail-product">
                         {% endif %}
-                        <style>
-                            .thumbnail-product{
-                                width: 100%;
-                                height: 200px;
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                                transition: .3s
-                            }
-                            .col-lg-4{transition: .3s}
-                            .col-lg-4:hover{
-                                width: 100%;
-                                height: 200px;
-                                transform: translateY(-6px);
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                            }
 
-                        </style>
                     </a>
 
                     <div class="card p-2 shadow">
@@ -309,17 +293,6 @@
     }
 
 </style>
-<script>
-    function find_max(nums) {
- let max_num = Number.NEGATIVE_INFINITY; // smaller than all other numbers
- for (let num of nums) {
- if (num > max_num) {
- // (Fill in the missing line here)
- }
- }
- return max_num;
- }
- console.log(max_num);
-</script>
+
 
 {% endblock %}

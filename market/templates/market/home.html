@@ -249,8 +249,16 @@
                 }
             </style>
             <a href="{{ product.get_absolute_url }}">
-                <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
-                     class="thumbnail-product">
+                {% if product.productimage_set.all %}
+                {% for product_image in product.productimage_set.all %}
+                {% if forloop.first %}
+                <img src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
+                     class="thumbnail-product">{% endif %}
+                {% endfor %}
+                {% else %}
+                    <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                         class="thumbnail-product">
+                {% endif %}
                 <style>
                     .thumbnail-product{
                         width: 100%;

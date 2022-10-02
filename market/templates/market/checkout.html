@@ -153,7 +153,7 @@
                                             <div class="d-md-block d-none text-center col-2"
                                                  data-toggle="tooltip" title="Remove from Cart" data-placement="top">
                                                 <a class="cart-remove text-muted update-cart"
-                                                   data-product="{{ item.product.id }}" data-action="delete">
+                                                   href="{% url 'remove_from_checkout' item.product.pk  %}" >
                                                     <svg width="2em" height="2em" viewBox="0 0 16 16"
                                                          class="bi bi-trash"
                                                          fill="currentColor" xmlns="http://www.w3.org/2000/svg">

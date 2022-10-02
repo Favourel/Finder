@@ -28,14 +28,13 @@
         <div class="box-element">
             <div class="row">
                 <div class="col-lg-10">
-                    <form action="" class="d-flex" autocomplete="off" method="GET" value="{{request.GET.q}}">
-                        <input style="border-radius: 2px; height: 50px" type="text" name="q" value="{{request.GET.q}}"
-                               class="form-control"
-                               placeholder="Search Connect?"/>
-                        <input style="border-radius: 24px; display: none"  type="submit" name="submit" value="Search"  class="ml-0 btn btn-warning">
-
-
-                    </form>
+                    <form action="{% url 'search' %}" class="d-flex mt-2" autocomplete="off" method="GET" value="{{request.GET.q}}">
+                    <input style="border-radius: 24px;width: 48rem" type="text" name="q" value="{{request.GET.q}}" class="form-control"
+                        placeholder="What service are you looking for today?"/>
+                    <div class="autocomplete" style="width:300px; display:none;">
+                        <input type="submit" name="submit" value="Search"/>
+                    </div>
+                </form>
                 </div>
                 <div class="col-lg-2">
                     <div class="dropdown">
@@ -67,7 +66,7 @@
 <br><br><br>
 <div class="container">
     {% if products|length > 0 %}
-    <div class="row p-2">
+    <div class="row p-2" id="articles">
         {% for product in products %}
         <div class="col-lg-3 col-md-4 col-sm-4 col-6">
             <style>
@@ -76,25 +75,23 @@
                 }
             </style>
             <a href="{{ product.get_absolute_url }}">
+                {% if product.productimage_set.all %}
+
+                    {% for product_image in product.productimage_set.all %}
+                        {% if forloop.first %}
+
+                        <div class="single-testimonial text-center">
+                            <img src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
+                                 class="thumbnail-product">
+                        </div>{% endif %}
+
+                    {% endfor %}
+
+                {% else %}
                 <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
                      class="thumbnail-product">
-                <style>
-                    .thumbnail-product{
-                        width: 100%;
-                        height: 200px;
-                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                        transition: .3s;
+                {% endif %}
 
-                    }
-                    .col-lg-3{transition: .3s}
-                    .col-lg-3:hover{
-                        width: 100%;
-                        height: 200px;
-                        transform: translateY(-6px);
-                        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                    }
-
-                </style>
             </a>
 
             <div class="card p-2 shadow">
@@ -131,6 +128,46 @@
         </div>
         {% endfor %}
     </div>
+    <style>
+        .thumbnail-product{
+            width: 100%;
+            height: 200px;
+            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+            transition: .3s;
+
+        }
+    </style>
+    <br>
+    <div class="pagination">
+    {% for i in page_range %}
+<!--    <a style="margin-left: 5px; " class="test" href="" data-url="{{i}}">{{i}}</a>-->
+    <a class="btn-sm btn btn-outline-info ml-2 mb-7" data-url="{{i}}" href="">{{i}}</a>
+    {% endfor %}
+		</div>
+    {% if products.has_other_pages %}
+    <div class="container mt-2" align="center">
+        {% if products.has_previous %}
+        <a class="btn-sm btn btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
+        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.previous_page_number }}#shop">&laquo;
+            Previous
+        </a>
+        {% endif %}
+        {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+        <a class="btn-sm btn btn-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
+        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        {% if products.has_next %}
+        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.next_page_number }}#shop">Next
+            &raquo;</a>
+        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.paginator.num_pages }}#shop">Last
+            Page
+            &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
 
     {% else %}
     <div class="container" id="product" align="center" style="opacity: 0.7" fill="#000">

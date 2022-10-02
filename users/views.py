@@ -25,10 +25,11 @@ def register(request):
                 form.save()
                 username = form.username
                 password = form.password
-                print(username, password)
 
                 auth_login = auth.authenticate(username=username, password=form_password)
                 auth.login(request, auth_login)
+                returnUlr = request.META['PATH_INFO']
+                # return redirect(f'login?return_url={returnUlr}')
                 return redirect("market")
     else:
         form = UserRegisterForm()
@@ -131,7 +132,7 @@ def notification_view(request):
     followed_by = request.user.following.filter(id__in=request.user.follower.all())[:1]
     followed_by_ = request.user.following.filter(id__in=request.user.follower.all())
     followed_by_count = followed_by_.count()
-    notification = Notification.objects.filter(user=request.user, is_seen=False)[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")[:3]
     post_notification = Notification.objects.filter(user=request.user, is_seen=False)
 
     if not notification:
@@ -164,9 +165,9 @@ def notification_view(request):
         }
         return render(request, "users/notification.html", context)
     else:
-        notification_list = Notification.objects.filter(user=request.user).order_by("-date_posted").exclude(notification_type=7)
+        notification_list = Notification.objects.filter(user=request.user).order_by("-date_posted").exclude(
+            notification_type=7)
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-
 
         queryset = []
         for let in Notification.objects.filter(user=request.user):
