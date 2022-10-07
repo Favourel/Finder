@@ -89,13 +89,13 @@
                     {% endfor %}
 
                 {% else %}
-                <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                <img src="{{ product.image.url }}" alt=""
                      class="thumbnail-product">
                 {% endif %}
 
             </a>
 
-            <div class="card p-2 shadow">
+            <div class="card p-2 ">
                 <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
                     <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
                     <div class="media">
@@ -133,15 +133,13 @@
         .thumbnail-product{
             width: 100%;
             height: 200px;
-            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
             transition: .3s;
-
         }
     </style>
     <br>
     <div class="pagination">
     {% for i in page_range %}
-<!--    <a style="margin-left: 5px; " class="test" href="" data-url="{{i}}">{{i}}</a>-->
+<!-- box-shadow:hsl(0, 0%, 80%) 0 0 16px;    <a style="margin-left: 5px; " class="test" href="" data-url="{{i}}">{{i}}</a>-->
     <a class="btn-sm btn btn-outline-info ml-2 mb-7" data-url="{{i}}" href="">{{i}}</a>
     {% endfor %}
 		</div>

@@ -381,19 +381,25 @@ def update_product(request, pk):
 def add_to_checkout(request, pk):
     user = request.user
     product = get_object_or_404(Product, pk=pk)
-    create_object, created = Checkout.objects.get_or_create(
-        user=user,
-        product=product,
-        complete=False,
-    )
-    create_object.quantity = (create_object.quantity + 1)
-    create_object.price = (create_object.quantity * create_object.product.price)
-    create_object.save()
-    if create_object.quantity > 1:
-        messages.success(request, f'"{product}" quantity has been updated!')
+    latest_vendor = Checkout.objects.filter(user=user).latest("product__vendor__username")
+    if str(product.vendor.username) == str(latest_vendor):
+        create_object, created = Checkout.objects.get_or_create(
+            user=user,
+            product=product,
+            complete=False,
+        )
+        create_object.quantity = (create_object.quantity + 1)
+        create_object.price = (create_object.quantity * create_object.product.price)
+        create_object.save()
+        if create_object.quantity > 1:
+            messages.success(request, f'"{product}" quantity has been updated!')
+        else:
+            messages.success(request, f'"{product}" has been added to your cart!')
+        return redirect("checkout")
+
     else:
-        messages.success(request, f'"{product}" has been added to your cart!')
-    return redirect("checkout")
+        messages.error(request, "You can't shop on a different store without checkout!😔😒")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 @login_required

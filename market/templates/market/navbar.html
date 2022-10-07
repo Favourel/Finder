@@ -72,7 +72,7 @@
                 {% if user.is_authenticated %}
                 <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">HOME </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> ABOUT US </a></li>
-                <li class="nav-item"><a class="nav-link" href=""> PRICING </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'checkout' %}"> CHECKOUT </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> PROFILE </a></li>
 
                 <li class="nav-item"><a class="nav-success btn btn-block btn-warning" href="{% url 'logout' %}">
@@ -80,7 +80,7 @@
                 {% else %}
                 <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">HOME </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> ABOUT US </a></li>
-                <li class="nav-item"><a class="nav-link" href=""> PRICING </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'checkout' %}"> CHECKOUT </a></li>
                 <li class="nav-item"><a class="nav-link mb-2" href="{% url 'login' %}"> LOGIN </a></li>
 
                 <li class="nav-item"><a class="nav-warning btn-block btn btn-warning" href="{% url 'register' %}">
@@ -125,7 +125,7 @@
                         <a href="{% url 'market' %}" class="nav-link">MARKET</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">PRICING</a>
+                        <a href="{% url 'checkout' %}" class="nav-link">CHECKOUT</a>
                     </li>
                     <li class="nav-item dropdown ">
                         <a class="nav-link " href="#" id="navbarDropdown" role="button"
@@ -286,7 +286,7 @@
                         <a href="" class="nav-link">ABOUT</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">PRICING</a>
+                        <a href="{% url 'checkout' %}" class="nav-link">CHECKOUT</a>
                     </li>
                     <br>
                     <li class="nav-item">
