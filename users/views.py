@@ -9,6 +9,11 @@ from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+def total_cart_items(request):
+    check_out_list = Checkout.objects.filter(user=request.user)
+    get_cart_items = sum([item.quantity for item in check_out_list])
+
+    return get_cart_items
 
 
 def register(request):
@@ -66,7 +71,8 @@ def create_store(request):
             'u_form': u_form,
             "education_field": StoreCreateFormEducationField(),
             "notification_count": notification_count,
-            "notification": notification
+            "notification": notification,
+            "get_cart_items": total_cart_items(request)
         }
         return render(request, 'users/create_store.html', context)
     else:
@@ -88,6 +94,7 @@ def vendor_view(request, username):
         "products": products,
         "notification_count": notification_count,
         "notification": notification,
+        "get_cart_items": total_cart_items(request),
         "form": UserUpdateForm(instance=request.user)
     }
     return render(request, "users/vendor_post.html", context)
@@ -145,6 +152,7 @@ def notification_view(request):
             "notification": notification,
             "followed_by": followed_by,
             "followed_by_count": followed_by_count,
+            "get_cart_items": total_cart_items(request)
 
         }
         return render(request, "users/notification.html", context)
@@ -160,6 +168,7 @@ def notification_view(request):
             "notification_count": notification_count,
             "followed_by": followed_by,
             "followed_by_count": followed_by_count,
+            "get_cart_items": total_cart_items(request)
 
             # "queryset": queryset
         }
@@ -181,6 +190,7 @@ def notification_view(request):
             "notification_count": notification_count,
             "followed_by": followed_by,
             "followed_by_count": followed_by_count,
+            "get_cart_items": total_cart_items(request)
 
         }
         return render(request, "users/notification.html", context)

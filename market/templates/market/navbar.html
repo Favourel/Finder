@@ -140,7 +140,7 @@
                                 {% if notification_count > 15 %}
                                 <small>15+</small>
                                 {% else %}
-                                {{ notification_count|intword }}
+                                {{ notification_count|add:get_cart_items|intword }}
                                 {% endif %}
                             </span>
                         </a>

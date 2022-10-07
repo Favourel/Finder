@@ -18,6 +18,11 @@ from django.core.paginator import Paginator
 
 
 # Create your views here.
+def total_cart_items(request):
+    check_out_list = Checkout.objects.filter(user=request.user)
+    get_cart_items = sum([item.quantity for item in check_out_list])
+
+    return get_cart_items
 
 
 def home(request):
@@ -64,7 +69,8 @@ def market_view(request):
                                                       "categories": categories,
                                                       'product': products,
                                                       "notification_count": notification_count,
-                                                      "notification": notification
+                                                      "notification": notification,
+                                                      "get_cart_items": total_cart_items(request)
                                                       })
     context = {
         # "products": first_page,
@@ -72,7 +78,8 @@ def market_view(request):
         "page_range": page_range,
         "categories": categories,
         "notification_count": notification_count,
-        "notification": notification
+        "notification": notification,
+        "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/market.html", context)
 
@@ -97,7 +104,8 @@ def product_detail(request, pk):
         "notification_count": notification_count,
         "notification": notification,
         "product_image": image,
-        "form": ReviewBox()
+        "form": ReviewBox(),
+        "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/product_detail.html", context)
 
@@ -106,11 +114,16 @@ def product_detail(request, pk):
 def checkout(request):
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
+    check_out_list = Checkout.objects.filter(user=request.user)
+    get_cart_total = sum([(item.product.price * item.quantity) for item in check_out_list])
+    get_cart_items = sum([item.quantity for item in check_out_list])
 
     context = {
         "notification_count": notification_count,
         "notification": notification,
-        "items": Checkout.objects.filter(user=request.user)
+        "items": check_out_list,
+        "get_cart_total": get_cart_total,
+        "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/checkout.html", context)
 
@@ -149,7 +162,8 @@ def create_view(request):
             "notification": notification,
             "form": form,
             "education_field": education_field,
-            "imageset": imageset
+            "imageset": imageset,
+            "get_cart_items": total_cart_items(request)
         }
         return render(request, "market/create.html", context)
     else:
@@ -178,7 +192,8 @@ def search(request):
                     "result_user": result_user,
                     "result_product": result_product,
                     "notification_count": notification_count,
-                    "notification": notification
+                    "notification": notification,
+                    "get_cart_items": total_cart_items(request)
                 }
                 return render(request, "market/search.html", context)
             else:
@@ -204,6 +219,7 @@ def search(request):
                     'submitbutton': submitbutton,
                     "result_user": result_user,
                     "result_product": result_product,
+                    "get_cart_items": total_cart_items(request)
 
                 }
                 return render(request, "market/search.html", context)
@@ -386,12 +402,20 @@ def remove_from_checkout(request, pk):
     product = get_object_or_404(Product, pk=pk)
     orderItem, created = Checkout.objects.get_or_create(user=customer, product=product)
     if Checkout.objects.filter(user=customer, product=product).exists():
-        orderItem.delete()
-        messages.success(request, f"'{product.name}' has been removed from your cart")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        if orderItem.quantity <= 0:
+            orderItem.delete()
+            messages.success(request, f"'{product.name}' has been removed from your cart")
+            return redirect("checkout")
+        if orderItem.quantity >= 1:
+            orderItem.quantity = (orderItem.quantity - 1)
+            orderItem.price = (orderItem.quantity * orderItem.product.price)
+            orderItem.save()
+            return redirect("checkout")
     else:
-        messages.error(request, "Product doesn't exists")
-        return redirect('checkout')
+        messages.success(request, f"'{product.name}' has been removed from your cart")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    return render(request, 'market/checkout.html', {})
 
 
 @login_required

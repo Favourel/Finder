@@ -15,5 +15,4 @@ urlpatterns = [
     path("search/", market_view.search, name="search"),
     path("<str:username>/follow", market_view.UserFollowerApi.as_view(), name="follower_vendor"),
     path('api/<str:username>/post_notify/', market_view.PostNotificationApi.as_view(), name='post_notify'),
-
 ]

@@ -38,8 +38,20 @@
                                            data-product="{{ item.product.id }}" data-action="delete" href="#">X</a>
                                         <div class="d-flex align-items-center">
                                             <a href="{% url 'product-detail' item.product.id %}">
+                                                {% if item.product.productimage_set.all %}
+
+                                                    {% for product_image in item.product.productimage_set.all %}
+                                                        {% if forloop.first %}
+                                                        <img height="70px" width="70px" src="{{ product_image.image.url }}" alt=""
+                                                            class="row-ima">
+                                                        {% endif %}
+
+                                                    {% endfor %}
+
+                                                {% else %}
+
                                                 <img height="70px" width="70px" src="{{ item.product.image.url }}" alt=""
-                                                     class="row-ima">
+                                                     class="row-ima">{% endif %}
                                             </a>
                                             <div class="cart-title text-left">
                                                 <a class="text-dark link-animated"
@@ -48,9 +60,7 @@
                                                     </strong>
                                                 </a>
                                                 <br>
-<!--                                                                                            <span class="text-muted text-sm">Description:-->
-<!--                                                                                            {{ item.product.description|safe|truncatewords:"4"|linebreaks }}-->
-<!--                                                                                            </span>-->
+
                                                 <div class="d-md-block d-none">
                                                     <a href="tel:{{ item.product.vendor.phone_number }}"
                                                        style="font-size: 11px"
@@ -124,20 +134,20 @@
                                                     <div class="text-muted d-md-none col-7 col-sm-9">Quantity</div>
                                                     <div class="col-5 col-sm-3 col-md-12">
                                                         <div class="d-flex align-items-center">
-                                                            <button data-product="{{ item.product.id }}"
-                                                                    data-action="add"
+                                                            <a data-product="{{ item.product.id }}"
+                                                                    href="{% url 'add_to_checkout' item.product.pk %}"
                                                                     class="update-cart text-decoration-none btn-sm btn-info">
                                                                 <b>+</b>
-                                                            </button>
+                                                            </a>
                                                             <b class="text-center border-0 border-md input-items form-control">
                                                                 {{ item.quantity }}
                                                             </b>
 
-                                                            <button data-product="{{ item.product.id }}"
-                                                                    data-action="remove"
+                                                            <a data-product="{{ item.product.id }}"
+                                                                    href="{% url 'remove_from_checkout' item.product.pk %}"
                                                                     class="text-decoration-none btn-sm btn-danger update-cart">
                                                                 <b>-</b>
-                                                            </button>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -205,13 +215,13 @@
                         }
                     </style>
                     <table class="table table-hover">
-<!--                                            <tr>-->
-<!--                                                <th><h5>Items: </h5></th>-->
-<!--                                                <th><h5>{{ order.get_cart_items }}</h5></th>-->
-<!--                                            </tr>-->
+                        <tr>
+                            <th><h5>Items: </h5></th>
+                            <th><h5>{{ get_cart_items }}</h5></th>
+                        </tr>
                         <tr>
                             <th><h5 class="mt-2">Subtotal: </h5></th>
-                            <th><h5 class="mt-2">₦{{ order.get_cart_total|floatformat:2 }}</h5></th>
+                            <th><h5 class="mt-2">₦{{ get_cart_total|floatformat:2 }}</h5></th>
                         </tr>
                     </table>
                     <hr>
