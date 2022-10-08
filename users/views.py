@@ -24,17 +24,12 @@ def register(request):
             form = form.save(commit=False)
             email = form.email
             if User.objects.filter(email=email).exists():
-                messages.error(request, "email already exists")
+                messages.error(request, "Email already exists.")
                 return redirect("register")
             else:
                 form.save()
-                username = form.username
-                password = form.password
-
-                auth_login = auth.authenticate(username=username, password=form_password)
+                auth_login = auth.authenticate(username=form.username, password=form_password)
                 auth.login(request, auth_login)
-                returnUlr = request.META['PATH_INFO']
-                # return redirect(f'login?return_url={returnUlr}')
                 return redirect("market")
     else:
         form = UserRegisterForm()
