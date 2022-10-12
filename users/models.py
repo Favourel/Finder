@@ -10,7 +10,7 @@ from market.models import Product
 class User(AbstractUser):
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     about = models.CharField(max_length=255, null=True, blank=True)
-    image = models.ImageField(default='profile.png', upload_to='profile_picture')
+    image = models.ImageField(default='download_EPBN0x6.jpg', upload_to='profile_picture')
     location = models.CharField(max_length=50, null=True, blank=True)
 
     follower = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='follower_list')

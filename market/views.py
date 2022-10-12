@@ -114,7 +114,7 @@ def product_detail(request, pk):
 def checkout(request):
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-    check_out_list = Checkout.objects.filter(user=request.user)
+    check_out_list = Checkout.objects.filter(user=request.user).order_by("-id")
     get_cart_total = sum([(item.product.price * item.quantity) for item in check_out_list])
     get_cart_items = sum([item.quantity for item in check_out_list])
 
@@ -183,10 +183,6 @@ def search(request):
                 lookups_product = Q(name__icontains=query)
                 result_user = User.objects.filter(lookups_user).distinct()
                 result_product = Product.objects.filter(lookups_product).distinct()
-                # combined_search = sorted(
-                #     chain(result_user, result_product),
-                #     key=lambda posts: posts
-                # )
                 context = {
                     'submitbutton': submitbutton,
                     "result_user": result_user,
@@ -198,10 +194,7 @@ def search(request):
                 return render(request, "market/search.html", context)
             else:
                 return render(request, 'market/search.html', )
-        context = {
-
-        }
-        return render(request, "market/search.html", context)
+        return render(request, "market/search.html", {})
     else:
         if request.method == "GET":
             query = request.GET.get('q')
@@ -219,7 +212,7 @@ def search(request):
                     'submitbutton': submitbutton,
                     "result_user": result_user,
                     "result_product": result_product,
-                    "get_cart_items": total_cart_items(request)
+                    "get_cart_items": 0
 
                 }
                 return render(request, "market/search.html", context)
@@ -424,8 +417,22 @@ def remove_from_checkout(request, pk):
     return render(request, 'market/checkout.html', {})
 
 
+def delete_from_checkout(request, pk):
+    customer = request.user
+    product = get_object_or_404(Product, pk=pk)
+    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product)
+    if Checkout.objects.filter(user=customer, product=product).exists():
+        orderItem.delete()
+        messages.success(request, f"'{product.name}' has been removed from your cart")
+        return redirect("checkout")
+
+    else:
+        messages.success(request, f"'{product.name}' doesn't exists in your cart")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
 @login_required
-def productReview(request, pk):
+def product_review(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
         form = ReviewBox(request.POST)

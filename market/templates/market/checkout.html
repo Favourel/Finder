@@ -6,6 +6,9 @@
 
 
 <div class="container">
+    <br>
+    <h2><b>Cart & Checkout</b></h2>
+    <a class="btn mb-3" href="{% url 'market' %}">&#x2190; Continue searching</a>
     <div class="row screen">
         <br>
         <div class="col-lg-9">
@@ -125,7 +128,7 @@
                                                 <div class="row">
                                                     <div class="d-md-none text-muted col-6">Price per item</div>
                                                     <b class="text-right text-md-center col-6 col-md-12">
-                                                        ₦{{ item.product.price|floatformat:'2' }}
+                                                        ${{ item.product.price|floatformat:'2'|intcomma }}
                                                     </b>
                                                 </div>
                                             </div>
@@ -142,12 +145,19 @@
                                                             <b class="text-center border-0 border-md input-items form-control">
                                                                 {{ item.quantity }}
                                                             </b>
-
+                                                            {% if item.quantity > 1 %}
                                                             <a data-product="{{ item.product.id }}"
                                                                     href="{% url 'remove_from_checkout' item.product.pk %}"
                                                                     class="text-decoration-none btn-sm btn-danger update-cart">
                                                                 <b>-</b>
                                                             </a>
+                                                            {% else %}
+                                                            <button disabled data-product="{{ item.product.id }}"
+                                                                    data-href="{% url 'remove_from_checkout' item.product.pk %}"
+                                                                    class="text-decoration-none btn-sm btn-danger update-cart">
+                                                                <b>-</b>
+                                                            </button>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -156,14 +166,15 @@
                                                 <div class="row">
                                                     <div class="d-md-none text-muted col-6">Total price</div>
                                                     <b class="text-right text-md-center col-6 col-md-12">
-                                                        ₦{{ item.get_total|floatformat:'2' }}
+                                                        ${{ item.get_total|floatformat:'2'|intcomma }}
+                                                        <small>${{ item.product.price|floatformat:'2'|intcomma }} x {{ item.quantity }}</small>
                                                     </b>
                                                 </div>
                                             </div>
                                             <div class="d-md-block d-none text-center col-2"
                                                  data-toggle="tooltip" title="Remove from Cart" data-placement="top">
                                                 <a class="cart-remove text-muted update-cart"
-                                                   href="{% url 'remove_from_checkout' item.product.pk  %}" >
+                                                   href="{% url 'delete_from_checkout' item.product.pk  %}" >
                                                     <svg width="2em" height="2em" viewBox="0 0 16 16"
                                                          class="bi bi-trash"
                                                          fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -198,8 +209,8 @@
                 {% endfor %}
             </section>
         </div>
-        <div class="col-lg-3">
-            <br>
+        <div class="col-lg-3 mt-5">
+
             <div class="sticky-top" style="top: 9px">
                 <div class="box-element">
                     <h4>Order Summary</h4>
@@ -221,11 +232,11 @@
                         </tr>
                         <tr>
                             <th><h5 class="mt-2">Subtotal: </h5></th>
-                            <th><h5 class="mt-2">₦{{ get_cart_total|floatformat:2 }}</h5></th>
+                            <th><h5 class="mt-2">${{ get_cart_total|floatformat:2|intcomma }}</h5></th>
                         </tr>
                     </table>
                     <hr>
-                    <li class="text-muted">Contact seller through their phone number</li>
+                    <li class="text-muted">Contact vendor through their phone number</li>
                     <li class="text-muted">Clicking complete order means you have contacted the seller and you want the
                         product(s)
                     </li>

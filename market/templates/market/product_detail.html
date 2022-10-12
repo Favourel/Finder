@@ -217,8 +217,7 @@
                         <br>
 
                         <a href="{% url 'add_to_checkout' product.pk %}" class="float-left shadow btn mb-3 btn-block">
-                            Proceed to checkout
-                            <img class="mr-2" src="https://img.icons8.com/cute-clipart/28/000000/wish-list.png"/>
+                            Add to checkout
                         </a>
 
                         <div class="modal fade" id="add-wishlist" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -737,7 +736,7 @@
                         <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                     </svg>
                     <b class="ml-1">{{ product.delivery_period }} Days Delivery</b>
-                     <a href="{% url 'add_to_checkout' product.pk %}"  class="shadow mt-2 btn btn-block" >Proceed to checkout</a>
+                     <a href="{% url 'add_to_checkout' product.pk %}"  class="shadow mt-2 btn btn-block" >Add to checkout</a>
                 </div>
             </div>
 

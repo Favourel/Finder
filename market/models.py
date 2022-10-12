@@ -120,7 +120,6 @@ class Checkout(models.Model):
     def __str__(self):
         return f'{self.user}'
 
-    @property
     def get_total(self):
         total = self.product.price * self.quantity
         return total
