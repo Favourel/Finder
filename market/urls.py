@@ -14,6 +14,5 @@ urlpatterns = [
     path("product/<int:pk>/review/", market_view.product_review, name="productReview"),
     path("create/", market_view.create_view, name="create"),
     path("search/", market_view.search, name="search"),
-    path("<str:username>/follow", market_view.UserFollowerApi.as_view(), name="follower_vendor"),
-    path('api/<str:username>/post_notify/', market_view.PostNotificationApi.as_view(), name='post_notify'),
+
 ]

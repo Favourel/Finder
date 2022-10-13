@@ -8,4 +8,7 @@ urlpatterns = [
     path('update-profile/', user_view.update_profile, name='update_profile'),
     path("notification/", user_view.notification_view, name="notification"),
     path("create-store/", user_view.create_store, name="create_store"),
+    path("<str:username>/follow", user_view.UserFollowerApi.as_view(), name="follower_vendor"),
+    path('api/<str:username>/post_notify/', user_view.PostNotificationApi.as_view(), name='post_notify'),
+
 ]

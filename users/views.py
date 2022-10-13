@@ -6,6 +6,9 @@ from .models import *
 from market.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions, serializers
 
 
 # Create your views here.
@@ -189,3 +192,78 @@ def notification_view(request):
 
         }
         return render(request, "users/notification.html", context)
+
+
+class UserFollowerApi(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, username, format=None):
+        obj = get_object_or_404(User, username=username)
+        user = request.user
+        updated = False
+        following = False
+
+        if user in obj.follower.all():
+            following = False
+            obj.follower.remove(user)
+            user.following.remove(obj)
+            obj.post_notification.remove(user)
+
+            notify = Notification.objects.get(sender=user, user=obj, notification_type=2)
+            notify.delete()
+
+        else:
+            following = True
+            obj.follower.add(user)
+            user.following.add(obj)
+
+            notify = Notification(sender=user, user=obj, notification_type=2)
+            notify.save()
+
+            data = {
+                'updated': updated,
+                'following': following,
+                'follower_count': obj.follower.count(),
+            }
+            return Response(data)
+        updated = True
+
+        data = {
+            'updated': updated,
+            'following': following,
+            'follower_count': obj.follower.count(),
+        }
+        return Response(data)
+
+
+class PostNotificationApi(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, username, format=None):
+        user = request.user
+        obj = get_object_or_404(User, username=username)
+        updated = False
+        post_notify = False
+        if user:
+            if user in obj.post_notification.all():
+                post_notify = False
+                obj.post_notification.remove(user)
+            else:
+                post_notify = True
+                obj.post_notification.add(user)
+
+                data = {
+                    "updated": updated,
+                    "post_notify": post_notify,
+                    "messages": "You will get notified when they post"
+                }
+                return Response(data)
+            updated = True
+        data = {
+            "updated": updated,
+            "post_notify": post_notify,
+            "messages": "You will get notified when they post"
+        }
+        return Response(data)

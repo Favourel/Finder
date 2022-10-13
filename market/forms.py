@@ -41,13 +41,6 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
-    # image = forms.ImageField(widget=forms.FileInput(attrs={
-    #
-    #     "required": True,
-    #     "multiple": True
-    # }
-    # )
-    # )
 
     class Meta:
         model = Product
