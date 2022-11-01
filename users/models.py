@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from datetime import datetime
-from market.models import Product
+from market.models import Product, Checkout
 
 # Create your models here.
 
@@ -10,7 +10,7 @@ from market.models import Product
 class User(AbstractUser):
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     about = models.CharField(max_length=255, null=True, blank=True)
-    image = models.ImageField(default='download_EPBN0x6.jpg', upload_to='profile_picture')
+    image = models.ImageField(default='profile_picture/download_EPBN0x6.jpg', upload_to='profile_picture')
     location = models.CharField(max_length=50, null=True, blank=True)
 
     follower = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='follower_list')
@@ -24,7 +24,7 @@ class User(AbstractUser):
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
-        (1, "likes"), (2, "follow"), (3, "Post Notification"),
+        (1, "Order"), (2, "follow"), (3, "Post Notification"),
                           )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
@@ -34,6 +34,7 @@ class Notification(models.Model):
 
     notification_type = models.IntegerField(choices=NOTIFICATION_TYPES)
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.CASCADE)
+    orders = models.ManyToManyField(Checkout, blank=True)
 
     date_posted = models.DateTimeField(default=datetime.now)
     is_seen = models.BooleanField(default=False)

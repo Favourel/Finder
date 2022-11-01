@@ -1,0 +1,366 @@
+{% extends 'market/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block title %}{{ vendor }}{% endblock %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+<div class="container">
+    <div class="row gx-3">
+        <div class="col-lg-3 phone_size">
+            <div class="sticky-top" style="top: 80px">
+                <div class="card border-0">
+                    <div align="center" class="customer-profile">
+                        <br>
+                        <img width="120" height="120" background="#fff" color="#fff"
+                             class="rounded-circle customer-image " src="{{ vendor.image.url }}">
+
+                        <h5>
+                            {% if vendor.display_name %}
+                            {{ vendor.display_name }}
+                            {% else %}
+                            {{ vendor }}
+                            {% endif %}
+                            {% if vendor.is_verified %}
+                            <img width="20px" height="20px" class="mb-1"
+                                 src="{% static 'images/verify.png' %}" alt="">
+                            {% endif %}
+                        </h5>
+                        <p>{{ vendor.vendor.about }}</p>
+                    </div>
+                    <hr>
+                    <div class="d-block">
+                        <b>{{ vendor.following.count }} </b> Following |
+                        <b class="_result_following"> {{ vendor.follower.count }} </b> Followers
+                    </div>
+                    <br>
+                    <div class="row gx-3">
+                        <div class="col">
+                            {% if request.user == vendor %}
+                            <a class="btn-lg-block btn text-light"
+                               data-target="#updateUserModal" data-toggle="modal">Edit
+                                profile
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            {% if request.user == vendor %}
+                            <a class="btn-lg-block btn text-light" href="{% url 'vendor' request.user %}">
+                                My Store
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+                    <p>
+                        <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
+                        {{ vendor.vendor.location }}
+                    </p>
+                    <div class="d-md-block">
+                        <a href="tel:{{ user.phone_number }}"
+                           class="text-decoration-none category-link">
+                            <p class="btn-call" onclick="off()">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                     class="bi mr-2 bi-telephone-outbound-fill"
+                                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                {{vendor.vendor.phone_number }}
+                            </p>
+                        </a>
+                        <style>
+                            .category-link {color: #000;}
+                            .category-link:hover{
+                                color: #db3717;
+                                }
+                        </style>
+                    </div>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                             class="bi bi-calendar3 mr-2" viewBox="0 0 16 16">
+                            <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                            <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                        </svg>
+                        Joined {{ vendor.date_joined|time }} &bull; {{ vendor.date_joined|date }}
+                    </p>
+                    <div class="flex mb-2">
+                        <a href="{{ vendor.vendor.twitter_url }}">
+                            <img src="https://img.icons8.com/color/40/000000/twitter-squared.png"/>
+                        </a>
+                        <a href="{{ vendor.vendor.instagram_url }}">
+                            <img src="https://img.icons8.com/fluent/40/000000/instagram-new.png"/>
+                        </a><br>
+                    </div>
+
+                    {% if request.user == vendor %}
+                    {% if request.user.vendor %}
+                    <a href="{% url 'create' %}" class="btn ">
+                        Create Gig
+                    </a>
+                    {% else %}
+                    <a href="{% url 'create_store' %}" class="btn ">
+                        Create Gig
+                    </a>
+                    {% endif %}
+                    {% endif %}
+                    <b class="websocket"></b>
+                </div>
+                <br>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-9 col-md-9 mt-2">
+            {% if request.user.vendor %}
+            {% if products|length > 1 %}
+            <div class="mt-2 box-element text-light mb-4 bg-gradient rounded">
+                <style>
+                .bg-gradient {
+                    background-imae: -o-linear-gradient(135deg,#014ba7,#0183d0);
+                    background-imag: linear-gradient(-45deg,#014ba7,#0183d0);
+                    background-color: #152e4d;
+                    background-position: center;
+                    font-color: white;
+                    text-color: '#fff';
+                }
+
+
+
+
+
+
+                </style>
+                <h4 style="margin-bottom: .5rem;
+                font-family: vremenagrotesk,sans-serif;
+                font-weight: 900;
+                line-height: 1.3;color: #fff">Product Sales</h4>
+                <hr>
+                <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
+                        style="font-color: white;text-color: #fff;">
+                </canvas>
+                <div class="text-center" align="center">
+                    Product Id
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="row mt-1">
+                <div class="col-lg-3 col-md-3 mb-2">
+                    <div class="box-element p-2"
+                         style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
+
+                        <h6>Total Products</h6>
+                        <div class="order-row">
+                            <h3 class="text-truncate" style="align-items: left;text-align: left;display: flex;
+                            flex-direction: column;color: #f5803e!important;">
+                                {% if request.user.vendor %}
+                                {{ products.count|intword }}
+                                {% else %}
+                                0
+                                {% endif %}
+                            </h3>
+                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="1.6rem"
+                                 height="1.6rem" fill="currentColor"
+                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">
+                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                            </svg>
+                        </div>
+                        <hr class="my-1">
+                        <small>Today Product</small>
+                        <div>
+                            <small><b>1</b></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 mb-2">
+                    <div class="box-element"
+                         style="background-image:url('{% static 'images/corner-4.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <h6>Total Orders</h6>
+                        <div class="order-row ">
+                            <h3 class="text-truncate text-info" style="align-items: left;justify-content: center;text-align: left;display: flex;
+                    flex-direction: column;">{{ orders.count|intword }}</h3>
+                            <svg style="color: #17a2b8!important;" width="1.6rem" height="1.6rem" viewBox="0 0 16 16"
+                                 class="bi bi-archive ml-auto mt-1"
+                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                        </div>
+                        <hr class="my-1">
+                        <small>Today Order</small>
+                        <div>
+                            <small><b>3</b></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 mb-2">
+                    <div class="box-element"
+                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <h6>Earnings</h6>
+                        <h3 class="text-truncate text-info" style="align-items: left;justify-content: center;text-align: left;display: flex;
+                    flex-direction: column;">${{ earnings|intword }}</h3>
+                        <hr class="my-1">
+                        <small>Today Earnings</small>
+                        <div>
+                            <small><b>$3000</b></small>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:none">
+                    <div class="col-lg-3 col-md-3 mb-2 ">
+                        <div class="box-element"
+                             style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
+    <!--                        <h6>Subscription</h6>-->
+    <!--                        <p>Plan - -->
+    <!--                            {% if request.user_plan %}-->
+    <!--                            {% for plan in user_plan %}-->
+    <!--                            {{plan.product }}-->
+    <!--                            {% endfor %}-->
+    <!--                            {% else %}-->
+    <!--                            No paid plan-->
+    <!--                            {% endif %}-->
+    <!--                        </p>-->
+                            <canvas class="my-2 w-100 p-2 rounded" id="line-chart" width="900" height="250"
+                            style="font-color: white;text-color: #fff;"></canvas>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <style>
+                .order-row{
+                    display: flex;
+                    align-items: flex-stretch;
+
+                }
+                .chartjs-render-monitor {font-color:#fff;}
+
+                .user-follower:hover {
+                    color: #007bff !important;
+                }
+
+            </style>
+
+
+            {% if request.user.vendor %}
+            {% if best_selling_products|length > 0 %}
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="box-element" style="overflow:auto;">
+                        <h4><b>Best Selling Product</b></h4>
+                        <table class="table table-hover">
+                            <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th>PRODUCT</th>
+                                <th>UPLOADED</th>
+                                <th>PRICE</th>
+                                <th>QUANTITY</th>
+                                <th>AMOUNT</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for p in best_selling_products %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{p.get_absolute_url}}">
+                                        {{ p.name }}
+                                    </a>
+                                </td>
+                                <td>{{ p.date_posted }}</td>
+                                <td>${{ p.price }}</td>
+                                <td>{{ p.product_purchase }}</td>
+                                <td>${{ p.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="box-element" style="overflow:auto;">
+                        <h4><b>Recent orders</b></h4>
+                        <table class="table table-hover">
+                            <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <!--                            <th>S.N.</th>-->
+                                <th>PRODUCT</th>
+                                <th></th>
+                                <th>AMOUNT</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for p in orders %}
+                            <tr>
+                                <td>{{ p.user.username }}</td>
+                                <td></td>
+                                <td>${{ p.product.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            <br>
+            <br>
+
+            <script>
+                var config = {
+                  type: 'bar',
+                  data: {
+                    datasets: [{
+                      data:
+                      [
+                      {% if request.user.vendor %}
+                      {% for product in products %}
+                      {{product.checkout_set.count}},
+                      {% endfor %}
+                      {% endif %}
+
+                    ],
+                      backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                    borderColor: '#333',
+                    borderWidth: 4,
+                    fontColor: 'white',
+                    pointBackgroundColor: '#00FFFF',
+                      label: 'Sales'
+                    }],
+                    labels: {{ DOW_CHOICES|safe }}
+                  },
+                  options: {
+                    responsive: true
+                  }
+                };
+
+                window.onload = function() {
+                  var ctx = document.getElementById('pie-chart').getContext('2d');
+                  window.myPie = new Chart(ctx, config);
+                };
+
+            </script>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

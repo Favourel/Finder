@@ -99,7 +99,7 @@
                 <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
                     <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
                     <div class="media">
-                        <h5 class="mt-1"><b>₦{{ product.price|floatformat:2 }}</b></h5>
+                        <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
                         <div class="media-body ">
                             <div class="float-right  badge badge-warning alert alert-warning py-2">
                                 <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"

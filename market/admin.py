@@ -9,7 +9,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["name", "vendor", "price", "date_posted"]
+    list_display = ["name", "vendor", "price", "product_purchase", "date_posted"]
     search_fields = ["name", "vendor"]
 
 
@@ -25,6 +25,20 @@ class CheckoutAdmin(admin.ModelAdmin):
     list_display = ["user", "product", "date_posted", "complete"]
 
 
+class MembershipInline(admin.TabularInline):
+    model = Order.order_item.through
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['user', 'date_posted']
+    search_fields = ["user"]
+    filter_horizontal = ['order_item']
+    # inlines = [
+    #     MembershipInline,
+    # ]
+    # exclude = ('order_item',)
+
+
 class ProductReviewAdmin(admin.ModelAdmin):
     list_display = ["customer_info", "product", "date_added"]
 
@@ -35,4 +49,5 @@ admin.site.register(Vendor, VendorAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(ProductReview, ProductReviewAdmin)
 admin.site.register(Checkout, CheckoutAdmin)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(MyUUIDModel)

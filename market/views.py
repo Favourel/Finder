@@ -1,13 +1,12 @@
 from abc import ABC
-
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview
-from django.db.models import Q
+from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order
+from django.db.models import Q, F
 from users.models import User, Notification
-from itertools import chain
+import datetime
 from .forms import CreateProductForm, CategoryField, ImageField, ReviewBox
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -16,7 +15,7 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 def total_cart_items(request):
-    check_out_list = Checkout.objects.filter(user=request.user)
+    check_out_list = Checkout.objects.filter(user=request.user, complete=False)
     get_cart_items = sum([item.quantity for item in check_out_list])
 
     return get_cart_items
@@ -38,7 +37,7 @@ def home(request):
 
 @login_required
 def market_view(request):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     categories = Category.objects.all()
     product_list = Product.objects.all()
@@ -83,7 +82,7 @@ def market_view(request):
 
 @login_required
 def product_detail(request, pk):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     obj = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
@@ -109,11 +108,11 @@ def product_detail(request, pk):
 
 @login_required
 def checkout(request):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-    check_out_list = Checkout.objects.filter(user=request.user).order_by("-id")
+    check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
     get_cart_total = sum([(item.product.price * item.quantity) for item in check_out_list])
-
+    quantity = [item.quantity for item in check_out_list]
     context = {
         "notification_count": notification_count,
         "notification": notification,
@@ -127,7 +126,7 @@ def checkout(request):
 @login_required
 def create_view(request):
     if Vendor.objects.filter(user=request.user).exists():
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         product = Product.objects.last()
         if request.method == "POST":
@@ -146,7 +145,7 @@ def create_view(request):
                 for user_noti in request.user.post_notification.all():
                     notify = Notification(product=form, sender=form.vendor, user=user_noti, notification_type=3)
                     notify.save()
-                messages.warning(request, 'Your product has been created.')
+                messages.success(request, 'Your product has been created.')
                 return redirect(f'/{request.user.vendor}/vendor/')
         else:
             form = CreateProductForm()
@@ -169,7 +168,7 @@ def create_view(request):
 # @login_required
 def search(request):
     if request.user.is_authenticated:
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         if request.method == "GET":
             query = request.GET.get('q')
@@ -239,7 +238,7 @@ class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView, ABC
 @login_required
 def update_product(request, pk):
     obj = get_object_or_404(Product, pk=pk)
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     if request.user == obj.vendor:
         if request.method == "POST":
@@ -283,7 +282,8 @@ def update_product(request, pk):
             "notification": notification,
             "form": form,
             "category_field": category_field,
-            "imageset": imageset
+            "imageset": imageset,
+            "get_cart_items": total_cart_items(request)
         }
         return render(request, "market/update_product.html", context)
     else:
@@ -295,8 +295,28 @@ def update_product(request, pk):
 def add_to_checkout(request, pk):
     user = request.user
     product = get_object_or_404(Product, pk=pk)
-    latest_vendor = Checkout.objects.filter(user=user).latest("product__vendor__username")
-    if str(product.vendor.username) == str(latest_vendor):
+    checkout_list = Checkout.objects.filter(user=user, complete=False)
+    if checkout_list.exists():
+        latest_vendor = Checkout.objects.filter(user=user, complete=False).last()
+        if str(product.vendor.username) == str(latest_vendor.product.vendor):
+            create_object, created = Checkout.objects.get_or_create(
+                user=user,
+                product=product,
+                complete=False,
+            )
+            create_object.quantity = (create_object.quantity + 1)
+            create_object.price = (create_object.quantity * create_object.product.price)
+            create_object.save()
+            if create_object.quantity > 1:
+                messages.success(request, f'"{product}" quantity has been updated!')
+            else:
+                messages.success(request, f'"{product}" has been added to your cart!')
+            return redirect("checkout")
+
+        else:
+            messages.error(request, "You can't shop on a different store without checkout!😔😒")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    else:
         create_object, created = Checkout.objects.get_or_create(
             user=user,
             product=product,
@@ -311,16 +331,12 @@ def add_to_checkout(request, pk):
             messages.success(request, f'"{product}" has been added to your cart!')
         return redirect("checkout")
 
-    else:
-        messages.error(request, "You can't shop on a different store without checkout!😔😒")
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-
 
 @login_required
 def remove_from_checkout(request, pk):
     customer = request.user
     product = get_object_or_404(Product, pk=pk)
-    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product)
+    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product, complete=False)
     if Checkout.objects.filter(user=customer, product=product).exists():
         if orderItem.quantity <= 0:
             orderItem.delete()
@@ -338,6 +354,7 @@ def remove_from_checkout(request, pk):
     return render(request, 'market/checkout.html', {})
 
 
+@login_required
 def delete_from_checkout(request, pk):
     customer = request.user
     product = get_object_or_404(Product, pk=pk)
@@ -350,6 +367,36 @@ def delete_from_checkout(request, pk):
     else:
         messages.success(request, f"'{product.name}' doesn't exists in your cart")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+@login_required
+def process_order(request):
+    transaction_id = datetime.datetime.now().timestamp()
+    check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
+    receiver = Checkout.objects.last().product.vendor
+    queryset = []
+    for item in check_out_list:
+        queryset.append(item.complete == True)
+        item.complete = True
+        item.save()
+    order = Order.objects.create(
+        user=request.user,
+        transaction_id=transaction_id,
+        ordered=True
+    )
+    order.order_item.set([item for item in check_out_list])
+    order.save()
+    list_product = [item.product for item in check_out_list]
+    Product.objects.filter(name__in=list_product).update(product_purchase=F('product_purchase')+1)
+    notification = Notification.objects.create(
+        user=receiver,
+        sender=request.user,
+        notification_type=1
+    )
+    notification.orders.set([item for item in check_out_list])
+    notification.save()
+    messages.success(request, "Order has been successfully made!")
+    return redirect("market")
 
 
 @login_required

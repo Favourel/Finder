@@ -9,11 +9,12 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, serializers
+from datetime import datetime, timedelta
 
 
 # Create your views here.
 def total_cart_items(request):
-    check_out_list = Checkout.objects.filter(user=request.user)
+    check_out_list = Checkout.objects.filter(user=request.user, complete=False)
     get_cart_items = sum([item.quantity for item in check_out_list])
 
     return get_cart_items
@@ -46,28 +47,21 @@ def register(request):
 def create_store(request):
     user = request.user
     if not Vendor.objects.filter(user=request.user).exists():
-        notification = Notification.objects.filter(user=request.user, is_seen=False)[:3]
+        notification = Notification.objects.filter(user=request.user, is_seen=False)[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         if request.method == 'POST':
             u_form = StoreCreateForm(request.POST)
-            education_field = StoreCreateFormEducationField(request.POST)
-
             if u_form.is_valid():
                 u_form = u_form.save(commit=False)
-                # education_field = education_field.save(commit=False)
                 u_form.user = request.user
-                # education_field.user = request.user
                 u_form.save()
-                # education_field.save()
-
+                print(u_form)
                 messages.success(request, f'Your store has been created by {user}.')
                 return redirect('create')
         else:
             u_form = StoreCreateForm()
-
         context = {
             'u_form': u_form,
-            "education_field": StoreCreateFormEducationField(),
             "notification_count": notification_count,
             "notification": notification,
             "get_cart_items": total_cart_items(request)
@@ -81,7 +75,7 @@ def create_store(request):
 @login_required
 def vendor_view(request, username):
     try:
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:3]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         vendor = get_object_or_404(User, username=username)
         products = vendor.product_set.all()
@@ -96,6 +90,53 @@ def vendor_view(request, username):
         "form": UserUpdateForm(instance=request.user)
     }
     return render(request, "users/vendor_post.html", context)
+
+
+@login_required
+def vendor_dashboard(request):
+    try:
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+        notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
+
+        vendor = request.user
+        # vendor_profile = Vendor.object.get(user=vendor)
+        products = vendor.product_set.all()
+        orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')[:5]
+        best_selling_products = Product.objects.filter(vendor=request.user).order_by('-product_purchase')[:5]
+        earnings = sum([(i.price * i.product_purchase) for i in best_selling_products])
+        days = {
+            '1': 'Monday',
+            '2': 'Tuesday',
+            '3': 'Wednesday',
+            '4': 'Thursday',
+            '5': 'Friday',
+            '6': 'Saturday',
+            '7': 'Sunday'
+        }
+
+        DOW_CHOICES = []
+
+        today = datetime.today()
+        for i in range(7):
+            day_number = (today + timedelta(days=i)).isoweekday()
+            day = days[str(day_number)]
+            DOW_CHOICES.append(day)
+    except ObjectDoesNotExist:
+        return redirect("market")
+
+    context = {
+        "vendor": vendor,
+        "products": products,
+        "orders": orders,
+        # "vendor_profile": vendor_profile,
+        "DOW_CHOICES": DOW_CHOICES,
+        "best_selling_products": best_selling_products,
+        "notification_count": notification_count,
+        "notification": notification,
+        "earnings": earnings,
+        "get_cart_items": total_cart_items(request),
+    }
+    return render(request, "users/dashboard.html", context)
 
 
 @login_required
@@ -137,7 +178,7 @@ def notification_view(request):
     followed_by = request.user.following.filter(id__in=request.user.follower.all())[:1]
     followed_by_ = request.user.following.filter(id__in=request.user.follower.all())
     followed_by_count = followed_by_.count()
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")[:3]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")[:7]
     post_notification = Notification.objects.filter(user=request.user, is_seen=False)
 
     if not notification:

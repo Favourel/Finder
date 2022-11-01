@@ -10,6 +10,7 @@ urlpatterns = [
     path("<int:pk>/remove_from_checkout/", market_view.remove_from_checkout, name="remove_from_checkout"),
     path("<int:pk>/delete_from_checkout/", market_view.delete_from_checkout, name="delete_from_checkout"),
     path("checkout/", market_view.checkout, name="checkout"),
+    path("process_order/", market_view.process_order, name="process_order"),
     path("product/<int:pk>/update/", market_view.update_product, name="product-update"),
     path("product/<int:pk>/review/", market_view.product_review, name="productReview"),
     path("create/", market_view.create_view, name="create"),

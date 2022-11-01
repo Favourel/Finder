@@ -31,7 +31,7 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "about", "image", "phone_number"]
+        fields = ["username", "email", "about", "image", "phone_number", "location"]
 
 
 class StoreCreateForm(forms.ModelForm):
@@ -99,6 +99,14 @@ class StoreCreateForm(forms.ModelForm):
     }
     )
     )
+    EDUCATION_TYPES = (
+        (1, "B.Sc."), (2, "M.Sc."), (3, "M.A."), (4, "M.Sc."), (5, "LLB"), (6, "Others"),
+    )
+    education = forms.CharField(widget=forms.Select(choices=EDUCATION_TYPES, attrs={
+        'class': 'form-control',
+        'name': 'education',
+
+    }))
 
     class Meta:
         model = Vendor
@@ -106,10 +114,3 @@ class StoreCreateForm(forms.ModelForm):
             "full_name", "phone_number", "about", "location",
             "twitter_url", "instagram_url", "education", "skills"
         ]
-
-
-class StoreCreateFormEducationField(forms.ModelForm):
-
-    class Meta:
-        model = Vendor
-        fields = ["education"]

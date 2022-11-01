@@ -19,19 +19,6 @@
         background-color: #fff;
    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>
 <div class="section">
     <div class="container py-5 mt-1">
@@ -42,10 +29,8 @@
 <div class="container mb-5">
     <div class="row mb-5">
         <div class="col-lg-9">
-            <form method="post" action="{% url 'create_store' %}">
+            <form method="POST" action="{% url 'create_store' %}">
                 {% csrf_token %}
-<!--                <h5><b>Details</b></h5>-->
-
                 <label>Full name</label>
                 {{ u_form.full_name }}
                 <div class="form-row mt-3">
@@ -57,7 +42,6 @@
                         <label>Location</label>
                         {{ u_form.location }}
                     </div>
-
                 </div>
                 <div class="form-group">
                     <label>About</label>
@@ -77,22 +61,22 @@
                 </div>
                 <div class="form-row mt-3 mb-3">
                     <div class="col-md-6">
-<!--                        <label>Education</label>-->
-                        {{ education_field|crispy }}
+                        <label>Education</label>
+                        {{ u_form.education }}
                     </div>
                     <div class="col-md-6">
                         <label>Skills</label>
                         {{ u_form.skills }}
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
-                        <label class="form-check-label" for="invalidCheck2">
-                            Agree to terms and conditions
-                        </label>
-                    </div>
-                </div>
+<!--                <div class="form-group">-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>-->
+<!--                        <label class="form-check-label" for="invalidCheck2">-->
+<!--                            Agree to terms and conditions-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <button class="btn btn-block" type="submit">Submit Form</button>
             </form>
         </div>

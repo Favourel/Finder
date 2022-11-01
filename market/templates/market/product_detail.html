@@ -212,7 +212,7 @@
                         <h4 style="margin-top: 5px;" class="font-weight-light">{{ product.name|safe }}</h4>
                         <hr>
                         <h5 style="display: inline-block;float: left"><strong>
-                            ₦{{ product.price|floatformat:2 }}</strong>
+                            ${{ product.price|floatformat:2 }}</strong>
                         </h5>
                         <br>
 
@@ -725,7 +725,7 @@
                         <h6 class="">{{product}}</h6>
                         <div class="media-body">
                             <div class="d-flex float-right">
-                                <h6><b>₦{{ product.price|floatformat:2 }}</b></h6>
+                                <h6><b>${{ product.price|floatformat:2 }}</b></h6>
                             </div>
                         </div>
                     </div>
@@ -854,7 +854,7 @@
                                     {{ query.name|safe|truncatewords:"4"|linebreaks }}
                                 </h6>
 
-                                <h5>₦{{ query.price|floatformat:2 }}</h5>
+                                <h5>${{ query.price|floatformat:2 }}</h5>
                             </div>
                         </a>
                     </div>
@@ -888,7 +888,7 @@
                                             {{ query.name|safe|truncatewords:"4"|linebreaks }}
                                         </h6>
 
-                                        <h5>₦{{ query.price|floatformat:2 }}</h5>
+                                        <h5>${{ query.price|floatformat:2 }}</h5>
                                     </div>
                                 </a>
                             </div>

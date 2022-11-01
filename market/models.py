@@ -103,6 +103,10 @@ class Product(models.Model):
         else:
             return Product.objects.all()
 
+    def amount(self):
+        total = self.price * self.product_purchase
+        return total
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -118,11 +122,22 @@ class Checkout(models.Model):
     date_posted = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.user}: {self.quantity} of {self.product}'
 
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+
+
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    transaction_id = models.CharField(max_length=30)
+    order_item = models.ManyToManyField(Checkout, related_name="order_item")
+    ordered = models.BooleanField(default=False)
+    date_posted = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return f'{self.user}'
 
 
 class ProductReview(models.Model):
