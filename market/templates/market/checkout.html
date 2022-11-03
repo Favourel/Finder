@@ -167,6 +167,7 @@
                                                     <div class="d-md-none text-muted col-6">Total price</div>
                                                     <b class="text-right text-md-center col-6 col-md-12">
                                                         ${{ item.get_total|floatformat:'2'|intcomma }}
+                                                        <br>
                                                         <small>${{ item.product.price|floatformat:'2'|intcomma }} x {{ item.quantity }}</small>
                                                     </b>
                                                 </div>
@@ -209,9 +210,9 @@
                 {% endfor %}
             </section>
         </div>
-        <div class="col-lg-3 mt-5">
+        <div class="col-lg-3 mt-3">
 
-            <div class="sticky-top" style="top: 9px">
+<!--            <div class="sticky-top" style="top: 9px">-->
                 <div class="box-element">
                     <h4>Order Summary</h4>
                     <style>
@@ -261,7 +262,7 @@
                     </style>
                     {% endif %}
                 </div>
-            </div>
+<!--            </div>-->
         </div>
     </div>
 </div>

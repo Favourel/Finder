@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, serializers
-from datetime import datetime, timedelta
+from datetime import datetime, date
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 # Create your views here.
@@ -92,48 +93,99 @@ def vendor_view(request, username):
     return render(request, "users/vendor_post.html", context)
 
 
+class DateExtendedEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            try:
+                return o.strftime("%b %d")
+            except ValueError as e:
+                return ''
+        else:
+            return super().default(o)
+
+
+def solution(date_list, time_list):
+    """
+    dates = ["Nov 2", "Nov 2", "Nov 4", "Nov 4", "Nov 5", "Nov 5", "Nov 7", "Nov 7", "Nov 8", "Nov 8"]
+    times = [2, 3, 2, 2, 3, 3, 1, 8, 2, 3]
+
+    final_result = {'Nov 2': 5, 'Nov 4': 4, 'Nov 5': 6, 'Nov 7': 9, 'Nov 8': 5}
+    """
+    checker = list(zip(date_list, time_list))
+    ans = {}
+
+    for i in list(date_list):
+        summation = 0
+        for j in checker:
+            if j[0] == i:
+                summation += j[1]
+        ans[i] = summation
+
+    nested_list = list(ans.items())  # converts ans to a nested list
+    single_list = [j for i in nested_list for j in i]  # run through the list to return a single list
+    it = iter(single_list[-12:])  # get last N values
+    result_dict = dict(zip(it, it))  # converts it to a dictionary
+
+    return result_dict
+
+
 @login_required
 def vendor_dashboard(request):
-    try:
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+    if Vendor.objects.filter(user=request.user).exists():
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
         vendor = request.user
         # vendor_profile = Vendor.object.get(user=vendor)
         products = vendor.product_set.all()
+        today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
         orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')[:5]
+        orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
+        today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
+        monthly_order = Checkout.objects.filter(product__vendor=vendor,
+                                                complete=True, date_posted__month__gte=datetime.now().month)
         best_selling_products = Product.objects.filter(vendor=request.user).order_by('-product_purchase')[:5]
-        earnings = sum([(i.price * i.product_purchase) for i in best_selling_products])
-        days = {
-            '1': 'Monday',
-            '2': 'Tuesday',
-            '3': 'Wednesday',
-            '4': 'Thursday',
-            '5': 'Friday',
-            '6': 'Saturday',
-            '7': 'Sunday'
-        }
+        earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
+        today_earning = sum([(i.product.price * i.quantity) for i in today_order])
+        monthly_earning = sum([(i.product.price * i.quantity) for i in monthly_order])
+        # print([(i.product.price * i.quantity) for i in monthly_order])
+        # print([DateExtendedEncoder.default(i.date_posted, i.date_posted) for i in monthly_order])
+        chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
-        DOW_CHOICES = []
+        date_list = []
 
-        today = datetime.today()
-        for i in range(7):
-            day_number = (today + timedelta(days=i)).isoweekday()
-            day = days[str(day_number)]
-            DOW_CHOICES.append(day)
-    except ObjectDoesNotExist:
-        return redirect("market")
+        for i in Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted"):
+            date_list.append(DateExtendedEncoder.default(i.date_posted, i.date_posted))
+            # uniques = []
+            # for number in date_list:
+            #     if number not in uniques:
+            #         uniques.append(number)
+
+        chart_value = solution(date_list, [i.quantity for i in chart_products])
+        get_values = chart_value.values()
+        get_keys = chart_value.keys()
+        # print(list(get_keys))
+        # print(uniques)
+
+    else:
+        messages.warning(request, "You need to register as a Vendor to view dashboard.")
+        return redirect("create_store")
 
     context = {
         "vendor": vendor,
         "products": products,
+        "chart_products": get_values,
+        "today_product": today_product,
         "orders": orders,
+        "today_order": today_order,
         # "vendor_profile": vendor_profile,
-        "DOW_CHOICES": DOW_CHOICES,
+        "DOW_CHOICES": list(get_keys),
         "best_selling_products": best_selling_products,
         "notification_count": notification_count,
         "notification": notification,
         "earnings": earnings,
+        "today_earning": today_earning,
+        "monthly_earning": monthly_earning,
         "get_cart_items": total_cart_items(request),
     }
     return render(request, "users/dashboard.html", context)

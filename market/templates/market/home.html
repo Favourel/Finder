@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdn.ayroui.com/1.0/css/tiny-slider.css"/>
 
     <script src="https://cdn.ayroui.com/1.0/js/tiny-slider.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
 
     <title>CONNECT</title>
 </head>
@@ -117,8 +118,8 @@
 }
 </style>
 
-<div align="center" class="category-section" style="background-color: #fff !important;height: 22vh;">
-    <div class="row align-items-center">
+<div align="center"  class="category-section" style="background-color: #fff !important;height: 22vh;">
+    <div class="row animate__animated animate__backInDown animate__delay-2s align-items-center" style="animated-duration: 2s;">
         {% for category in categories %}
         <div class="box-element" style="border-radius: 1px; margin: 20px">
             <a href="/market/?category_id={{ category.id }}" class="category-link text-decoration-none">
@@ -172,7 +173,7 @@
     }
 </style>
 <div class="features-section" align="center">
-    <div class="container">
+    <div class="container headline">
         <div class="row justify-content-center align-items-center">
             <div class="col-xxl-5 col-xl-6 col-lg-7">
                 <div class="section-title text-center mb-30">
@@ -189,20 +190,23 @@
         <br><br>
         <div class="row justify-content-center">
             <br>
-            <div class="col-lg-4 col-md-8 col-sm-10">
-                <div class="single-feature">
-                    <div class="icon color-1 mb-2">
-                        <img src="{% static 'images/3798326_easy to.png' %}" width="85px" height="85px" alt="">
-                    </div>
-                    <div class="content">
-                        <h3><b>Easy To Use</b></h3>
-                        <p>Lorem ipsum dolor samet consetet sadip scing elitr serewd diam nonumy eirmod tempor invidunt
-                            ut
-                            labore.</p>
+            <div class="col-lg-4 col-md-8 col-sm-10" >
+                <div class="border-around" style="">
+                    <div class="single-feature">
+                        <div class="icon color-1 mb-2">
+                            <img src="{% static 'images/3798326_easy to.png' %}" width="85px" height="85px" alt="">
+                        </div>
+                        <div class="content">
+                            <h3><b>Easy To Use</b></h3>
+                            <p>Lorem ipsum dolor samet consetet sadip scing elitr serewd diam nonumy eirmod tempor invidunt
+                                ut
+                                labore.</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-8 col-sm-10">
+                <div class="border-around-middle" style="">
                 <div class="single-feature">
                     <div class="icon color-2 mb-2">
                         <img src="{% static 'images/198-1982604_savings-png-picture-savings-svg.png' %}" width="85px" height="85px" alt="">
@@ -214,8 +218,10 @@
                             labore.</p>
                     </div>
                 </div>
+                </div>
             </div>
             <div class="col-lg-4 col-md-8 col-sm-10">
+                <div class="border-around" style="">
                 <div class="single-feature">
                     <div class="icon color-3 mb-2">
                         <img color="white" src="{% static 'images/417266-200.png' %}" width="85px" height="85px" alt="">
@@ -227,12 +233,35 @@
                             labore.</p>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<style>
+    .border-around{
+        border: 1px solid #adb5bd;
+        border-radius: 13px;
+        padding: 33px;
+        transition: .5s;
+    }
+    .border-around-middle{
+        border-radius: 13px;
+        background-color: #fff;
+        box-shadow: hsl(0, 0%, 80%) 0 0 19px;
+        padding: 33px;
+
+    }
+    .border-around:hover{
+        background-color: #fff;
+        box-shadow: hsl(0, 0%, 80%) 0 0 19px;
+    }
+</style>
+
 <br>
-<div class="container">
+<br>
+<br>
+<div class="container ">
     {% if products|length > 0 %}
     <h1 class="mb-25 wow fadeInUp" data-wow-delay=".2s"
         style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
@@ -240,7 +269,7 @@
     </h1>
     <br>
     <br>
-    <div class="row p-2">
+    <div class="row headline p-2">
         {% for product in products %}
         <div class="col-lg-3 col-md-4 col-sm-4 col-6">
             <style>
@@ -313,17 +342,24 @@
         {% endfor %}
     </div>
     <br>
-    <div class="" align="center">
-        <a href="{% url 'market' %}" class="btn shadow">View more products</a>
+    <br>
+    <div class="tagline" align="center">
+        <a href="{% url 'market' %}" class="btn btn-lg shadow">View more products</a>
     </div>
     {% endif %}
-
 </div>
+<script>
+    ScrollReveal().reveal('.headline');
+    ScrollReveal().reveal('.tagline', { delay: 500 });
+    ScrollReveal().reveal('.punchline', { delay: 2000 });
+</script>
+<br>
+<br>
 <br>
 <br>
 <div class="masthead d-none masthead-page mb-5"
      style="color: white; background-image: linear-gradient(160deg, #0093E9 10%, #80D0C7 90%);">
-    <div class="container py-5">
+    <div class="container headline py-5">
         <div class="row align-items-center">
             <div class="col-lg-7 py-5 mb-4 " style="">
                 <h1 style="color: white; font-size: 3rem;animated-duration: 5s;
@@ -491,7 +527,7 @@
             </h5>
         </div>
 
-        <div class="testimonial-one-wrapper">
+        <div class="testimonial-one-wrapper headline">
             <div class="row">
                 <div class="col p-3">
                     <div class="testimonial-one-active">
@@ -881,8 +917,11 @@
         justify-content: center;
     }
 </style>
+<br>
+<br>
+<br>
 <section class="section-steps">
-    <div class="container">
+    <div class="container headline">
         <div class="container-testimonial" align="center">
             <h1><b>Very Easy To Use Just Following 3 Steps</b></h1>
             <h5>Lorem ipsum dolor samet consenter discing elitr,
@@ -891,7 +930,7 @@
         </div>
         <br>
         <br>
-        <div class="row">
+        <div class="row headline">
             <div class="col-lg-4 mt-3">
                 <style>
                     .col-6 {
@@ -913,7 +952,7 @@
                     <h5>Vendors with good customer service.</h5>
                 </div>
             </div>
-            <div class="col-lg-4 mt-3">
+            <div class="col-lg-4" style="margin-top: 4rem">
                 <div class="box-element" style="border-left: 4px solid #fd5631;padding-right: 0">
                     <svg width="3em" height="3em" color="red" viewBox="0 0 16 16" class="bi bi-shield-check" fill="currentColor"
                          xmlns="http://www.w3.org/2000/svg">
@@ -926,7 +965,7 @@
                 </div>
             </div>
             <br><br>
-            <div class="col-lg-4 mt-3">
+            <div class="col-lg-4" style="margin-top: 7rem">
                 <div class="box-element" style="border-left: 4px solid #fd5631;padding-right: 0">
                     <svg width="3em" height="3em" color="red" viewBox="0 0 16 16" class="bi bi-credit-card-2-front"
                          fill="currentColor"
@@ -943,6 +982,9 @@
         </div>
     </div>
 </section>
+<br>
+<br>
+<br>
 <style>
     .get-started{
         background: #db3717;
@@ -959,7 +1001,7 @@
         justify-content: center;
     }
 </style>
-<div class="container">
+<div class="container headline">
     <div class="get-started">
         <div class="container-get-started container">
              <h2 class=""><b>Find the <i>talent</i> needed to get your business <i>growing</i>.</b></h2>
@@ -970,6 +1012,8 @@
     </div>
 </div>
 
+<br>
+<br>
 <br>
 <br>
 <footer class="bg-dark" style="background-colr: #373f50 !important;color: #fff" id="main-footer">

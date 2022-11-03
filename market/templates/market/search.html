@@ -149,7 +149,7 @@
                         <br>
                         <a href="{% url 'vendor' result %}" class="text-dark text-decoration-none">
                             <img width="120" height="120" background="#fff" color="#fff"
-                                 class="rounded-circle customer-image " src="{{ result.image.url }}">
+                                 class="rounded-circle customer-image " src="{{ result.user.image.url }}">
 
                             <h5>
                                 {% if result.display_name %}
@@ -166,8 +166,8 @@
                         <p>{{ result.about|truncatewords:10 }}</p>
                         <hr>
                         <div class="d-block">
-                            <b>{{ result.following.count }} </b> Following |
-                            <b class="ml-2 _result_following"> {{ result.follower.count }} </b> Followers
+                            <b>{{ result.user.following.count }} </b> Following |
+                            <b class="ml-2 _result_following"> {{ result.user.follower.count }} </b> Followers
                         </div>
                         {% if result.location %}
                         <p class="mt-2">
@@ -211,16 +211,16 @@
                     </div>
                     <br>
 
-                    {% if request.user == result %}
+                    {% if request.user == result.user %}
                     <a class="btn-block btn btn-outline-info"
                        href="">Edit
                         profile
                     </a>
-                    {% elif result in request.user.following.all %}
+                    {% elif result.user in request.user.following.all %}
                     <a data-href="{% url 'follower_vendor' result %}"
                        class="btn follow-btn text-light btn-block">Following
                     </a>
-                    {% elif request.user in result.following.all %}
+                    {% elif request.user in result.user.following.all %}
                     <a data-href="{% url 'follower_vendor' result %}"
                        class="btn  follow-btn text-light btn-block">Follow back
                     </a>

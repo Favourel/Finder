@@ -41,6 +41,12 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
+    # category_type = Category.objects.all().values_list("name", "name")
+    # category = forms.CharField(widget=forms.Select(choices=category_type, attrs={
+    #     'class': 'form-control',
+    #     'name': 'category',
+    #
+    # }))
 
     class Meta:
         model = Product

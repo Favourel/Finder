@@ -140,9 +140,7 @@
                 <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
                         style="font-color: white;text-color: #fff;">
                 </canvas>
-                <div class="text-center" align="center">
-                    Product Id
-                </div>
+
             </div>
             {% endif %}
             {% endif %}
@@ -154,7 +152,7 @@
 
                         <h6>Total Products</h6>
                         <div class="order-row">
-                            <h3 class="text-truncate" style="align-items: left;text-align: left;display: flex;
+                            <h3 class="text-truncate" id="product-count" style="align-items: left;text-align: left;display: flex;
                             flex-direction: column;color: #f5803e!important;">
                                 {% if request.user.vendor %}
                                 {{ products.count|intword }}
@@ -162,38 +160,38 @@
                                 0
                                 {% endif %}
                             </h3>
-                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="1.6rem"
-                                 height="1.6rem" fill="currentColor"
-                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">
-                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                            </svg>
+<!--                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="1.6rem"-->
+<!--                                 height="1.6rem" fill="currentColor"-->
+<!--                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">-->
+<!--                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>-->
+<!--                            </svg>                             -->
+                            <img class="ml-auto" style="color: #f5803e!important;"
+                                 src="{% static 'images/open-box.png' %}" width="32px" height="32px" alt="">
+
                         </div>
                         <hr class="my-1">
-                        <small>Today Product</small>
-                        <div>
-                            <small><b>1</b></small>
-                        </div>
+                        <small>Today Product:
+                            <b>{{ today_product.count }}</b></small>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 mb-2">
                     <div class="box-element"
-                         style="background-image:url('{% static 'images/corner-4.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
                         <h6>Total Orders</h6>
                         <div class="order-row ">
-                            <h3 class="text-truncate text-info" style="align-items: left;justify-content: center;text-align: left;display: flex;
+                            <h3 class="text-truncate text-info" id="order-count" style="align-items: left;justify-content: center;text-align: left;display: flex;
                     flex-direction: column;">{{ orders.count|intword }}</h3>
-                            <svg style="color: #17a2b8!important;" width="1.6rem" height="1.6rem" viewBox="0 0 16 16"
-                                 class="bi bi-archive ml-auto mt-1"
-                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                            </svg>
+<!--                            <svg style="color: #17a2b8!important;" width="1.6rem" height="1.6rem" viewBox="0 0 16 16"-->
+<!--                                 class="bi bi-archive ml-auto mt-1"-->
+<!--                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">-->
+<!--                                <path fill-rule="evenodd"-->
+<!--                                      d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>-->
+<!--                            </svg>-->
+                            <img class="ml-auto" style="color: #f5803e!important;"
+                                 src="{% static 'images/checkout.png' %}" width="32px" height="32px" alt="">
                         </div>
                         <hr class="my-1">
-                        <small>Today Order</small>
-                        <div>
-                            <small><b>3</b></small>
-                        </div>
+                        <small>Today Order:<b> {{ today_order.count }}</b></small>
                     </div>
                 </div>
 
@@ -201,13 +199,26 @@
                     <div class="box-element"
                          style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
                         <h6>Earnings</h6>
-                        <h3 class="text-truncate text-info" style="align-items: left;justify-content: center;text-align: left;display: flex;
-                    flex-direction: column;">${{ earnings|intword }}</h3>
-                        <hr class="my-1">
-                        <small>Today Earnings</small>
-                        <div>
-                            <small><b>$3000</b></small>
+                        <div class="order-row ">
+                            <h3 class="text-truncate text-info" id="earnings-count" style="align-items: left;justify-content: center;text-align: left;display: flex;
+                    flex-direction: column;">
+                                ${{ earnings|floatformat:"2"|intcomma }}</h3>
+                            <img class="ml-auto" style="color: #f5803e!important;"
+                                 src="{% static 'images/earn.png' %}" width="32px" height="32px" alt="">
                         </div>
+                        <hr class="my-1">
+                        <div class="order-row">
+
+                            <div style="display:block">
+                                <small>Today Earnings:</small>
+                                <small><b>${{today_earning|floatformat:"2"|intcomma}}</b></small>
+                            </div>
+                            <div class="ml-auto">
+                                <small>Monthly Earnings:</small>
+                                <small><b>${{monthly_earning|floatformat:"2"|intcomma}}</b></small>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div style="display:none">
@@ -252,7 +263,7 @@
             {% if best_selling_products|length > 0 %}
 
             <div class="row">
-                <div class="col-lg-9">
+                <div class="col-lg-8">
                     <div class="box-element" style="overflow:auto;">
                         <h4><b>Best Selling Product</b></h4>
                         <table class="table table-hover">
@@ -262,23 +273,22 @@
                                 <th>UPLOADED</th>
                                 <th>PRICE</th>
                                 <th>QUANTITY</th>
-                                <th>AMOUNT</th>
+<!--                                <th>AMOUNT</th>-->
                             </tr>
                             </thead>
                             <tbody>
 
                             {% for p in best_selling_products %}
-
                             <tr>
                                 <td>
-                                    <a href="{{p.get_absolute_url}}">
+                                    <a class="text-dark text-decoration-none" href="{{p.get_absolute_url}}">
                                         {{ p.name }}
                                     </a>
                                 </td>
                                 <td>{{ p.date_posted }}</td>
-                                <td>${{ p.price }}</td>
+                                <td>${{ p.price|floatformat:"2"|intcomma }}</td>
                                 <td>{{ p.product_purchase }}</td>
-                                <td>${{ p.amount }}</td>
+<!--                                <td>${{ p.amount|floatformat:"2"|intcomma }}</td>-->
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -286,7 +296,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                     <div class="box-element" style="overflow:auto;">
                         <h4><b>Recent orders</b></h4>
                         <table class="table table-hover">
@@ -304,7 +314,7 @@
                             <tr>
                                 <td>{{ p.user.username }}</td>
                                 <td></td>
-                                <td>${{ p.product.amount }}</td>
+                                <td>${{ p.get_total|intword|intcomma }}</td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -326,8 +336,8 @@
                       data:
                       [
                       {% if request.user.vendor %}
-                      {% for product in products %}
-                      {{product.checkout_set.count}},
+                      {% for product in chart_products %}
+                      {{product}},
                       {% endfor %}
                       {% endif %}
 
@@ -342,11 +352,11 @@
                 ],
                     borderColor: '#333',
                     borderWidth: 4,
-                    fontColor: 'white',
+                    fontColor: '#fff',
                     pointBackgroundColor: '#00FFFF',
-                      label: 'Sales'
+                      label: 'Sales',
                     }],
-                    labels: {{ DOW_CHOICES|safe }}
+                    labels: {{ DOW_CHOICES|safe }},
                   },
                   options: {
                     responsive: true
@@ -362,5 +372,27 @@
         </div>
     </div>
 </div>
+<script>
+  function animateValue(obj, start, end, duration) {
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    obj.innerHTML = Math.floor(progress * (end - start) + start);
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  window.requestAnimationFrame(step);
+}
 
+const obj = document.getElementById("product-count");
+animateValue(obj, 0, {{products.count}}, 1000);
+
+const obj_order_count = document.getElementById("order-count");
+animateValue(obj_order_count, 0, {{orders.count}}, 1000);
+
+//const obj_earnings_count = document.getElementById("earnings-count");
+//animateValue(obj_earnings_count, 0, {{earnings}}, 2000);
+</script>
 {% endblock %}

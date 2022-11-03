@@ -37,6 +37,7 @@
 
 <div id="mySidenav" class="sidenav">
 <!--    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+    {% if notification|length >= 1 %}
     {% for follow_notification in notification %}
     {% if follow_notification.notification_type == 1 %}
     <a class="dropdown-item d-flex align-items-center" href="#">
@@ -60,7 +61,7 @@
                 <img width="15px" height="15px" class="mb-1"
                      src="{% static 'images/verify.png' %}" alt="">
                 {% endif %}
-                just made an order!
+                made an order!
             </span>
         </div>
     </a>
@@ -88,7 +89,7 @@
                 <img width="15px" height="15px" class="mb-1"
                      src="{% static 'images/verify.png' %}" alt="">
                 {% endif %}
-                has now started following you!
+                followed you!
             </span>
         </div>
     </a>
@@ -115,13 +116,16 @@
                 {% if follow_notification.sender.is_verified %}
                 <img width="15px" height="15px" class="mb-1"
                      src="{% static 'images/verify.png' %}" alt="">
-                {% endif %} just uploaded a Gig!
+                {% endif %} uploaded a Gig!
             </span>
         </div>
     </a>
     <hr>
     {% endif %}
     {% endfor %}
+    {% else %}
+    <h4 class="container"> Nothing to see here</h4>
+    {% endif %}
 </div>
 
 <!--<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>-->
@@ -130,11 +134,11 @@
 
 function openNav() {
   var x = document.getElementById("mySidenav");
-  if (x.style.width === "400px") {
+  if (x.style.width === "350px") {
     x.style.width = "0";
 //    x.style.boxShadow = "10px 20px 30px black";
   } else {
-    x.style.width = "400px";
+    x.style.width = "350px";
   //  x.style.boxShadow = "10px 20px 30px black";
   }
 }

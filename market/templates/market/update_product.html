@@ -17,17 +17,6 @@
         width: 84%;
         background-color: #fff;
    }
-
-
-
-
-
-
-
-
-
-
-
 </style>
 <div class="section">
     <div class="container py-5 mt-1">
@@ -49,7 +38,9 @@
                         <br>
                         <p>Upload fle</p>
                         <!--                        <input type="file" name="images" multiple>-->
-                        {{ imageset.image }}
+                        {% for i in imageset %}
+                        {{ i.image }}
+                        {% endfor %}
                         <br>
                     </div>
                 </div>

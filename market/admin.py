@@ -22,7 +22,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 
 class CheckoutAdmin(admin.ModelAdmin):
-    list_display = ["user", "product", "date_posted", "complete"]
+    list_display = ["user", "product", "quantity", "date_posted", "complete"]
 
 
 class MembershipInline(admin.TabularInline):

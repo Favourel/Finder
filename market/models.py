@@ -113,6 +113,9 @@ class ProductImage(models.Model):
     image = models.ImageField(default='2placeholder_test_b9l9NT5.png', upload_to='product_images')
     date_posted = models.DateTimeField(default=datetime.now)
 
+    def __str__(self):
+        return f"{self.image}"
+
 
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
