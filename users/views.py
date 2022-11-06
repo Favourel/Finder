@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, Http404
 from django.contrib.auth.models import auth
 from .forms import *
 from django.contrib import messages
@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions, serializers
 from datetime import datetime, date
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -78,17 +79,18 @@ def vendor_view(request, username):
     try:
         notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-        vendor = get_object_or_404(User, username=username)
+        vendor = get_object_or_404(Vendor, user__username=username)
         products = vendor.product_set.all()
-    except ObjectDoesNotExist:
-        return redirect("market")
+    except Http404:
+        messages.warning(request, "You don't have an active store/profile")
+        return redirect("create")
     context = {
         "vendor": vendor,
         "products": products,
         "notification_count": notification_count,
         "notification": notification,
         "get_cart_items": total_cart_items(request),
-        "form": UserUpdateForm(instance=request.user)
+        "form": StoreCreateForm(instance=vendor)
     }
     return render(request, "users/vendor_post.html", context)
 
@@ -123,7 +125,7 @@ def solution(date_list, time_list):
 
     nested_list = list(ans.items())  # converts ans to a nested list
     single_list = [j for i in nested_list for j in i]  # run through the list to return a single list
-    it = iter(single_list[-12:])  # get last N values
+    it = iter(single_list[-14:])  # get last N values
     result_dict = dict(zip(it, it))  # converts it to a dictionary
 
     return result_dict
@@ -135,21 +137,19 @@ def vendor_dashboard(request):
         notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
-        vendor = request.user
-        # vendor_profile = Vendor.object.get(user=vendor)
-        products = vendor.product_set.all()
+        vendor = request.user.vendor
+        products = Product.objects.filter(vendor=vendor)
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
         orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')[:5]
         orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
+        all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
         monthly_order = Checkout.objects.filter(product__vendor=vendor,
                                                 complete=True, date_posted__month__gte=datetime.now().month)
-        best_selling_products = Product.objects.filter(vendor=request.user).order_by('-product_purchase')[:5]
+        best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
         earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
         today_earning = sum([(i.product.price * i.quantity) for i in today_order])
         monthly_earning = sum([(i.product.price * i.quantity) for i in monthly_order])
-        # print([(i.product.price * i.quantity) for i in monthly_order])
-        # print([DateExtendedEncoder.default(i.date_posted, i.date_posted) for i in monthly_order])
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
         date_list = []
@@ -164,8 +164,6 @@ def vendor_dashboard(request):
         chart_value = solution(date_list, [i.quantity for i in chart_products])
         get_values = chart_value.values()
         get_keys = chart_value.keys()
-        # print(list(get_keys))
-        # print(uniques)
 
     else:
         messages.warning(request, "You need to register as a Vendor to view dashboard.")
@@ -177,6 +175,7 @@ def vendor_dashboard(request):
         "chart_products": get_values,
         "today_product": today_product,
         "orders": orders,
+        "all_order": all_order,
         "today_order": today_order,
         # "vendor_profile": vendor_profile,
         "DOW_CHOICES": list(get_keys),
@@ -196,28 +195,28 @@ def update_profile(request):
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        form = StoreCreateForm(request.POST, instance=request.user.vendor)
 
         if form.is_valid():
             form = form.save(commit=False)
-            image_path = form.image.path
+            # image_path = form.image.path
 
             # if os.path.exists(image_path):
             #     os.remove(image_path)
             #     print(image_path)
 
             form.save()
-            print(image_path)
+            # print(image_path)
 
             messages.success(request, 'Your account has been updated!')
-            return redirect(f"../{request.user}/vendor/")
+            return redirect(f"../{request.user.vendor}/vendor/")
             # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         else:
             # i changed the error popup
             messages.warning(request, 'error')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        form = UserUpdateForm(instance=request.user)
+        form = UserUpdateForm(instance=request.user.vendor)
     context = {
         "form": form,
         "notification_count": notification_count,
@@ -360,3 +359,21 @@ class PostNotificationApi(APIView):
             "messages": "You will get notified when they post"
         }
         return Response(data)
+
+
+@login_required
+def update_notification(request):
+    updated = False
+    queryset = []
+    for i in Notification.objects.filter(user=request.user):
+        queryset.append(i.is_seen == True)
+        i.is_seen = True
+        i.save()
+        updated = True
+    notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
+
+    data = {
+        "updated": updated,
+        "notification_count": notification_count
+    }
+    return JsonResponse(data)

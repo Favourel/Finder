@@ -87,7 +87,7 @@ def product_detail(request, pk):
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     obj = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
-        if obj.vendor == request.user:
+        if obj.vendor.user == request.user:
             obj.delete()
         messages.success(request, f'{obj} HAS BEEN SUCCESSFULLY DELETED!')
         return redirect(f'/{obj.vendor}/vendor/')
@@ -136,9 +136,8 @@ def create_view(request):
             images = request.FILES.getlist('images')
             if form.is_valid():
                 form = form.save(commit=False)
-                form.vendor = request.user
+                form.vendor = request.user.vendor
                 form.save()
-                print(images)
                 for image in images:
                     ProductImage.objects.create(image=image, product=form)
                     # images.save()
@@ -196,9 +195,9 @@ def search(request):
             query = request.GET.get('q')
             submitbutton = request.GET.get('submit')
             if query is not None:
-                lookups_user = Q(username__icontains=query)
+                lookups_user = Q(user__username__icontains=query)
                 lookups_product = Q(name__icontains=query)
-                result_user = User.objects.filter(lookups_user).distinct()
+                result_user = Vendor.objects.filter(lookups_user).distinct()
                 result_product = Product.objects.filter(lookups_product).distinct()
                 # combined_search = sorted(
                 #     chain(result_user, result_product),
@@ -240,45 +239,46 @@ class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView, ABC
 def update_product(request, pk):
     obj = get_object_or_404(Product, pk=pk)
     obj_image = obj.productimage_set.all()
-    # queryset = []
-    # for item in obj_image:
-    #     queryset.append(ImageField(request.POST or None, request.FILES, instance=item))
-    #
-    # my_forms = all([i.is_valid() for i in queryset])
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-    if request.user == obj.vendor:
+    if request.user == obj.vendor.user:
         if request.method == "POST":
+            queryset_forms = []
+            for item in obj_image:
+                queryset_forms.append(ImageField(request.POST or None, request.FILES, instance=item))
+
+            my_forms = all([i.is_valid() for i in queryset_forms])
+
             form = CreateProductForm(request.POST, request.FILES, instance=obj)
             category_field = CategoryField(request.POST, instance=obj)
-            ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
-            formset = ImageFormset(request.POST, request.FILES, queryset=obj_image)
-            if all([form.is_valid(), formset.is_valid()]):
+            # ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
+            # formset = ImageFormset(request.POST, request.FILES, queryset=obj_image)
+            if my_forms and form.is_valid():
                 form = form.save(commit=False)
-                form.vendor = request.user
+                form.vendor.user = request.user
                 form.save()
-                print("get the format")
-                print(formset)
-                for form_2 in formset:
+                for form_2 in queryset_forms:
                     forms = form_2.save(commit=False)
                     forms.product = form
                     forms.save()
-                    print("dfnlnfjn")
-                    print(forms)
                 messages.success(request, 'Your product has been updated.')
-                return redirect(obj.get_absolute_url)
+                return redirect(form.get_absolute_url)
         else:
             form = CreateProductForm(instance=obj)
             category_field = CategoryField(instance=obj)
-            ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
-            formset = ImageFormset(queryset=obj_image)
+            # ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
+            # formset = ImageFormset(queryset=obj_image)
+            queryset_forms = []
+            for item in obj_image:
+                queryset_forms.append(ImageField(request.POST or None, request.FILES, instance=item))
+
         context = {
             "notification_count": notification_count,
             "product": obj,
             "notification": notification,
             "form": form,
             "category_field": category_field,
-            "imageset": formset,
+            "imageset": queryset_forms,
             "get_cart_items": total_cart_items(request)
         }
         return render(request, "market/update_product.html", context)
@@ -294,7 +294,7 @@ def add_to_checkout(request, pk):
     checkout_list = Checkout.objects.filter(user=user, complete=False)
     if checkout_list.exists():
         latest_vendor = Checkout.objects.filter(user=user, complete=False).last()
-        if str(product.vendor.username) == str(latest_vendor.product.vendor):
+        if str(product.vendor.user) == str(latest_vendor.product.vendor.user):
             create_object, created = Checkout.objects.get_or_create(
                 user=user,
                 product=product,
@@ -369,7 +369,7 @@ def delete_from_checkout(request, pk):
 def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
     check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
-    receiver = Checkout.objects.last().product.vendor
+    receiver = Checkout.objects.last().product.vendor.user
     queryset = []
     for item in check_out_list:
         queryset.append(item.complete == True)
@@ -378,7 +378,8 @@ def process_order(request):
     order = Order.objects.create(
         user=request.user,
         transaction_id=transaction_id,
-        ordered=True
+        ordered=True,
+        vendor=Checkout.objects.last().product.vendor
     )
     order.order_item.set([item for item in check_out_list])
     order.save()

@@ -17,7 +17,8 @@ class CreateProductForm(forms.ModelForm):
         'type': 'number',
         'name': 'price',
         'id': 'product_price',
-        'class': 'form-control'
+        'class': 'form-control',
+        'step': "0.01"
     }
     )
     )

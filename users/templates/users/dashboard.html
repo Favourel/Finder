@@ -14,30 +14,26 @@
                     <div align="center" class="customer-profile">
                         <br>
                         <img width="120" height="120" background="#fff" color="#fff"
-                             class="rounded-circle customer-image " src="{{ vendor.image.url }}">
+                             class="rounded-circle customer-image " src="{{ vendor.user.image.url }}">
 
                         <h5>
-                            {% if vendor.display_name %}
-                            {{ vendor.display_name }}
-                            {% else %}
                             {{ vendor }}
-                            {% endif %}
                             {% if vendor.is_verified %}
                             <img width="20px" height="20px" class="mb-1"
                                  src="{% static 'images/verify.png' %}" alt="">
                             {% endif %}
                         </h5>
-                        <p>{{ vendor.vendor.about }}</p>
+                        <p>{{ vendor.about }}</p>
                     </div>
                     <hr>
                     <div class="d-block">
-                        <b>{{ vendor.following.count }} </b> Following |
-                        <b class="_result_following"> {{ vendor.follower.count }} </b> Followers
+                        <b>{{ vendor.user.following.count }} </b> Following |
+                        <b class="_result_following"> {{ vendor.user.follower.count }} </b> Followers
                     </div>
                     <br>
                     <div class="row gx-3">
                         <div class="col">
-                            {% if request.user == vendor %}
+                            {% if request.user == vendor.user %}
                             <a class="btn-lg-block btn text-light"
                                data-target="#updateUserModal" data-toggle="modal">Edit
                                 profile
@@ -45,7 +41,7 @@
                             {% endif %}
                         </div>
                         <div class="col">
-                            {% if request.user == vendor %}
+                            {% if request.user == vendor.user %}
                             <a class="btn-lg-block btn text-light" href="{% url 'vendor' request.user %}">
                                 My Store
                             </a>
@@ -56,10 +52,10 @@
                     <hr>
                     <p>
                         <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
-                        {{ vendor.vendor.location }}
+                        {{ vendor.location }}
                     </p>
                     <div class="d-md-block">
-                        <a href="tel:{{ user.phone_number }}"
+                        <a href="tel:{{ vendor.phone_number }}"
                            class="text-decoration-none category-link">
                             <p class="btn-call" onclick="off()">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16"
@@ -68,7 +64,7 @@
                                     <path fill-rule="evenodd"
                                           d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
                                 </svg>
-                                {{vendor.vendor.phone_number }}
+                                {{vendor.phone_number }}
                             </p>
                         </a>
                         <style>
@@ -87,15 +83,15 @@
                         Joined {{ vendor.date_joined|time }} &bull; {{ vendor.date_joined|date }}
                     </p>
                     <div class="flex mb-2">
-                        <a href="{{ vendor.vendor.twitter_url }}">
+                        <a href="{{ vendor.twitter_url }}">
                             <img src="https://img.icons8.com/color/40/000000/twitter-squared.png"/>
                         </a>
-                        <a href="{{ vendor.vendor.instagram_url }}">
+                        <a href="{{ vendor.instagram_url }}">
                             <img src="https://img.icons8.com/fluent/40/000000/instagram-new.png"/>
                         </a><br>
                     </div>
 
-                    {% if request.user == vendor %}
+                    {% if request.user == vendor.user %}
                     {% if request.user.vendor %}
                     <a href="{% url 'create' %}" class="btn ">
                         Create Gig
@@ -114,7 +110,6 @@
         <br>
         <div class="col-lg-9 col-md-9 mt-2">
             {% if request.user.vendor %}
-            {% if products|length > 1 %}
             <div class="mt-2 box-element text-light mb-4 bg-gradient rounded">
                 <style>
                 .bg-gradient {
@@ -132,17 +127,16 @@
 
 
                 </style>
-                <h4 style="margin-bottom: .5rem;
+                <h6 style="margin-bottom: .5rem;
                 font-family: vremenagrotesk,sans-serif;
                 font-weight: 900;
-                line-height: 1.3;color: #fff">Product Sales</h4>
+                line-height: 1.5;color: #fff">Product Sales</h6>
                 <hr>
                 <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
                         style="font-color: white;text-color: #fff;">
                 </canvas>
 
             </div>
-            {% endif %}
             {% endif %}
 
             <div class="row mt-1">
@@ -265,7 +259,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="box-element" style="overflow:auto;">
-                        <h4><b>Best Selling Product</b></h4>
+                        <h5><b>Best Selling Product</b></h5>
                         <table class="table table-hover">
                             <thead style="background-color: #f8f9fa;">
                             <tr>
@@ -298,7 +292,15 @@
 
                 <div class="col-lg-4">
                     <div class="box-element" style="overflow:auto;">
-                        <h4><b>Recent orders</b></h4>
+
+                        <div class="order-row">
+                            <h5 class="d-flex"><b>Recent orders</b></h5>
+                            <div style="flex:2">
+                                <div class="form-inline float-right ">
+                                    <a href="#" style="flex:2" data-target="#orderModal" data-toggle="modal">See all</a>
+                                </div>
+                            </div>
+                        </div>
                         <table class="table table-hover">
                             <thead style="background-color: #f8f9fa;">
                             <tr>
@@ -343,18 +345,27 @@
 
                     ],
                       backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                    borderColor: '#333',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(58, 224, 25, 0.5)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(58, 224, 25, 1)',
+                    ],
                     borderWidth: 4,
-                    fontColor: '#fff',
+                    color: '#fff',
                     pointBackgroundColor: '#00FFFF',
-                      label: 'Sales',
+                    label: 'Sales',
                     }],
                     labels: {{ DOW_CHOICES|safe }},
                   },
@@ -372,6 +383,53 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="orderModal" tabindex="-3" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #f6f9fc !important">
+            <div class="modal-body">
+                <h4>Order listing</h4>
+                <table class="table table-hover">
+                    <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <!--                            <th>S.N.</th>-->
+                        <th>USER</th>
+                        <th></th>
+                        <th>ORDER ITEM</th>
+                        <th>ORDERED</th>
+                        <th>TOTAL</th>
+                        <th>DATE POSTED</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for p in all_order %}
+                    <tr>
+                        <td>{{ p.user.username }}</td>
+                        <td></td>
+                        <td>
+                            {% for i in p.order_item.all %}
+                            {{ i }}<br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if p.ordered %}
+                            <b><span class="badge badge-success">Completed</span></b>
+                            {% else %}
+                            <b><span class="badge badge-warning">Order incomplete</span></b>
+                            {% endif %}
+                        </td>
+                        <td>${{ p.total_order_item_price|intword|intcomma }}</td>
+                        <td>{{ p.date_posted }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
   function animateValue(obj, start, end, duration) {
   let startTimestamp = null;
@@ -387,10 +445,10 @@
 }
 
 const obj = document.getElementById("product-count");
-animateValue(obj, 0, {{products.count}}, 1000);
+animateValue(obj, 0, {{products.count}}, 2000);
 
 const obj_order_count = document.getElementById("order-count");
-animateValue(obj_order_count, 0, {{orders.count}}, 1000);
+animateValue(obj_order_count, 0, {{orders.count}}, 2000);
 
 //const obj_earnings_count = document.getElementById("earnings-count");
 //animateValue(obj_earnings_count, 0, {{earnings}}, 2000);

@@ -21,22 +21,40 @@
 <div class="section">
     <div class="container py-5 mt-1">
         <h3><b>Update {{product}}</b></h3>
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <b>{{ field }}</b>: {{ error }}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if imageset.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in imageset.errors.items %}
+            {% for error in errors %}
+            <b>{{ field }}</b>: {{ error }}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
 <br><br>
 <div class="container mb-5">
     <div class="row mb-5">
         <div class="col-lg-9">
-            <form method="post" action="{% url 'product-update' product.id %}" enctype="multipart/form-data">
+            <form method="POST" action="{% url 'product-update' product.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h5><b>Upload file</b></h5>
                 <label>
-                    File types supported: PNG, JPG, GIF, WEBP, MP3 or MP4. Max size: 100kb
+                    File types supported: PNG, JPG, GIF, WEBP. Max size: 100kb
                 </label>
                 <div id="wrapper">
-                    <div align="center" class="file">
+                    <div align="center">
                         <br>
-                        <p>Upload fle</p>
+                        <p>Upload image</p>
                         <!--                        <input type="file" name="images" multiple>-->
                         {% for i in imageset %}
                         {{ i.image }}
@@ -52,13 +70,6 @@
                         height: 10rem;
 
                     }
-                    .file{
-                        align-items: center;
-                        display: block;
-                        justify-content: center;
-                        padding: 10px;
-                        }
-
                 </style>
                 <br><br>
                 <h5><b>Details</b></h5>

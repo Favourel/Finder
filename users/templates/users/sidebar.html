@@ -139,9 +139,35 @@ function openNav() {
 //    x.style.boxShadow = "10px 20px 30px black";
   } else {
     x.style.width = "350px";
+    document.getElementById("counter").innerHTML= "0";
   //  x.style.boxShadow = "10px 20px 30px black";
   }
 }
+$(document).ready(function(){
+  $(".bell-btn").click(function(e){
+    e.preventDefault()
+    var this_ = $(this)
+    var notificationUrl = this_.attr("data-href")
+    if (notificationUrl){
+       $.ajax({
+        url: notificationUrl,
+        method: "GET",
+        data: {},
+        success: function(data){
+          console.log(data)
+          var newNotification;
+          if (data.updated){
+              //$("#counter").hide();
+              //$(".noti_count").text("09");
+             }
+            }, error: function(error){
+              //console.log(error)
+              console.log("error")
+        }
+      })
+    }
 
+  })
+})
 </script>
 

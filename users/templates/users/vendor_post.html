@@ -13,7 +13,7 @@
                     <div align="center" class="customer-profile">
                         <br>
                         <img width="120" height="120" background="#fff" color="#fff"
-                             class="rounded-circle customer-image " src="{{ vendor.image.url }}">
+                             class="rounded-circle customer-image " src="{{ vendor.user.image.url }}">
 
                         <h5>
                             {% if vendor.display_name %}
@@ -26,26 +26,26 @@
                                  src="{% static 'images/verify.png' %}" alt="">
                             {% endif %}
                         </h5>
-                        <p>{{ vendor.vendor.about }}</p>
+                        <p>{{ vendor.about }}</p>
                     </div>
                     <hr>
                     <div class="d-block">
-                        <b>{{ vendor.following.count }} </b> Following |
-                        <b class="_result_following"> {{ vendor.follower.count }} </b> Followers
+                        <b>{{ vendor.user.following.count }} </b> Following |
+                        <b class="_result_following"> {{ vendor.user.follower.count }} </b> Followers
                     </div>
                     <br>
                     <div class="row gx-3">
                         <div class="col">
-                            {% if request.user == vendor %}
+                            {% if request.user == vendor.user %}
                             <a class="btn-lg-block btn text-light"
                                data-target="#updateUserModal" data-toggle="modal">Edit
                                 profile
                             </a>
-                            {% elif vendor in request.user.following.all %}
+                            {% elif vendor.user in request.user.following.all %}
                             <a data-href="{% url 'follower_vendor' vendor %}"
                                class="btn follow-btn text-light btn-block">Following
                             </a>
-                            {% elif request.user in vendor.following.all %}
+                            {% elif request.user in vendor.user.following.all %}
                             <a data-href="{% url 'follower_vendor' vendor %}"
                                class="btn  follow-btn text-light btn-block">Follow back
                             </a>
@@ -57,12 +57,12 @@
                         </div>
 
                         <div class="col">
-                            {% if request.user.vendor %}
+                            {% if vendor.user == request.user %}
                             <a href="{% url 'vendor_dashboard' %}"
                                class=" btn text-light mr-1" style="cursor: pointer;">Dashboard
                             </a>
-                            {% elif vendor in request.user.following.all %}
-                                {% if request.user in vendor.post_notification.all %}
+                            {% elif vendor.user in request.user.following.all %}
+                                {% if request.user in vendor.user.post_notification.all %}
                                 <a data-href="{% url 'post_notify' vendor %}" class=" btn text-light mr-1 bi-bell-notify notify-btn"
                                    style="cursor: pointer;">Notification
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em"
@@ -95,7 +95,7 @@
                                     </svg>
                                 </a>
                                 {% endif %}
-                            {% elif not request.user in vendor.post_notification.all %}
+                            {% elif not request.user in vendor.user.post_notification.all %}
                             <a data-href="{% url 'post_notify' vendor %}" class="text-light btn mr-1 bi-bell-slash notify-btn"
                                style="cursor: pointer; display: none" data-placement="left" data-toggle="tooltip"
                                title="Notify me when they create post">Notification
@@ -118,10 +118,10 @@
                     <hr>
                     <p>
                         <img class="mr-2" src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
-                        {{ vendor.vendor.location }}
+                        {{ vendor.location }}
                     </p>
                     <div class="d-md-block">
-                        <a href="tel:{{ user.phone_number }}"
+                        <a href="tel:{{ vendor.phone_number }}"
                            class="text-decoration-none category-link">
                             <p class="btn-call" onclick="off()">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16"
@@ -130,7 +130,7 @@
                                     <path fill-rule="evenodd"
                                           d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z"/>
                                 </svg>
-                                {{vendor.vendor.phone_number }}
+                                {{vendor.phone_number }}
                             </p>
                         </a>
                         <style>
@@ -150,15 +150,15 @@
                         Joined {{ vendor.date_joined|time }} &bull; {{ vendor.date_joined|date }}
                     </p>
                     <div class="flex mb-2">
-                        <a href="{{ vendor.vendor.twitter_url }}">
+                        <a href="{{ vendor.twitter_url }}">
                             <img src="https://img.icons8.com/color/40/000000/twitter-squared.png"/>
                         </a>
-                        <a href="{{ vendor.vendor.instagram_url }}">
+                        <a href="{{ vendor.instagram_url }}">
                             <img src="https://img.icons8.com/fluent/40/000000/instagram-new.png"/>
                         </a><br>
                     </div>
 
-                    {% if request.user == vendor %}
+                    {% if request.user == vendor.user %}
                     {% if request.user.vendor %}
                     <a href="{% url 'create' %}" class="btn ">
                         Create Gig

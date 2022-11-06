@@ -70,22 +70,15 @@ class Category(models.Model):
         return Category.objects.all()
 
 
-class MyUUIDModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=90)
-
-    def __str__(self):
-        return self.name
-
-
 class Product(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
     image = models.ImageField(default='2placeholder_test_b9l9NT5.png', upload_to='product_images')
     description = models.TextField(default="")
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_purchase = models.IntegerField(default=0)
-    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(default=datetime.now)
     date_updated = models.DateTimeField(auto_now=True)
     delivery_period = models.IntegerField(default=0)
@@ -94,7 +87,7 @@ class Product(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("product-detail", kwargs={"pk": self.pk})
+        return reverse("product-detail", kwargs={"pk": self.id})
 
     @staticmethod
     def getProductByFilter(category_id):
@@ -127,6 +120,7 @@ class Checkout(models.Model):
     def __str__(self):
         return f'{self.user}: {self.quantity} of {self.product}'
 
+    @property
     def get_total(self):
         total = self.product.price * self.quantity
         return total
@@ -136,11 +130,18 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=30)
     order_item = models.ManyToManyField(Checkout, related_name="order_item")
+    vendor = models.ForeignKey(Vendor, blank=True, null=True, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
     date_posted = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return f'{self.user}'
+
+    @property
+    def total_order_item_price(self):
+        total = self.order_item.all()
+        total_price = sum([i.get_total for i in total])
+        return total_price
 
 
 class ProductReview(models.Model):

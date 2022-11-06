@@ -120,6 +120,7 @@
 
 <div align="center"  class="category-section" style="background-color: #fff !important;height: 22vh;">
     <div class="row animate__animated animate__backInDown animate__delay-2s align-items-center" style="animated-duration: 2s;">
+        {% if categories %}
         {% for category in categories %}
         <div class="box-element" style="border-radius: 1px; margin: 20px">
             <a href="/market/?category_id={{ category.id }}" class="category-link text-decoration-none">
@@ -133,6 +134,7 @@
         </div>
         <br>
         {% endfor %}
+        {% endif %}
     </div>
 </div>
 <style>
@@ -332,8 +334,8 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
-                        <img src="{{ product.vendor.image.url }}" width="30" height="30" class="rounded-circle" alt="">
-                            <h6 class="mt-1">{{ product.vendor }}</h6></a>
+                        <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                            <h6 class="mt-1">{{ product.vendor.user }}</h6></a>
 
                     </li>
                 </ul>

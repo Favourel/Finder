@@ -28,8 +28,8 @@
         <div class="box-element">
             <div class="row">
                 <div class="col-lg-10">
-                    <form action="{% url 'search' %}" class="d-flex mt-2" autocomplete="off" method="GET" value="{{request.GET.q}}">
-                    <input style="border-radius: 24px;width: 48rem" type="text" name="q" value="{{request.GET.q}}" class="form-control"
+                    <form action="{% url 'search' %}" class="d-flex" autocomplete="off" method="GET" value="{{request.GET.q}}">
+                    <input style="width: 68rem" type="text" name="q" value="{{request.GET.q}}" class="form-control"
                         placeholder="What service are you looking for today?"/>
                     <div class="autocomplete" style="width:300px; display:none;">
                         <input type="submit" name="submit" value="Search"/>
@@ -120,7 +120,7 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
-                        <img src="{{ product.vendor.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                        <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
                             <h6 class="mt-1">{{ product.vendor }}</h6></a>
 
                     </li>

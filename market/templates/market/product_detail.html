@@ -241,7 +241,7 @@
                             </div>
                         </div>
 
-                        {% if product.vendor == request.user %}
+                        {% if product.vendor.user == request.user %}
                         <div class="mb-3 " style="display: inline-block;">
                             <a href="{% url 'product-update' product.id %}" style="box-shadow: 4px 6px 5px grey;"
                                class="btn  btn-outline-secondary ">Update product</a>
@@ -254,21 +254,21 @@
                         {% endif %}
                         <br>
                         <div class="alert alert-secondary row mb-2" style="margin: 1px">
-                            <img src="{{ product.vendor.image.url }}"
+                            <img src="{{ product.vendor.user.image.url }}"
                                  alt="" class="shadow img-sell rounded-circle">
                             <div class="col" style="display: inline-block">Vendor:
                                 <a href="{% url 'vendor' product.vendor %}">
                                     {% if product.seller.first_name %}
-                                    {{ product.vendor.first_name }}
+                                    {{ product.vendor.full_name }}
                                     {% else %}
-                                    {{ product.vendor.username }}
+                                    {{ product.vendor }}
                                     {% endif %}
                                 </a>
                                 <br>
 
                                 <p style="color:grey; font-size: 13px">
                                     <img src="https://img.icons8.com/ios-filled/20/000000/location-update--v2.png"/>
-                                    {{ product.vendor.vendor.location }}
+                                    {{ product.vendor.location }}
                                 </p>
                             </div>
                         </div>

@@ -17,17 +17,6 @@
         width: 84%;
         background-color: #fff;
    }
-
-
-
-
-
-
-
-
-
-
-
 </style>
 <div class="section">
     <div class="container py-5 mt-1">
@@ -113,52 +102,35 @@
             <div class="sticky-top" style="top: 9px">
                 <h5 class="mb-4"><b>Preview</b></h5>
 
-                <a href="{{ product.get_absolute_url }}">
-                    {% if product.productimage_set.all %}
-
-                    {% for product_image in product.productimage_set.all %}
-                    {% if forloop.first %}
-
-                    <div class="single-testimonial text-center">
-                        <img src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
-                             class="thumbnail-product">
-                    </div>
-                    {% endif %}
-
-                    {% endfor %}
-
-                    {% else %}
-                    <img src="{{ product.image.url }}" fill="777" background="#777" color="#777" alt=""
+                <a href="#">
+                    <img src="https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg" fill="777" background="#777" color="#777" alt=""
                          class="thumbnail-product">
-                    {% endif %}
                     <style>
-                            .thumbnail-product{
-                                width: 100%;
-                                height: 200px;
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                                transition: .3s
-                            }
-                            .col-lg-4{transition: .3s}
-                            .col-lg-4:hover{
-                                width: 100%;
-                                height: 200px;
-                                transform: translateY(-6px);
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                            }
-
-
+                        .thumbnail-product{
+                            width: 100%;
+                            height: 200px;
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                            transition: .3s
+                        }
+                        .col-lg-4{transition: .3s}
+                        .col-lg-4:hover{
+                            width: 100%;
+                            height: 200px;
+                            transform: translateY(-6px);
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                        }
                     </style>
                 </a>
 
                 <div class="card p-2 shadow">
-                    <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
-                        <p class="text-secondary mb-1">by <a href="{% url 'vendor' product.vendor %}">
-                            {{ product.vendor }}</a> in
-                            <a href="/market/?category_id={{ product.category.id }}">
-                                {{ product.category }}
+                    <a href="#" class="text-dark text-decoration-none">
+                        <p class="text-secondary mb-1">by <a href="#">
+                            Admin</a> in
+                            <a href="#">
+                                Fashion
                             </a>
                         </p>
-                        <h6 class="mb-3 mt-2 text-truncate">{{ product.name }}</h6>
+                        <h6 class="mb-3 mt-2 text-truncate">DANVOUY Womens T Shirt Casual Cotton Short</h6>
                         <div class="media">
                             <div class="d-block">
                                 <img src="{% static 'images/cart.png' %}" width="23px" height="23px" alt="">
@@ -170,11 +142,11 @@
                                 <!--                                    <path fill-rule="evenodd"-->
                                 <!--                                          d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>-->
                                 <!--                                </svg>-->
-                                <strong class="ml-0"> {{ product.product_purchase }} </strong> sales
+                                <strong class="ml-0"> 23 </strong> sales
                             </div>
                             <div class="media-body">
                                 <div class="d-flex float-right badge badge-warning alert alert-warning py-1">
-                                    <h6><b>₦{{ product.price|floatformat:2 }}</b></h6>
+                                    <h6><b>$900.00</b></h6>
                                 </div>
                             </div>
                         </div>
