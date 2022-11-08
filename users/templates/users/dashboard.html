@@ -109,7 +109,7 @@
         </div>
         <br>
         <div class="col-lg-9 col-md-9 mt-2">
-            {% if request.user.vendor %}
+            {% if DOW_CHOICES|length >= 2 %}
             <div class="mt-2 box-element text-light mb-4 bg-gradient rounded">
                 <style>
                 .bg-gradient {
@@ -174,7 +174,7 @@
                         <h6>Total Orders</h6>
                         <div class="order-row ">
                             <h3 class="text-truncate text-info" id="order-count" style="align-items: left;justify-content: center;text-align: left;display: flex;
-                    flex-direction: column;">{{ orders.count|intword }}</h3>
+                    flex-direction: column;">{{ total_orders.count|intword }}</h3>
 <!--                            <svg style="color: #17a2b8!important;" width="1.6rem" height="1.6rem" viewBox="0 0 16 16"-->
 <!--                                 class="bi bi-archive ml-auto mt-1"-->
 <!--                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">-->
@@ -363,7 +363,7 @@
                         'rgba(58, 224, 25, 1)',
                     ],
                     borderWidth: 4,
-                    color: '#fff',
+                    color: ['#fff'],
                     pointBackgroundColor: '#00FFFF',
                     label: 'Sales',
                     }],
@@ -448,7 +448,7 @@ const obj = document.getElementById("product-count");
 animateValue(obj, 0, {{products.count}}, 2000);
 
 const obj_order_count = document.getElementById("order-count");
-animateValue(obj_order_count, 0, {{orders.count}}, 2000);
+animateValue(obj_order_count, 0, {{total_orders.count}}, 2000);
 
 //const obj_earnings_count = document.getElementById("earnings-count");
 //animateValue(obj_earnings_count, 0, {{earnings}}, 2000);

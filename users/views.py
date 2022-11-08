@@ -141,20 +141,26 @@ def vendor_dashboard(request):
         products = Product.objects.filter(vendor=vendor)
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
         orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')[:5]
+        total_orders = Order.objects.filter(vendor=vendor, ordered=True).order_by('-date_posted')
+        # total_orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
-        today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
+        today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
+        # today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
-        monthly_order = Checkout.objects.filter(product__vendor=vendor,
-                                                complete=True, date_posted__month__gte=datetime.now().month)
+        monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
+        # monthly_order = Checkout.objects.filter(product__vendor=vendor,
+        #                                         complete=True, date_posted__month__gte=datetime.now().month)
         best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
         earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
-        today_earning = sum([(i.product.price * i.quantity) for i in today_order])
-        monthly_earning = sum([(i.product.price * i.quantity) for i in monthly_order])
+        today_earning = sum([j.get_total for i in today_order for j in i.order_item.all()])
+        monthly_earning = sum([j.get_total for i in monthly_order for j in i.order_item.all()])
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
         date_list = []
 
-        for i in Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted"):
+        # for i in Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted"):
+        # try this
+        for i in Order.objects.filter(order_item__product__vendor=vendor, ordered=True).order_by("date_posted"):
             date_list.append(DateExtendedEncoder.default(i.date_posted, i.date_posted))
             # uniques = []
             # for number in date_list:
@@ -164,6 +170,7 @@ def vendor_dashboard(request):
         chart_value = solution(date_list, [i.quantity for i in chart_products])
         get_values = chart_value.values()
         get_keys = chart_value.keys()
+        print(date_list)
 
     else:
         messages.warning(request, "You need to register as a Vendor to view dashboard.")
@@ -173,8 +180,11 @@ def vendor_dashboard(request):
         "vendor": vendor,
         "products": products,
         "chart_products": get_values,
+        "chart_products_quantity": [i.quantity for i in chart_products],  # remove later
+        "date_list": date_list,  # remove later
         "today_product": today_product,
         "orders": orders,
+        "total_orders": total_orders,
         "all_order": all_order,
         "today_order": today_order,
         # "vendor_profile": vendor_profile,

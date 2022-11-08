@@ -4,6 +4,7 @@
 {% block title %}{{ vendor }} checkout{% endblock %}
 {% block content %}
 
+<script src="https://js.paystack.co/v1/inline.js"></script>
 
 <div class="container">
     <br>
@@ -233,7 +234,7 @@
                         </tr>
                         <tr>
                             <th><h5 class="mt-2">Subtotal: </h5></th>
-                            <th><h5 class="mt-2">${{ get_cart_total|floatformat:2|intcomma }}</h5></th>
+                            <th><h5 id="amount" class="mt-2">${{ get_cart_total|floatformat:2|intcomma }}</h5></th>
                         </tr>
                     </table>
                     <hr>
@@ -248,7 +249,7 @@
                     <!--                <a href="" class="btn btn-info btn-block">-->
                     <!--                    CONFIRM ORDER-->
                     <!--                </a>-->
-                    <a href="{% url 'process_order' %}" id="make-payment" class="btn btn-block btn-info">
+                    <a href="{% url 'process_order' %}" type="submit" onclick="payWithPaystack()" id="make-payment" class="btn btn-block btn-info">
                         <div class="spinner-border text-light hide" id="spinner" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
@@ -273,7 +274,33 @@
         display: none;
     }
 </style>
+<script>
+const paymentForm = document.getElementById('make-payment');
+paymentForm.addEventListener("click", payWithPaystack, false);
+function payWithPaystack(e) {
+  e.preventDefault();
 
+  let handler = PaystackPop.setup({
+    key: '{{paystack_public_key}}', // Replace with your public key
+    email: '{{ request.user.email }}',
+    currency: 'NGN',
+    amount: '{{ get_cart_total }}' * 100,
+    ref: '{{ payment.ref }}', // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+    //ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+    // label: "Optional string that replaces customer email"
+    onClose: function(){
+      alert('Window closed.');
+    },
+    callback: function(response){
+      let message = 'Payment complete! Reference: ' + response.reference;
+      window.location.href = "{% url 'process_order' %}"
+      alert(message);
+    }
+  });
+
+  handler.openIframe();
+}
+</script>
 <style>
 .row-imagek {
     height: 80px;

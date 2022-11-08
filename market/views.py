@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRe
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order
+from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order, Payment
 from django.db.models import Q, F
 from users.models import User, Notification
 import datetime
@@ -12,6 +12,7 @@ from django.views.generic import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.forms.models import modelformset_factory
+from django.conf import settings
 
 
 # Create your views here.
@@ -118,7 +119,8 @@ def checkout(request):
         "notification": notification,
         "items": check_out_list,
         "get_cart_total": get_cart_total,
-        "get_cart_items": total_cart_items(request)
+        "get_cart_items": total_cart_items(request),
+        "paystack_public_key": settings.PAYSTACK_PUBLIC_KEY
     }
     return render(request, "market/checkout.html", context)
 
@@ -397,6 +399,13 @@ def process_order(request):
     )
     notification.orders.set([item for item in check_out_list])
     notification.save()
+    # Work on the payment option!
+    # payment = get_object_or_404(Payment, ref=ref)
+    # verified = payment.verified()
+    # if verified:
+    #     messages.success(request, "Verification passed!")
+    # else:
+    #     messages.error(request, "Verification failed")
     messages.success(request, "Order has been successfully made!")
     return redirect("market")
 
