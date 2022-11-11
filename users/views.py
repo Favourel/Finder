@@ -145,6 +145,13 @@ def vendor_dashboard(request):
         # total_orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
+        customers = Order.objects.filter(vendor=vendor)
+        iter_customers = [i.user for i in customers]
+        uniques = []
+        for number in iter_customers:
+            if number not in uniques:
+                uniques.append(number)
+        print(uniques)
         # today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
@@ -170,7 +177,6 @@ def vendor_dashboard(request):
         chart_value = solution(date_list, [i.quantity for i in chart_products])
         get_values = chart_value.values()
         get_keys = chart_value.keys()
-        print(date_list)
 
     else:
         messages.warning(request, "You need to register as a Vendor to view dashboard.")
@@ -179,14 +185,15 @@ def vendor_dashboard(request):
     context = {
         "vendor": vendor,
         "products": products,
+        "today_product": today_product,
         "chart_products": get_values,
         "chart_products_quantity": [i.quantity for i in chart_products],  # remove later
         "date_list": date_list,  # remove later
-        "today_product": today_product,
         "orders": orders,
         "total_orders": total_orders,
         "all_order": all_order,
         "today_order": today_order,
+        "monthly_order": monthly_order,
         # "vendor_profile": vendor_profile,
         "DOW_CHOICES": list(get_keys),
         "best_selling_products": best_selling_products,
@@ -196,6 +203,9 @@ def vendor_dashboard(request):
         "today_earning": today_earning,
         "monthly_earning": monthly_earning,
         "get_cart_items": total_cart_items(request),
+        "now": datetime.now().hour,
+        "form": StoreCreateForm(instance=vendor),
+        "customers": len(uniques)
     }
     return render(request, "users/dashboard.html", context)
 
@@ -219,8 +229,8 @@ def update_profile(request):
             # print(image_path)
 
             messages.success(request, 'Your account has been updated!')
-            return redirect(f"../{request.user.vendor}/vendor/")
-            # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            # return redirect(f"../{request.user.vendor}/vendor/")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         else:
             # i changed the error popup
             messages.warning(request, 'error')

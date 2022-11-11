@@ -13,6 +13,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.forms.models import modelformset_factory
 from django.conf import settings
+import json
+from .middlewares.market_middleware import checkout_middleware
 
 
 # Create your views here.
@@ -356,20 +358,24 @@ def remove_from_checkout(request, pk):
 def delete_from_checkout(request, pk):
     customer = request.user
     product = get_object_or_404(Product, pk=pk)
-    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product)
-    if Checkout.objects.filter(user=customer, product=product).exists():
+    print(Checkout.objects.filter(user=customer, product=product, complete=False))
+    orderItem, created = Checkout.objects.get_or_create(user=customer, product=product, complete=False)
+    if Checkout.objects.filter(user=customer, product=product, complete=False).exists():
+        print(Checkout.objects.filter(user=customer, product=product, complete=False))
         orderItem.delete()
         messages.success(request, f"'{product.name}' has been removed from your cart")
         return redirect("checkout")
-
     else:
         messages.success(request, f"'{product.name}' doesn't exists in your cart")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 @login_required
+@checkout_middleware
 def process_order(request):
+    data = json.loads(request.body)
     transaction_id = datetime.datetime.now().timestamp()
+    reference = str(data['ref']['reference'])
     check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
     receiver = Checkout.objects.last().product.vendor.user
     queryset = []
@@ -399,6 +405,12 @@ def process_order(request):
     )
     notification.orders.set([item for item in check_out_list])
     notification.save()
+    Payment.objects.create(
+        amount=order.total_order_item_price,
+        ref=reference,
+        email=request.user.email,
+        verified=True
+    )
     # Work on the payment option!
     # payment = get_object_or_404(Payment, ref=ref)
     # verified = payment.verified()
@@ -406,8 +418,7 @@ def process_order(request):
     #     messages.success(request, "Verification passed!")
     # else:
     #     messages.error(request, "Verification failed")
-    messages.success(request, "Order has been successfully made!")
-    return redirect("market")
+    return JsonResponse('Payment complete!', safe=False)
 
 
 @login_required

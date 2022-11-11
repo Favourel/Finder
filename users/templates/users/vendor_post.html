@@ -263,33 +263,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable bg-dark">
-        <div class="modal-content" style="background-color: #fff !important;">
-            <div class="modal-header">
-                <h5><strong>Edit Profile</strong></h5>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="update-profile-form" action="{% url 'update_profile'%}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button class="btn create-submit_button btn-block btn-info" type="submit">
-                        Update Info
-                    </button>
-                </form>
-            </div>
-            <script>
-                $(document).ready(function(){
-                    var $myForm = $('#update-profile-form')
-                    $myForm.submit(function(event){
-                        $(".create-submit_button").prop('disabled', true);
-                    })
-                })
-            </script>
-        </div>
-    </div>
-</div>
 <style>
     .col-6 {
         padding: 6px;
