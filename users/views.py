@@ -140,7 +140,7 @@ def vendor_dashboard(request):
         vendor = request.user.vendor
         products = Product.objects.filter(vendor=vendor)
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
-        orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')[:5]
+        orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted").order_by('-date_posted')[:5]
         total_orders = Order.objects.filter(vendor=vendor, ordered=True).order_by('-date_posted')
         # total_orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')

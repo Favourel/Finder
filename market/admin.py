@@ -30,7 +30,7 @@ class MembershipInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['user', 'date_posted']
+    list_display = ['user', 'vendor', 'date_posted']
     search_fields = ["user"]
     filter_horizontal = ['order_item']
     # inlines = [

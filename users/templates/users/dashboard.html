@@ -277,31 +277,11 @@
                                 <small><b>${{today_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                             <div class="ml-auto">
-                                <small>Monthly </small><br>
+                                <small class="fs-6 text-muted text-uppercase mb-0">Monthly </small><br>
                                 <small><b>${{monthly_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                         </div>
 
-                    </div>
-                </div>
-                <div style="display:none">
-                    <div class="col-lg-3 col-md-3 mb-2 ">
-                        <div class="box-element"
-                             style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
-    <!--                        <h6>Subscription</h6>-->
-    <!--                        <p>Plan - -->
-    <!--                            {% if request.user_plan %}-->
-    <!--                            {% for plan in user_plan %}-->
-    <!--                            {{plan.product }}-->
-    <!--                            {% endfor %}-->
-    <!--                            {% else %}-->
-    <!--                            No paid plan-->
-    <!--                            {% endif %}-->
-    <!--                        </p>-->
-                            <canvas class="my-2 w-100 p-2 rounded" id="line-chart" width="900" height="250"
-                            style="font-color: white;text-color: #fff;"></canvas>
-                            <hr>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -372,7 +352,7 @@
                         <table class="table table-hover">
                             <thead style="background-color: #f8f9fa;font-size: 13px">
                             <tr>
-                                <th>PRODUCT</th>
+                                <th>USER</th>
                                 <th>AMOUNT</th>
                             </tr>
                             </thead>
@@ -386,9 +366,10 @@
                                      fill="currentColor" class="bi bi-clock mr-1" viewBox="0 0 16 16">
                                     <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
-                                    {{ p.date_posted|naturaltime }}
+                                    {{ p.date_posted|naturalday }},
+                                    {{ p.date_posted|time }}
                                 </td>
-                                <td>${{ p.get_total|intword|intcomma }}</td>
+                                <td>${{ p.total_order_item_price|intword|intcomma }}</td>
                             </tr>
                             {% endfor %}
                             </tbody>

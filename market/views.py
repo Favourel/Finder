@@ -266,7 +266,7 @@ def update_product(request, pk):
                     forms.product = form
                     forms.save()
                 messages.success(request, 'Your product has been updated.')
-                return redirect(form.get_absolute_url)
+                return redirect(form.get_absolute_url())
         else:
             form = CreateProductForm(instance=obj)
             category_field = CategoryField(instance=obj)
@@ -377,7 +377,12 @@ def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
     reference = str(data['ref']['reference'])
     check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
-    receiver = Checkout.objects.last().product.vendor.user
+    receiver = []
+    notify_user = []
+    for i in Checkout.objects.filter(user=request.user, complete=False):
+        receiver.append(i.product.vendor)
+        notify_user.append(i.product.vendor.user)
+
     queryset = []
     for item in check_out_list:
         queryset.append(item.complete == True)
@@ -387,7 +392,7 @@ def process_order(request):
         user=request.user,
         transaction_id=transaction_id,
         ordered=True,
-        vendor=Checkout.objects.last().product.vendor
+        vendor=receiver[0]
     )
     order.order_item.set([item for item in check_out_list])
     order.save()
@@ -399,7 +404,7 @@ def process_order(request):
         item.product.save()
 
     notification = Notification.objects.create(
-        user=receiver,
+        user=notify_user[0],
         sender=request.user,
         notification_type=1
     )
