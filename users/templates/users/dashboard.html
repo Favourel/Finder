@@ -174,13 +174,13 @@
                                 0
                                 {% endif %}
                             </h4>
-<!--                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="1.6rem"-->
-<!--                                 height="1.6rem" fill="currentColor"-->
-<!--                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">-->
-<!--                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>-->
-<!--                            </svg>                             -->
-                            <img class="ml-auto" style="color: #f5803e!important;"
-                                 src="{% static 'images/open-box.png' %}" width="32px" height="32px" alt="">
+                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="30px"
+                                 height="30px" fill="currentColor"
+                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">
+                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                            </svg>
+<!--                            <img class="ml-auto" style="color: #f5803e!important;"-->
+<!--                                 src="{% static 'images/open-box.png' %}" width="32px" height="32px" alt="">-->
 
                         </div>
                         <hr class="my-1">
@@ -194,7 +194,6 @@
                                 <small><b>0</b></small>
                             </div>
                         </div>
-<!--                        <small>Today Product<br><b>{{ today_product.count }}</b></small>-->
                     </div>
                 </div>
                 <div class="col-lg-3 mb-2">
@@ -203,7 +202,14 @@
                         <h6 class="text-secondary">Total Orders</h6>
                         <div class="row ">
                             <div class="col">
-                                <h4 class="text-truncate text-info" id="order-count" style="font-size: calc(1.2625rem + .15vw);">{{ total_orders.count|intword }}</h4>
+                                <div class="d-flex align-items-center">
+                                    <h4 class="text-truncate text-info" id="order-count" style="font-size: calc(1.2625rem + .15vw);">
+                                        {{ all_order.count|intword }}
+                                    </h4>
+                                    <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 45px">
+                                        {{percentage}}%
+                                    </span>
+                                </div>
                             </div>
                             <div class="col-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="30" width="30" class="text-info">
@@ -223,7 +229,6 @@
                                 <small><b>{{ monthly_order.count }}</b></small>
                             </div>
                         </div>
-<!--                        <small>Today Order<br><b> {{ today_order.count }}</b></small>-->
                     </div>
                 </div>
                 <div class="col-lg-3 mb-2">
@@ -500,7 +505,7 @@ const obj = document.getElementById("product-count");
 animateValue(obj, 0, {{products.count}}, 2000);
 
 const obj_order_count = document.getElementById("order-count");
-animateValue(obj_order_count, 0, {{total_orders.count}}, 2000);
+animateValue(obj_order_count, 0, {{all_order.count}}, 2000);
 
 //const obj_earnings_count = document.getElementById("earnings-count");
 //animateValue(obj_earnings_count, 0, {{earnings}}, 2000);

@@ -217,7 +217,7 @@
                         <br>
 
                         <a href="{% url 'add_to_checkout' product.pk %}" class="float-left shadow btn mb-3 btn-block">
-                            Add to checkout
+                            Proceed to checkout
                         </a>
 
                         <div class="modal fade" id="add-wishlist" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -242,14 +242,17 @@
                         </div>
 
                         {% if product.vendor.user == request.user %}
-                        <div class="mb-3 " style="display: inline-block;">
-                            <a href="{% url 'product-update' product.id %}" style="box-shadow: 4px 6px 5px grey;"
-                               class="btn  btn-outline-secondary ">Update product</a>
-                            <button style="box-shadow: 4px 6px 5px grey;"
-                                    class="btn btn-outline-danger ml-lg-2" data-toggle="modal"
+                        <div class="mb-3 ">
+                            <div class="row">
+                                <div class="col"><a href="{% url 'product-update' product.id %}"
+                               class="btn shadow btn-outline-secondary ">Update product</a></div>
+                                <div class="col-auto"><button
+                                    class="btn shadow btn-outline-danger ml-lg-2" data-toggle="modal"
                                     data-target="#exampleDelete">Delete
-                                product
-                            </button>
+                                    product
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         {% endif %}
                         <br>
@@ -320,7 +323,7 @@
                 <div class="article-content">
                     {{ product.description | safe }}
                 </div>
-                <!--                    white-space: pre-line;-->
+
                 <style>
                     p img {
                         vertical-align: middle;
@@ -330,11 +333,12 @@
                         max-width: 100%;
                         height: auto;
                     }
-                    .article-content {
-                        white-space: pre-line;
-                        word-wrap: break-word;
-                    }
+
                 </style>
+<!--                .article-content {-->
+<!--                        white-space: pre-line;-->
+<!--                        word-wrap: break-word;-->
+<!--                    }-->
             </div>
             <div class="modal fade" id="exampleDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
@@ -736,7 +740,7 @@
                         <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                     </svg>
                     <b class="ml-1">{{ product.delivery_period }} Days Delivery</b>
-                     <a href="{% url 'add_to_checkout' product.pk %}"  class="shadow mt-2 btn btn-block" >Add to checkout</a>
+                     <a href="{% url 'add_to_checkout' product.pk %}"  class="shadow mt-2 btn btn-block" >Proceed to checkout</a>
                 </div>
             </div>
 
@@ -834,24 +838,33 @@
         </style>
 
         {% if seller_products|length > 0 %}
-        <div class="col-lg-12">
+        <div class="col-lg-12 mt-2">
             <div class="box-element">
-                <h4><b>More products from this seller</b></h4>
+                <h4><b>More gigs from this seller</b></h4>
 
                 <div class="row p-2">
                     {% for query in seller_products %}
-                    <div class="col-lg-2 col-md-3 col-sm-3 col-6">
+                    <div class="col-lg-3 col-md-4 col-sm-3 col-6">
                         <style>
                             .col-6 {
                                 padding: 10px;
                             }
                         </style>
-                        <a href="" class="text-decoration-none" style="color: black;">
-                            <img src="{{ query.image.url }}"
-                                 alt="{{ query.name }} with quality amazing HD picture">
+                        <a href="{{query.get_absolute_url}}" class="text-decoration-none" style="color: black;">
+
+                            {% if query.productimage_set.all %}
+                            {% for image in query.productimage_set.all %}
+                            {% if forloop.first %}
+                            <img src="{{ image.image.url }}" class="thumbnail-product">
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            <img src="{{ image.image.url }}" class="thumbnail-product">
+                            {% endif %}
+
                             <div class="mt-1">
-                                <h6 style="font-size: 15px" class="text-truncate">
-                                    {{ query.name|safe|truncatewords:"4"|linebreaks }}
+                                <h6 class="text-truncate">
+                                    {{ query.name}}
                                 </h6>
 
                                 <h5>${{ query.price|floatformat:2 }}</h5>
@@ -864,63 +877,6 @@
         </div>
         <br>
         {% endif %}
-
-        {% if category_products|length > 0 %}
-        <div class="col-lg-12">
-            <div id="category-content-wrapper" class="box-element">
-                <h4><b>You may also like</b></h4>
-                <div class="category-column">
-                    <div id="category-slide-wrapper">
-                        <div id="category-slider">
-                            {% for query in category_products %}
-                            <div class="col-lg-2 col-md-4 col-sm-4 col-6">
-                                <style>
-                                    .col-6 {
-                                        padding: 10px;
-                                    }
-                                </style>
-                                <a href="" class="text-decoration-none"
-                                   style="color: black;">
-                                    <img src="{{ query.image.url }}"
-                                         alt="{{ query.name }} with quality amazing HD picture" id="thumb">
-                                    <div class="mt-1">
-                                        <h6 style="font-size: 15px" class="text-truncate">
-                                            {{ query.name|safe|truncatewords:"4"|linebreaks }}
-                                        </h6>
-
-                                        <h5>${{ query.price|floatformat:2 }}</h5>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        <style>
-            .category-column{
-                width: 100%;
-                padding: 1px;
-
-            }
-
-            #category-slide-wrapper{
-                max-width: 100%;
-                display: flex;
-                min-height: 100px;
-                align-items: center;
-            }
-
-            #category-slider{
-                width: 100%;
-                display: flex;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-
-            }
-        </style>
     </div>
 </div>
 

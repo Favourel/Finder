@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1"]
 
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django.contrib.humanize',
     'channels',
+    'ckeditor',
+    "djrichtextfield",
 ]
 
 MIDDLEWARE = [
@@ -157,3 +159,22 @@ LOGOUT_REDIRECT_URL = "login"
 PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
 PAYSTACK_PUBLIC_KEY = os.environ.get("PAYSTACK_PUBLIC_KEY")
 
+DJRICHTEXTFIELD_CONFIG = {
+    'js': ['//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js'],
+    'init_template': 'djrichtextfield/init/tinymce.js',
+    'settings': {
+        'menubar': False,
+        'message': False,
+        'plugins': 'link image',
+        'toolbar': [
+            {'items': ['Format', '-', 'Bold', 'Italic', '-',
+                       'RemoveFormat']},
+            {'items': ['Link', 'Unlink', 'Image', 'Table']},
+            {'items': ['Source']}
+        ],
+        'width': 'auto',
+        'height': 150,
+        "name": "content",
+        "tox-statusbar": False,
+    }
+}

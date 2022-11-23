@@ -11,10 +11,12 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ["name", "vendor", "price", "product_purchase", "date_posted"]
     search_fields = ["name", "vendor"]
+    list_filter = ['vendor', 'date_posted']
 
 
 class VendorAdmin(admin.ModelAdmin):
     list_display = ["user", "phone_number", "location", "date_joined", "is_verified"]
+    list_filter = ['user', 'date_joined']
 
 
 class ProductImageAdmin(admin.ModelAdmin):
@@ -23,6 +25,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 class CheckoutAdmin(admin.ModelAdmin):
     list_display = ["user", "product", "quantity", "date_posted", "complete"]
+    list_filter = ['user', 'date_posted']
 
 
 class MembershipInline(admin.TabularInline):
@@ -33,6 +36,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['user', 'vendor', 'date_posted']
     search_fields = ["user"]
     filter_horizontal = ['order_item']
+    list_filter = ['date_posted']
     # inlines = [
     #     MembershipInline,
     # ]

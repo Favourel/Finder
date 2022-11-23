@@ -71,7 +71,7 @@ def create_store(request):
         return render(request, 'users/create_store.html', context)
     else:
         messages.warning(request, 'You are already a vendor')
-        return redirect(f'/{user}/vendor/')
+        return redirect(f'/vendor/{user}/')
 
 
 @login_required
@@ -134,39 +134,39 @@ def solution(date_list, time_list):
 @login_required
 def vendor_dashboard(request):
     if Vendor.objects.filter(user=request.user).exists():
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
         vendor = request.user.vendor
         products = Product.objects.filter(vendor=vendor)
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
-        orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted").order_by('-date_posted')[:5]
-        total_orders = Order.objects.filter(vendor=vendor, ordered=True).order_by('-date_posted')
-        # total_orders = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
-        orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
+        best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
+
+        orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted").order_by('-date_posted')[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
+        monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
+        all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
+
+        previous = len(all_order)
+        current = len(today_order) + previous
+        percentage = ((current - previous) / previous) * 100
+
         customers = Order.objects.filter(vendor=vendor)
         iter_customers = [i.user for i in customers]
         uniques = []
         for number in iter_customers:
             if number not in uniques:
                 uniques.append(number)
-        print(uniques)
-        # today_order = Checkout.objects.filter(product__vendor=vendor, complete=True, date_posted__gte=date.today())
-        all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
-        monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
-        # monthly_order = Checkout.objects.filter(product__vendor=vendor,
-        #                                         complete=True, date_posted__month__gte=datetime.now().month)
-        best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
+
+        orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
         earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
         today_earning = sum([j.get_total for i in today_order for j in i.order_item.all()])
         monthly_earning = sum([j.get_total for i in monthly_order for j in i.order_item.all()])
+
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
         date_list = []
 
-        # for i in Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted"):
-        # try this
         for i in Order.objects.filter(order_item__product__vendor=vendor, ordered=True).order_by("date_posted"):
             date_list.append(DateExtendedEncoder.default(i.date_posted, i.date_posted))
             # uniques = []
@@ -181,27 +181,28 @@ def vendor_dashboard(request):
     else:
         messages.warning(request, "You need to register as a Vendor to view dashboard.")
         return redirect("create_store")
-
     context = {
+        "notification_count": notification_count,
+        "notification": notification,
+
         "vendor": vendor,
         "products": products,
         "today_product": today_product,
-        "chart_products": get_values,
-        "chart_products_quantity": [i.quantity for i in chart_products],  # remove later
-        "date_list": date_list,  # remove later
+
         "orders": orders,
-        "total_orders": total_orders,
         "all_order": all_order,
         "today_order": today_order,
         "monthly_order": monthly_order,
-        # "vendor_profile": vendor_profile,
+        "percentage": str(percentage)[:4],
+
+        "chart_products": get_values,
         "DOW_CHOICES": list(get_keys),
         "best_selling_products": best_selling_products,
-        "notification_count": notification_count,
-        "notification": notification,
+
         "earnings": earnings,
         "today_earning": today_earning,
         "monthly_earning": monthly_earning,
+
         "get_cart_items": total_cart_items(request),
         "now": datetime.now().hour,
         "form": StoreCreateForm(instance=vendor),
@@ -397,3 +398,23 @@ def update_notification(request):
         "notification_count": notification_count
     }
     return JsonResponse(data)
+
+
+@login_required
+def settings(request):
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")
+    notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
+
+    if request.method == "POST":
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form = form.save(commit=False)
+    else:
+        form = UserUpdateForm(instance=request.user)
+    context = {
+        "form": form,
+        "get_cart_items": total_cart_items(request),
+        "notification_count": notification_count,
+        "notification": notification,
+    }
+    return render(request, "users/settings.html", context)

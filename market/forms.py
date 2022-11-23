@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from djrichtextfield.widgets import RichTextWidget
 
 
 class CreateProductForm(forms.ModelForm):
@@ -22,17 +23,7 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
-    description = forms.CharField(widget=forms.Textarea(attrs={
-        'placeholder': 'Product Description',
-        'type': 'text',
-        'name': 'product_description',
-        'id': 'product_description',
-        'class': 'form-control',
-        "rows": 3,
-        "required": True
-    }
-    )
-    )
+    description = forms.CharField(widget=RichTextWidget())
     delivery_period = forms.IntegerField(widget=forms.NumberInput(attrs={
         'placeholder': 'Product delivery period',
         'type': 'number',

@@ -89,6 +89,7 @@
                 <div class="form-group">
                     <label>Description</label>
                     {{ form.description }}
+                    {{ form.media }}
                 </div>
                 <div class="form-group">
                     <label>Delivery period</label>
@@ -126,21 +127,20 @@
                          class="thumbnail-product">
                     {% endif %}
                     <style>
-                            .thumbnail-product{
-                                width: 100%;
-                                height: 200px;
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                                transition: .3s
-                            }
-                            .col-lg-4{transition: .3s}
-                            .col-lg-4:hover{
-                                width: 100%;
-                                height: 200px;
-                                transform: translateY(-6px);
-                                box-shadow:hsl(0, 0%, 80%) 0 0 16px;
-                            }
-
-
+                        .thumbnail-product{
+                            width: 100%;
+                            height: 200px;
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                            transition: .3s
+                        }
+                        .col-lg-4{transition: .3s}
+                        .col-lg-4:hover{
+                            width: 100%;
+                            height: 200px;
+                            transform: translateY(-6px);
+                            box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+                        }
+                        .tox-notification{display: none !important;}
                     </style>
                 </a>
 

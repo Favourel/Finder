@@ -36,7 +36,7 @@
                 <div id="wrapper">
                     <div align="center" class="file">
                         <br>
-                        <p>Upload fle</p>
+                        <p>Upload file</p>
                         <input type="file" name="images" multiple>
                         <br>
                     </div>
@@ -75,6 +75,7 @@
                 <div class="form-group">
                     <label>Description</label>
                     {{ form.description }}
+                    {{ form.media }}
                 </div>
                 <div class="form-group">
                     <label>Delivery period</label>
@@ -119,6 +120,8 @@
                             transform: translateY(-6px);
                             box-shadow:hsl(0, 0%, 80%) 0 0 16px;
                         }
+                        .tox-notification{display: none !important;}
+
                     </style>
                 </a>
 

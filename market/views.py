@@ -89,6 +89,7 @@ def product_detail(request, pk):
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     obj = get_object_or_404(Product, pk=pk)
+    seller_products = Product.objects.filter(vendor=obj.vendor).exclude(name=obj).order_by("?")[:4]
     if request.method == 'POST':
         if obj.vendor.user == request.user:
             obj.delete()
@@ -105,6 +106,7 @@ def product_detail(request, pk):
         "notification": notification,
         "product_image": image,
         "form": ReviewBox(),
+        "seller_products": seller_products,
         "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/product_detail.html", context)
@@ -340,15 +342,16 @@ def remove_from_checkout(request, pk):
     if Checkout.objects.filter(user=customer, product=product).exists():
         if orderItem.quantity <= 0:
             orderItem.delete()
-            messages.success(request, f"'{product.name}' has been removed from your cart")
+            messages.success(request, f"'{product.name}' has been removed from your cart/checkout")
             return redirect("checkout")
         if orderItem.quantity >= 1:
             orderItem.quantity = (orderItem.quantity - 1)
             orderItem.price = (orderItem.quantity * orderItem.product.price)
             orderItem.save()
+            messages.success(request, f"'{product.name}' quantity has been reduced from your cart/checkout")
             return redirect("checkout")
     else:
-        messages.success(request, f"'{product.name}' has been removed from your cart")
+        messages.success(request, f"'{product.name}' has been removed from your cart/checkout")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     return render(request, 'market/checkout.html', {})

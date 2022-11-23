@@ -5,6 +5,8 @@ from datetime import datetime, date
 from django.shortcuts import reverse
 import uuid
 from .paystack import Paystack
+from ckeditor.fields import RichTextField
+# from djrichtextfield.models import RichTextField
 
 
 # Create your models here.
@@ -79,7 +81,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
     image = models.ImageField(default='2placeholder_test_b9l9NT5.png', upload_to='product_images')
-    description = models.TextField(default="")
+    description = RichTextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_purchase = models.IntegerField(default=0)
     vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.CASCADE)
