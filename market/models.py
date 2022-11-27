@@ -64,6 +64,13 @@ class Vendor(models.Model):
         return f"{self.user}"
 
 
+class VendorReview(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField()
+    date_posted = models.DateTimeField(default=datetime.now)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, default="Select Category")
     date = models.DateTimeField(default=datetime.now)

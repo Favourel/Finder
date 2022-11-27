@@ -1,0 +1,313 @@
+{% extends 'market/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block title %}{{ request.user }} settings{% endblock %}
+{% block content %}
+
+<br>
+<div class="container">
+    {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+        {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+        <b>{{ field }}</b>: {{ error }}
+        {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h4><b>Profile Settings</b></h4>
+    <br>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="box-element p-3">
+                <div class="media">
+                    {% if request.user.vendor %}
+                    <img src="{{request.user.image.url}}" class="rounded-circle" width="90px" height="90px" alt="">
+                    {% else %}
+                    <img src="{% static 'images/user.png' %}" class="rounded-circle" width="90px" height="90px" alt="">
+                    {% endif %}
+                    <div class="media-body ml-4 mt-3">
+                        <h5><b>{{ request.user }}</b></h5>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                 class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            </svg>
+                            Joined {{ request.user.date_joined }}
+                        </p>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col">
+                        <b>TOTAL SPENT</b>
+                        <br>
+                        <p>${{total_spent|floatformat:"2"|intcomma}}</p>
+                    </div>
+                    <div class="col">
+                        <b>LAST ORDER</b>
+                        <br>
+                        <p>
+                            {% if last_order %}
+                            {% for i in last_order %}
+                            {{ i.date_posted|naturaltime }}
+                            {% endfor %}
+                            {% else %}
+                            You haven't ordered yet
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col">
+                        <b>TOTAL ORDERS</b>
+                        <br>
+                        <p>{{all_order.count}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-4">
+            <div class="box-element">
+                <div class="row mb-1">
+                    <div class="col"><b>Email</b></div>
+                    <div class="col-auto">{{ request.user.email }}</div>
+                </div>
+
+                <div class="row">
+                    <div class="col"><b>Phone No.</b></div>
+                    <div class="col-auto">
+                        {% if request.user.phone_number %}
+                        {{ request.user.phone_number }}
+                        {% else %}
+                        <p>You haven't provided a phone number</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr class="py-1">
+                <div class="alert alert-danger" role="alert">
+                    <img src="{% static 'images/warning.png' %}" height="25" width="25" alt="">
+                    Your account/data will be lost if you delete
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-auto">
+                        <a class="btn mb-1 text-light btn mr-auto" data-target="#deleteuserModal" data-toggle="modal">
+                            Delete my account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active mr-3" id="nav-home-tab" data-toggle="tab" data-target="#nav-home"
+                    type="button"
+                    role="tab" aria-controls="nav-home" aria-selected="true">
+                <img src="{% static 'images/checkout.png' %}" height="20" width="20" alt="">
+                Orders ({{all_order_count}})
+            </button>
+            <button class="nav-link mr-3" id="nav-profile-tab" data-toggle="tab" data-target="#nav-profile"
+                    type="button"
+                    role="tab" aria-controls="nav-profile" aria-selected="false">
+                <img src="{% static 'images/feedback.png' %}" height="20" width="20" alt="">
+                Reviews ({{reviews_count}})
+            </button>
+            <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button"
+                    role="tab" aria-controls="nav-contact" aria-selected="false">
+                <img src="{% static 'images/edit.png' %}" height="20" width="20" alt="">
+                Profile info
+            </button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+            <table class="table table-hover" >
+                <thead  style="background-color: #f8f9fa;font-size: 13px">
+                <tr>
+                    <th>ORDER ID</th>
+                    <th>ORDER ITEM</th>
+                    <th>ORDERED</th>
+                    <th>TOTAL</th>
+                    <th>DATE</th>
+                </tr>
+                </thead>
+
+                <tbody ><section id="all-order">
+                    {% for order in all_order %}
+                    <tr class="p-1">
+                        <td>
+                            {{order.transaction_id}}
+                        </td>
+                        <td>
+                            {% for i in order.order_item.all %}
+                            {{ i }}<br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if order.ordered %}
+                            <b><span class="badge badge-success">Completed</span></b>
+                            {% else %}
+                            <b><span class="badge badge-warning">Order incomplete</span></b>
+                            {% endif %}
+                        </td>
+                        <td>${{ order.total_order_item_price|floatformat:"2"|intcomma }}</td>
+                        <td>{{ order.date_posted }}</td>
+                    </tr>
+                    {% endfor %}
+<!--                    <tr id="show-more"></tr>--></section>
+                </tbody>
+
+                </table>
+
+<!--            <div id="all-order"></div>-->
+            <br>
+            {% for i in page_list %}
+            <button class="btn" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</button>
+            {% endfor %}
+        </div>
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <table class="table table-hover">
+                <thead style="background-color: #f8f9fa;font-size: 13px">
+                <tr>
+                    <th>PRODUCT</th>
+                    <th>RATINGS</th>
+                    <th>REVIEW</th>
+                    <th>DATE</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for review in reviews %}
+                <tr class="p-1">
+                    <td>
+                        {{review.product}}
+                    </td>
+                    <td>
+                        {{review.ratings}}
+                    </td>
+                    <td>
+                        {{review.review}}
+                    </td>
+                    <td>{{ review.date_added }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+            <form action="{% url 'settings' %}" method="POST" class="mt-2">
+                {% csrf_token %}
+                <label>Username</label>
+                {{ form.username }}
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Phone Number</label>
+                        {{ form.phone_number }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>About</label>
+                    {{ form.about }}
+                    {{ form.media }}
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    {{ form.location }}
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-auto">
+                        <button class="btn btn-block" type="submit">Save changes</button>
+                    </div>
+                </div>
+            </form>
+            <br><br>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<script>
+    function ajax_function(page,user) {
+        $.ajax({
+            url: '{% url "paginate" %}',
+            type: "get",
+            data: {
+                'page': page,
+                'user': user,
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('#all-order').empty();
+
+                for (i = 0; i < data.length; i++) {
+                    let obj = data[i];
+                    var new_message =
+                    `<table class="table table-hover">
+                     <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr class="p-1">
+                            <td>
+                                ` + obj.transaction_id + `
+                            </td>
+                            <td>
+                                ` + obj.order_item_data + `
+                            </td>
+                            <td>
+                                <b><span class="badge badge-success">Completed</span></b>
+                            </td>
+                            <td>` + obj.total_order_item_price + ` </td>
+                            <td>` + obj.date_posted + `</td>
+                        </tr>
+                    </tbody></table>`;
+                    $('#all-order').append(new_message);
+                }
+            }
+        })
+    }
+</script>
+<style>
+    .tox-notification{display: none !important;}
+</style>
+<div class="modal fade" id="deleteuserModal" tabindex="-3" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #f6f9fc !important">
+            <div class="modal-body">
+
+                <h4>Warning! Delete @{{request.user}}?</h4>
+                <h6>If you delete your account, you will lose all your data.
+                </h6>
+
+                <div align="center">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel
+                    </button>
+                    <form action="{% url 'delete_account' request.user %}" method="post">
+                        {% csrf_token %}
+                        <input class="btn mt-2 mb-2 block-btn mr-auto" type="submit"
+                               name="delete" value="Delete my account"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

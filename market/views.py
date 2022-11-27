@@ -40,7 +40,7 @@ def home(request):
 
 @login_required
 def market_view(request):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     categories = Category.objects.all()
     product_list = Product.objects.all()
@@ -86,7 +86,7 @@ def market_view(request):
 
 @login_required
 def product_detail(request, pk):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     obj = get_object_or_404(Product, pk=pk)
     seller_products = Product.objects.filter(vendor=obj.vendor).exclude(name=obj).order_by("?")[:4]
@@ -114,7 +114,7 @@ def product_detail(request, pk):
 
 @login_required
 def checkout(request):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     check_out_list = Checkout.objects.filter(user=request.user, complete=False).order_by("-id")
     get_cart_total = sum([(item.product.price * item.quantity) for item in check_out_list])
@@ -132,7 +132,7 @@ def checkout(request):
 @login_required
 def create_view(request):
     if Vendor.objects.filter(user=request.user).exists():
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         product = Product.objects.last()
         if request.method == "POST":
@@ -173,7 +173,7 @@ def create_view(request):
 # @login_required
 def search(request):
     if request.user.is_authenticated:
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         if request.method == "GET":
             query = request.GET.get('q')
@@ -245,7 +245,7 @@ class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView, ABC
 def update_product(request, pk):
     obj = get_object_or_404(Product, pk=pk)
     obj_image = obj.productimage_set.all()
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     if request.user == obj.vendor.user:
         if request.method == "POST":

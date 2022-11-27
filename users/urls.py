@@ -11,7 +11,9 @@ urlpatterns = [
     path("create-store/", user_view.create_store, name="create_store"),
     path("<str:username>/follow", user_view.UserFollowerApi.as_view(), name="follower_vendor"),
     path('api/<str:username>/post_notify/', user_view.PostNotificationApi.as_view(), name='post_notify'),
-    path('update_notification/', user_view.update_notification, name='update_notification'),
+    path('mark_as_read/', user_view.mark_as_read, name='update_notification'),
     path('settings/', user_view.settings, name='settings'),
+    path('ajax/paginate/', user_view.paginate, name='paginate'),
+    path('delete_account/<str:username>/', user_view.delete_account, name='delete_account'),
 
 ]

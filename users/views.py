@@ -4,14 +4,17 @@ from .forms import *
 from django.contrib import messages
 from .models import *
 from market.models import *
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework import authentication, permissions, serializers
 from datetime import datetime, date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from market.serializers import OrderSerializer
+from django.db.models import F
 
 
 # Create your views here.
@@ -30,7 +33,7 @@ def register(request):
             form = form.save(commit=False)
             email = form.email
             if User.objects.filter(email=email).exists():
-                messages.error(request, "Email already exists.")
+                messages.error(request, "A user with that email already exists.")
                 return redirect("register")
             else:
                 form.save()
@@ -77,13 +80,14 @@ def create_store(request):
 @login_required
 def vendor_view(request, username):
     try:
-        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:7]
+        notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         vendor = get_object_or_404(Vendor, user__username=username)
         products = vendor.product_set.all()
+        Vendor.objects.filter(user__username=username).update(account_visit=F("account_visit") + 1)
     except Http404:
-        messages.warning(request, "You don't have an active store/profile")
-        return redirect("create")
+        messages.error(request, "The searched word has no active store/profile")
+        return redirect("error404")
     context = {
         "vendor": vendor,
         "products": products,
@@ -142,7 +146,7 @@ def vendor_dashboard(request):
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
         best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
 
-        orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted").order_by('-date_posted')[:4]
+        orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
@@ -206,7 +210,9 @@ def vendor_dashboard(request):
         "get_cart_items": total_cart_items(request),
         "now": datetime.now().hour,
         "form": StoreCreateForm(instance=vendor),
-        "customers": len(uniques)
+        "customers": len(uniques),
+
+        "account_visit": vendor.account_visit
     }
     return render(request, "users/dashboard.html", context)
 
@@ -237,7 +243,7 @@ def update_profile(request):
             messages.warning(request, 'error')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        form = UserUpdateForm(instance=request.user.vendor)
+        form = StoreCreateForm(instance=request.user.vendor)
     context = {
         "form": form,
         "notification_count": notification_count,
@@ -383,7 +389,7 @@ class PostNotificationApi(APIView):
 
 
 @login_required
-def update_notification(request):
+def mark_as_read(request):
     updated = False
     queryset = []
     for i in Notification.objects.filter(user=request.user):
@@ -395,26 +401,105 @@ def update_notification(request):
 
     data = {
         "updated": updated,
-        "notification_count": notification_count
+        "notification_count": notification_count,
+        "messages": "Notifications has been marked as read"
     }
     return JsonResponse(data)
 
 
 @login_required
 def settings(request):
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
+    user = request.user
+    all_order = Order.objects.filter(user=user, ordered=True).order_by("-date_posted")
+    all_order_count = len(all_order)
+    reviews = ProductReview.objects.filter(customer_info=user).order_by("-date_added")
+    reviews_count = len(reviews)
+
+    last_order = Order.objects.filter(user=user, ordered=True).order_by("-date_posted")[:1]
+    total_spent = sum([j.get_total for i in all_order for j in i.order_item.all()])
+
+    paginator = Paginator(all_order, 7)
+    page = request.GET.get('page', 1)
+
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
+
+    page_list = blogs.paginator.page_range
+
+    paginator = Paginator(reviews, 7)
+    page_number = request.GET.get('page')
+    reviews = paginator.get_page(page_number)
+
     if request.method == "POST":
-        form = UserUpdateForm(request.POST, instance=request.user)
+        form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form = form.save(commit=False)
+            email = form.email
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "A user with that email already exists.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            else:
+                form.save()
+                messages.success(request, 'Your account has been updated!')
+                # return redirect(f"../{request.user.vendor}/vendor/")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        form = UserUpdateForm(instance=request.user)
+        form = UserUpdateForm(instance=user)
     context = {
         "form": form,
         "get_cart_items": total_cart_items(request),
         "notification_count": notification_count,
         "notification": notification,
+        "all_order": all_order,
+        "all_order_count": all_order_count,
+        "reviews": reviews,
+        "reviews_count": reviews_count,
+        "last_order": last_order,
+        "total_spent": total_spent,
+
+        "page_list": page_list,
     }
     return render(request, "users/settings.html", context)
+
+
+@api_view(["GET", "POST"])
+def paginate(request):
+    page = request.GET.get('page', None)
+    user = request.GET.get('user', None)
+
+    starting_number = (int(page) - 1) * 7
+    ending_number = int(page) * 7
+
+    "here you should multiply the 'page' by the number of results you want per page, in my example it's 10"
+
+    instance = Order.objects.filter(user=user, ordered=True).order_by("-date_posted")[starting_number:ending_number]
+    print(instance)
+    data = OrderSerializer(instance, many=True).data
+
+    "By [starting_number:ending_number] we specify the interval of results. Order them by date or whatever you want"
+    # data = {result}
+
+    return Response(data)
+
+
+@login_required
+def delete_account(request, username):
+    try:
+        user_id = get_object_or_404(User, username=username)
+        user_id.delete()
+
+    except User.DoesNotExist:
+        messages.error(request, "User does not exist")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    except Exception as e:
+        return render(request, 'users/settings.html', {'err': e.message})
+
+    return redirect("/")

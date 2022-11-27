@@ -108,7 +108,7 @@
             </div>
         </div>
         <br>
-        <div class="col-lg-9 col-md-9 mt-2">
+        <div class="col-lg-9 col-md-9 ">
             <br>
             <h4 class="mb-4">
                 {% if 0 >= now %}
@@ -130,35 +130,6 @@
                 {% endif %}
                 {{ request.user.vendor }}😉!
             </h4>
-            {% if DOW_CHOICES|length >= 2 %}
-            <div class="mt-2 box-element text-light mb-4 bg-gradient rounded">
-                <style>
-                .bg-gradient {
-                    background-imae: -o-linear-gradient(135deg,#014ba7,#0183d0);
-                    background-imag: linear-gradient(-45deg,#014ba7,#0183d0);
-                    background-color: #152e4d;
-                    background-position: center;
-                    font-color: white;
-                    text-color: '#fff';
-                }
-
-
-
-
-
-
-                </style>
-                <h6 style="margin-bottom: .5rem;
-                font-family: vremenagrotesk,sans-serif;
-                font-weight: 900;
-                line-height: 1.5;color: #fff">Product Sales</h6>
-                <hr>
-                <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
-                        style="font-color: white;text-color: #fff;">
-                </canvas>
-
-            </div>
-            {% endif %}
 
             <div class="row mt-1">
                 <div class="col-lg-3 mb-2">
@@ -190,7 +161,7 @@
                                 <small ><b>{{ today_product.count }}</b></small>
                             </div>
                             <div class="ml-auto">
-                                <small class="fs-6 text-muted text-uppercase mb-0">Monthly </small><br>
+                                <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
                                 <small><b>0</b></small>
                             </div>
                         </div>
@@ -225,7 +196,7 @@
                                 <small><b>{{ today_order.count }}</b></small>
                             </div>
                             <div class="ml-auto">
-                                <small class="fs-6 text-muted text-uppercase mb-0">Monthly </small><br>
+                                <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
                                 <small><b>{{ monthly_order.count }}</b></small>
                             </div>
                         </div>
@@ -234,7 +205,7 @@
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
                          style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary">Total Customers</h6>
+                        <h6 class="text-secondary">Total Clients</h6>
                         <div class="row">
                             <div class="col"><h4 class="text-truncate text-info"
                                 style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">{{ customers|intword }}</h4></div>
@@ -252,20 +223,21 @@
                                 <small><b>0</b></small>
                             </div>
                             <div class="ml-auto">
-                                <small class="fs-6 text-muted text-uppercase mb-0">Monthly </small><br>
+                                <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
                                 <small><b>{{ customers|intword }}</b></small>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
                          style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
                         <h6 class="text-secondary">Total Earnings</h6>
                         <div class="row ">
                             <div class="col">
-                                <h4 class="text-truncate text-info" id="earnings-count" style="font-size: calc(1.2625rem + .15vw);">
+                                <h4 class="text-truncate text-info" id="earnings-count" data-toggle="tooltip"
+                                           title="${{ earnings|floatformat:'2'|intcomma }}" data-placement="left"
+                                    style="font-size: calc(1.2625rem + .15vw);cursor:pointer">
                                 ${{ earnings|floatformat:"2"|intcomma }}</h4>
                             </div>
                             <div class="col-auto">
@@ -282,16 +254,44 @@
                                 <small><b>${{today_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                             <div class="ml-auto">
-                                <small class="fs-6 text-muted text-uppercase mb-0">Monthly </small><br>
+                                <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
                                 <small><b>${{monthly_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
             <br>
+            {% if DOW_CHOICES|length >= 2 %}
+            <div class="box-element text-light mb-4 bg-gradient rounded">
+                <style>
+                .bg-gradient {
+                    background-imae: -o-linear-gradient(135deg,#014ba7,#0183d0);
+                    background-imag: linear-gradient(-45deg,#014ba7,#0183d0);
+                    background-color: #152e4d;
+                    background-position: center;
+                    font-color: white;
+                    text-color: '#fff';
+                }
+
+
+
+
+
+
+                </style>
+                <h6 style="margin-bottom: .5rem;
+                font-family: vremenagrotesk,sans-serif;
+                font-weight: 900;
+                line-height: 1.5;color: #fff">Product Sales</h6>
+                <hr>
+                <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
+                        style="font-color: white;text-color: #fff;">
+                </canvas>
+
+            </div>
+            {% endif %}
             <style>
                 .order-row{
                     display: flex;
@@ -305,7 +305,61 @@
                 }
 
             </style>
+            <div class="row">
+                <div class="col-lg-6 mb-2">
+                    <div class="box-element p-3"
+                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <div class="row">
+                            <div class="col">
+                                <div class="media">
+                                    <img src="{% static 'images/wallet.png' %}" height="50" width="50" alt="">
+                                    <div class="media-body ml-2">
+                                        <h6 class="text-secondary mb-1">Current Balance</h6>
+                                        <h4 class="text-truncate text-info" style="font-size: calc(1.2625rem + .15vw);">
+                                            $1,120.00
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge badge-light-success badge-info">
+                                       <a href="" class="text-light"> Request withdrawal </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <div class="box-element p-3"
+                         style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <div class="row">
+                            <div class="col">
+                                <div class="media">
+                                    <img src="{% static 'images/website.png' %}" height="50" width="50" alt="">
+                                    <div class="media-body ml-2">
+                                        <h6 class="text-secondary mb-1">Store visit</h6>
+                                        <div class="d-flex align-items-center">
+                                            <h4 class="text-truncate text-info mr-2" style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
+                                                {{account_visit|intword}}
+                                            </h4>
 
+                                            <span class="badge badge-light-success mb-1 ml-2 badge-warning" style="width: 45px">
+                                                2.34%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge badge-warning">
+                                       <a href="{% url 'vendor' request.user %}" class="text-dark"> Go to store </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
 
             {% if request.user.vendor %}
             {% if best_selling_products|length > 0 %}
@@ -320,7 +374,7 @@
                                 <th>PRODUCT</th>
                                 <th>UPLOADED</th>
                                 <th>PRICE</th>
-                                <th>QUANTITY</th>
+                                <th>PURCHASE</th>
 <!--                                <th>AMOUNT</th>-->
                             </tr>
                             </thead>

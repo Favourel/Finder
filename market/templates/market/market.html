@@ -67,67 +67,79 @@
 <div class="container">
     {% if products|length > 0 %}
     <div class="row p-2" id="articles">
-        {% for product in products %}
-        <div class="col-lg-3 col-md-4 col-sm-4 col-6">
-            <style>
-                .col-6 {
-                    padding: 6px;
-                }
-            </style>
-            <a href="{{ product.get_absolute_url }}">
-                {% if product.productimage_set.all %}
+        <div class="col-lg-3">
+            <div class="box-element">
+                {% for category in categories %}
+                <h6>{{ category }}</h6>
+                <hr>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div class="row">
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 col-sm-4 col-6">
+                <style>
+                    .col-6 {
+                        padding: 6px;
+                    }
+                </style>
+                <a href="{{ product.get_absolute_url }}">
+                    {% if product.productimage_set.all %}
 
-                    {% for product_image in product.productimage_set.all %}
-                        {% if forloop.first %}
+                        {% for product_image in product.productimage_set.all %}
+                            {% if forloop.first %}
 
-                        <div class="single-testimonial text-center">
-                            <img loading="lazy" src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
-                                 class="thumbnail-product">
-                        </div>
-                        {% endif %}
-
-                    {% endfor %}
-
-                {% else %}
-                <img src="{{ product.image.url }}" alt=""
-                     class="thumbnail-product">
-                {% endif %}
-
-            </a>
-
-            <div class="card p-2 ">
-                <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
-                    <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
-                    <div class="media">
-                        <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
-                        <div class="media-body ">
-                            <div class="float-right  badge badge-warning alert alert-warning py-2">
-                                <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
-                                     fill="currentColor"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                          d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                    <path fill-rule="evenodd"
-                                          d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                </svg>
-                                <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                            <div class="single-testimonial text-center">
+                                <img loading="lazy" src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
+                                     class="thumbnail-product">
                             </div>
-                        </div>
-                    </div>
+                            {% endif %}
+
+                        {% endfor %}
+
+                    {% else %}
+                    <img src="{{ product.image.url }}" alt=""
+                         class="thumbnail-product">
+                    {% endif %}
 
                 </a>
 
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
-                        <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
-                            <h6 class="mt-1">{{ product.vendor }}</h6></a>
+                <div class="card p-2 ">
+                    <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
+                        <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                        <div class="media">
+                            <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
+                            <div class="media-body ">
+                                <div class="float-right  badge badge-warning alert alert-warning py-2">
+                                    <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                         fill="currentColor"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                        <path fill-rule="evenodd"
+                                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    </svg>
+                                    <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                                </div>
+                            </div>
+                        </div>
 
-                    </li>
-                </ul>
+                    </a>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
+                            <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                                <h6 class="mt-1">{{ product.vendor }}</h6></a>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
     <style>
         .thumbnail-product{

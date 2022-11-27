@@ -212,7 +212,6 @@
             </section>
         </div>
         <div class="col-lg-3 mt-3">
-
 <!--            <div class="sticky-top" style="top: 9px">-->
                 <div class="box-element">
                     <h4>Order Summary</h4>
@@ -249,7 +248,7 @@
                     <!--                <a href="" class="btn btn-info btn-block">-->
                     <!--                    CONFIRM ORDER-->
                     <!--                </a>-->
-                    <a href="{% url 'process_order' %}" type="submit" onclick="payWithPaystack()" id="make-payment" class="btn btn-block btn-info">
+                    <a href="{% url 'process_order' %}" type="submit" onclick="payWithPaystack()" id="make-payment" class="btn btn-block">
                         <div class="spinner-border text-light hide" id="spinner" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
@@ -335,7 +334,7 @@ function payWithPaystack(e) {
 
         .then((data) =>{
                 console.log('Success:', data);
-                window.location.href = '/market/'
+                window.location.href = '/settings/'
             })
 
       //console.log(message);

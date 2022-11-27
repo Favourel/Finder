@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from users.models import User
 from market.models import Vendor
+from djrichtextfield.widgets import RichTextWidget
 
 
 class UserRegisterForm(UserCreationForm):
@@ -20,14 +21,47 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    # username = forms.CharField(widget=forms.TextInput(attrs={
-    #     "class": "form-control",
-    #     'name': "username"
-    # }))
-    # email = forms.EmailField(widget=forms.EmailInput(attrs={
-    #     "class": "form-control",
-    #     'email': "email"
-    # }))
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        "class": "form-control",
+        'name': "username",
+        "id": "username",
+        'placeholder': 'Username',
+
+    }))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={
+        "class": "form-control",
+        'name': "email",
+        "id": "email",
+        'placeholder': 'Email Address',
+
+    }))
+    about = forms.CharField(widget=forms.Textarea(attrs={
+        'placeholder': 'About',
+        'type': 'text',
+        'name': 'about',
+        'id': 'about',
+        'class': 'form-control',
+        "rows": 3,
+    }
+    )
+    )
+    phone_number = forms.CharField(widget=forms.NumberInput(attrs={
+        "class": "form-control",
+        'name': "phone_number",
+        'type': 'number',
+        "id": "phone_number",
+        'placeholder': 'Phone Number',
+
+    }))
+    location = forms.CharField(widget=forms.TextInput(attrs={
+        'name': "location",
+        'type': 'text',
+        "required": False,
+        'placeholder': 'Location',
+        "class": "form-control",
+        "id": "location"
+
+    }))
 
     class Meta:
         model = User
