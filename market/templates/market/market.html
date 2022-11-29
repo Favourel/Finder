@@ -49,22 +49,21 @@
                             });
 
                         </script>
-
-                        <ul class="dropdown-menu-list dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" href="/market/?category_id=">All category</a>
+                        <ul class="dropdown-menu-list dropdown-menu" style="width:12rem" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="/market/">All Product</a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">Ratings</a>
+                                <a class="dropdown-item" href="/market/?rate-ings">Ratings</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/market/?low-high-price=">Low to high price</a>
+                                <a class="dropdown-item" href="/market/?low-high-price">Low to high price</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">High to low price</a>
+                                <a class="dropdown-item" href="/market/?high-low-price">High to low price</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">Recent</a>
+                                <a class="dropdown-item" href="/market/?recent">Recent</a>
                             </li>
                         </ul>
                     </div>
@@ -119,37 +118,15 @@
                     <!-- Rating Star group -->
                     <ul class="list-inline mb-0 g-3">
                         <!-- Item -->
+                        {% for i in 5|times %}
                         <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings=1" class="btn btn-sm btn-light btn-primary-soft-check" >1
+                            <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light
+                            btn-primary-soft-check" >{{forloop.counter}}
                                 <i class="fa fa-star "></i>
                             </a>
                         </li>
-                        <!-- Item -->
-                        <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings=2" class="btn btn-sm btn-light btn-primary-soft-check" >2
-                                <i class="fa fa-star "></i>
-                            </a>
-                        </li>
-                        <!-- Item -->
-                        <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings=3" class="btn btn-sm btn-light btn-primary-soft-check">3
-                                <i class="fa fa-star "></i>
-                            </a>
-                        </li>
-                        <!-- Item -->
-                        <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings=4" class="btn btn-sm btn-light btn-primary-soft-check" >4
-                                <i class="fa fa-star "></i>
-                            </a>
-                        </li>
-                        <!-- Item -->
-                        <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings=5" class="btn btn-sm btn-light btn-primary-soft-check" >5
-                                <i class="fa fa-star ">
+                        {% endfor %}
 
-                                </i>
-                            </a>
-                        </li>
                     </ul>
                     <br>
                 </div>
@@ -158,10 +135,8 @@
         <div class="col-lg-9" >
             <div class="headline">
                 <div class="market-started">
-
                     <div class="market-get-started container">
                          <h3><b> Easily find the <i>Talent</i> and <i>Gigs</i> needed to get your business <i>growing</i>.</b></h3>
-                        <br>
                     </div>
                 </div>
             </div>
@@ -297,7 +272,7 @@
         animation: gradient 10s ease infinite;
         background-size: 400% 400%;
         color: #fff;
-        height: 40vh;
+        height: 35vh;
         align-items: center;
         display: flex;
         justify-content: center;
@@ -443,6 +418,19 @@
                         <div class="card p-2 shadow">
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
+                                <p class="fs--1">
+                                    {% with str="` + obj.times + `" %}
+                                    {% for i in str %}
+                                    <span class="fa fa-star checked text-warning"></span>
+                                    {% endfor %}
+                                    {% endwith %}
+                                    {% for i in str %}
+                                    <span class="fa fa-star"></span>
+                                    {% endfor %}
+
+                                    <span class="text-500 text-grey fw-semi-bold ms-1">
+                                        ({{product.productreview_set.count}} people rated)</span>
+                                </p>
                                 <div class="media">
                                     <h5 class="mt-1"><b>` + obj.edited_price + `</b></h5>
                                     <div class="media-body ">
@@ -478,15 +466,15 @@
         })
     }
 
-    function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
-    const [from, to] = getParsed(fromInput, toInput);
-    fillSlider(fromInput, toInput, '#C6C6C6', '#fd5631', controlSlider);
-    if (from > to) {
-        fromSlider.value = to;
-        fromInput.value = to;
-    } else {
-        fromSlider.value = from;
-    }
+function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
+const [from, to] = getParsed(fromInput, toInput);
+fillSlider(fromInput, toInput, '#C6C6C6', '#fd5631', controlSlider);
+if (from > to) {
+    fromSlider.value = to;
+    fromInput.value = to;
+} else {
+    fromSlider.value = from;
+}
 }
 
 function controlToInput(toSlider, fromInput, toInput, controlSlider) {

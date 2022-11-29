@@ -24,6 +24,7 @@ class ProductSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
     vendor = VendorPublicSerializer(read_only=True)
     vendor_url = serializers.SerializerMethodField(read_only=True)
+    times = serializers.SerializerMethodField(read_only=True)
     products_images = ProductImageSerializer(source="productimage_set", read_only=True, many=True)
 
     class Meta:
@@ -38,7 +39,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "product_purchase",
             "vendor",
             "vendor_url",
-            "products_images"
+            "products_images",
+            "rating_count",
+            "times",
         ]
 
     @classmethod
@@ -52,6 +55,12 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_vendor_url(self, obj):
         request = self.context.get("request")
         return reverse("vendor", kwargs={"username": obj.vendor.user}, request=request)
+
+    @classmethod
+    def get_times(cls, obj):
+        range_round = range(round(obj.rating_count))
+        print(range(round(obj.rating_count)))
+        return str(range_round)
 
 
 class OrderSerializer(serializers.ModelSerializer):
