@@ -5,6 +5,7 @@ from . import views as market_view
 urlpatterns = [
     path("", market_view.home, name="home"),
     path("market/", market_view.market_view, name="market"),
+    path("paginate_products/", market_view.paginate_products, name="paginate_products"),
     path("product/<uuid:pk>/", market_view.product_detail, name="product-detail"),
     path("<uuid:pk>/add_to_checkout/", market_view.add_to_checkout, name="add_to_checkout"),
     path("<uuid:pk>/remove_from_checkout/", market_view.remove_from_checkout, name="remove_from_checkout"),

@@ -134,51 +134,16 @@
             <div class="row mt-1">
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
-
-                        <h6  class="text-secondary">Total Products</h6>
-                        <div class="order-row">
-                            <h4 class="text-truncate" id="product-count" style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
-                                {% if request.user.vendor %}
-                                {{ products.count|intword }}
-                                {% else %}
-                                0
-                                {% endif %}
-                            </h4>
-                            <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" width="30px"
-                                 height="30px" fill="currentColor"
-                                 class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">
-                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                            </svg>
-<!--                            <img class="ml-auto" style="color: #f5803e!important;"-->
-<!--                                 src="{% static 'images/open-box.png' %}" width="32px" height="32px" alt="">-->
-
-                        </div>
-                        <hr class="my-1">
-                        <div class="order-row">
-                            <div style="display:block">
-                                <small class="fs-6 text-muted text-uppercase mb-0">Today </small><br>
-                                <small ><b>{{ today_product.count }}</b></small>
-                            </div>
-                            <div class="ml-auto">
-                                <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
-                                <small><b>0</b></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 mb-2">
-                    <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary">Total Orders</h6>
+                         style="background-image:url('{% static 'images/corner-22.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <h6 class="text-secondary text-uppercase">Total Orders</h6>
                         <div class="row ">
                             <div class="col">
                                 <div class="d-flex align-items-center">
                                     <h4 class="text-truncate text-info" id="order-count" style="font-size: calc(1.2625rem + .15vw);">
                                         {{ all_order.count|intword }}
                                     </h4>
-                                    <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 45px">
-                                        {{percentage}}%
+                                    <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 55px">
+                                         ↑{{percentage_order}}%
                                     </span>
                                 </div>
                             </div>
@@ -204,13 +169,23 @@
                 </div>
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary">Total Clients</h6>
+                         style="background-image:url('{% static 'images/corner-12.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <h6 class="text-secondary text-uppercase">Total Clients</h6>
                         <div class="row">
-                            <div class="col"><h4 class="text-truncate text-info"
-                                style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">{{ customers|intword }}</h4></div>
+                            <div class="col">
+                                <div class="d-flex align-items-center">
+                                    <h4 class="text-truncate text-info" id="client-count"
+                                        style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
+                                            {{ customers|intword }}</h4>
+                                    <span class="badge badge-light-success mb-1 ml-2 badge-info"
+                                          style="width: 55px;background-color: #f5803e!important;">
+                                         ↑4.89%
+                                    </span>
+                                </div>
+
+                            </div>
                             <div class="col-auto">
-                                <svg viewBox="0 0 24 24" height="30" width="30" class="text-danger" xmlns="http://www.w3.org/2000/svg">
+                                <svg style="color: #f5803e!important;" viewBox="0 0 24 24" height="30" width="30" class="text-danger" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M2.250 6.000 A2.250 2.250 0 1 0 6.750 6.000 A2.250 2.250 0 1 0 2.250 6.000 Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
                                     <path d="M4.5,9.75A3.75,3.75,0,0,0,.75,13.5v2.25h1.5l.75,6H6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
                                     <path d="M17.250 6.000 A2.250 2.250 0 1 0 21.750 6.000 A2.250 2.250 0 1 0 17.250 6.000 Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M19.5,9.75a3.75,3.75,0,0,1,3.75,3.75v2.25h-1.5l-.75,6H18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M9.000 3.750 A3.000 3.000 0 1 0 15.000 3.750 A3.000 3.000 0 1 0 9.000 3.750 Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M17.25,13.5a5.25,5.25,0,0,0-10.5,0v2.25H9l.75,7.5h4.5l.75-7.5h2.25Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
@@ -229,20 +204,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 mb-2">
+                <div class="col-lg-6 mb-2">
                     <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary">Total Earnings</h6>
+                         style="background-image:url('{% static 'images/corner-22.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                        <h6 class="text-secondary text-uppercase">Total Earnings</h6>
                         <div class="row ">
                             <div class="col">
-                                <h4 class="text-truncate text-info" id="earnings-count" data-toggle="tooltip"
+                                <div class="d-flex align-items-center">
+                                    <h4 class="text-truncate text-info" id="earnings-count" data-toggle="tooltip"
                                            title="${{ earnings|floatformat:'2'|intcomma }}" data-placement="left"
-                                    style="font-size: calc(1.2625rem + .15vw);cursor:pointer">
-                                ${{ earnings|floatformat:"2"|intcomma }}</h4>
+                                            style="font-size: calc(1.2625rem + .15vw);cursor:pointer">
+                                        ${{ earnings|floatformat:"2"|intcomma }}</h4>
+                                    <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 55px">
+                                         ↑{{percentage_earnings}}%
+                                    </span>
+                                    <span class="text-grey ml-2 mb-1"><small>since last 7 days</small></span>
+                                </div>
                             </div>
                             <div class="col-auto">
-<!--                                <img class="ml-auto" style="color: #f5803e!important;"-->
-<!--                                 src="{% static 'images/earn.png' %}" width="32px" height="32px" alt="">-->
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="30" width="30" class="text-info"><defs><style>.a{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px;}</style></defs><title>monitor-graph-line</title><polygon class="a" points="15 23.253 9 23.253 9.75 18.753 14.25 18.753 15 23.253"></polygon><line class="a" x1="6.75" y1="23.253" x2="17.25" y2="23.253"></line><rect class="a" x="0.75" y="0.753" width="22.5" height="18" rx="3" ry="3"></rect><path class="a" d="M18.75,5.253H16.717a1.342,1.342,0,0,0-.5,2.588l2.064.825a1.342,1.342,0,0,1-.5,2.587H15.75"></path><line class="a" x1="17.25" y1="5.253" x2="17.25" y2="4.503"></line><line class="a" x1="17.25" y1="12.003" x2="17.25" y2="11.253"></line><path class="a" d="M.75,11.253,4.72,7.284a.749.749,0,0,1,1.06,0L7.72,9.223a.749.749,0,0,0,1.06,0l3.97-3.97"></path><line class="a" x1="0.75" y1="15.753" x2="23.25" y2="15.753"></line>
                                 </svg>
                             </div>
@@ -308,13 +287,13 @@
             <div class="row">
                 <div class="col-lg-6 mb-2">
                     <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-2.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                         style="background-image:url('{% static 'images/corner-22.png' %}');background-position: right; border-top-right-radius: .375rem;">
                         <div class="row">
                             <div class="col">
                                 <div class="media">
                                     <img src="{% static 'images/wallet.png' %}" height="50" width="50" alt="">
                                     <div class="media-body ml-2">
-                                        <h6 class="text-secondary mb-1">Current Balance</h6>
+                                        <h6 class="text-secondary text-uppercase mb-1">Current Balance</h6>
                                         <h4 class="text-truncate text-info" style="font-size: calc(1.2625rem + .15vw);">
                                             $1,120.00
                                         </h4>
@@ -331,19 +310,24 @@
                 </div>
                 <div class="col-lg-6 mb-2">
                     <div class="box-element p-3"
-                         style="background-image:url('{% static 'images/corner-1.png' %}');background-position: right; border-top-right-radius: .375rem;">
+                         style="background-image:url('{% static 'images/corner-12.png' %}');background-position: right; border-top-right-radius: .375rem;">
                         <div class="row">
                             <div class="col">
                                 <div class="media">
-                                    <img src="{% static 'images/website.png' %}" height="50" width="50" alt="">
+                                    <svg style="color: #f5803e!important;" xmlns="http://www.w3.org/2000/svg" height="50" width="50" fill="currentColor"
+                                         class="bi bi-box-seam ml-auto mt-1" viewBox="0 0 16 16">
+                                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                                    </svg>
+<!--                                    <img src="{% static 'images/website.png' %}" height="50" width="50" alt="">-->
                                     <div class="media-body ml-2">
-                                        <h6 class="text-secondary mb-1">Store visit</h6>
+                                        <h6 class="text-secondary text-uppercase mb-1">Store visit</h6>
                                         <div class="d-flex align-items-center">
-                                            <h4 class="text-truncate text-info mr-2" style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
+                                            <h4 class="text-truncate text-info " style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
                                                 {{account_visit|intword}}
                                             </h4>
 
-                                            <span class="badge badge-light-success mb-1 ml-2 badge-warning" style="width: 45px">
+                                            <span class="badge text-light badge-light-success mb-1 ml-2 badge-warning"
+                                                  style="width: 45px;background-color: #f5803e!important;">
                                                 2.34%
                                             </span>
                                         </div>
@@ -351,8 +335,8 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <span class="badge badge-warning">
-                                       <a href="{% url 'vendor' request.user %}" class="text-dark"> Go to store </a>
+                                <span class="badge badge-warning" style="background-color: #f5803e!important;">
+                                       <a href="{% url 'vendor' request.user %}" class="text-light"> Go to store </a>
                                 </span>
                             </div>
                         </div>
@@ -367,7 +351,24 @@
             <div class="row">
                 <div class="col-lg-9">
                     <div class="card shadow" style="overflow:auto;">
-                        <h5 class="p-2"><b>Best Selling Product</b></h5>
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="p-2"><b>Best Selling Product</b></h5>
+                            </div>
+                            <div class="col-auto mt-2 mr-2">
+                                <a href="{% url 'export_products' %}" class="btn btn-sm btn-block ">
+                                    Export to CSV
+                                    <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                         fill="currentColor"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                        <path fill-rule="evenodd"
+                                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                         <table class="table table-hover">
                             <thead style="background-color: #f8f9fa;font-size: 13px">
                             <tr>
@@ -498,8 +499,20 @@
      aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content" style="background-color: #f6f9fc !important">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Order listing</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="#fff">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black"></rect>
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="black"></rect>
+                        </svg>
+                    </span>
+                    </span>
+                </button>
+            </div>
             <div class="modal-body">
-                <h4>Order listing</h4>
                 <table class="table table-hover">
                     <thead style="background-color: #f8f9fa;">
                     <tr>
@@ -555,8 +568,8 @@
   window.requestAnimationFrame(step);
 }
 
-const obj = document.getElementById("product-count");
-animateValue(obj, 0, {{products.count}}, 2000);
+const obj = document.getElementById("client-count");
+animateValue(obj, 0, {{customers}}, 2000);
 
 const obj_order_count = document.getElementById("order-count");
 animateValue(obj_order_count, 0, {{all_order.count}}, 2000);

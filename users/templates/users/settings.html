@@ -62,7 +62,7 @@
                     <div class="col">
                         <b>TOTAL ORDERS</b>
                         <br>
-                        <p>{{all_order.count}}</p>
+                        <p>{{all_order_count}}</p>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                 </tr>
                 </thead>
 
-                <tbody ><section id="all-order">
+                <tbody><section id="all-order">
                     {% for order in all_order %}
                     <tr class="p-1">
                         <td>
@@ -167,9 +167,32 @@
 
 <!--            <div id="all-order"></div>-->
             <br>
-            {% for i in page_list %}
-            <button class="btn" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</button>
-            {% endfor %}
+<!--            {% for i in page_list %}-->
+<!--            <button class="btn" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</button>-->
+<!--            {% endfor %}-->
+
+            {% if all_order.has_other_pages %}
+                {% if all_order.has_previous %}
+                <a class="btn-sm btn btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
+                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.previous_page_number }}#shop">&laquo;
+                    Previous
+                </a>
+                {% endif %}
+                {% for num in all_order.paginator.page_range %}
+                {% if all_order.number == num %}
+                <a class="btn-sm btn btn-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
+                {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}
+                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if all_order.has_next %}
+                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}#shop">Next
+                    &raquo;</a>
+                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}#shop">Last
+                    Page
+                    &raquo;</a>
+                {% endif %}
+            {% endif %}
         </div>
         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
             <table class="table table-hover">
@@ -189,7 +212,7 @@
                         {{review.product}}
                     </td>
                     <td>
-                        {{review.ratings}}
+                        {{review.rating}}
                     </td>
                     <td>
                         {{review.review}}

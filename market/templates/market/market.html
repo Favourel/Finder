@@ -27,20 +27,20 @@
     <div class="search-category">
         <div class="box-element">
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col">
                     <form action="{% url 'search' %}" class="d-flex" autocomplete="off" method="GET" value="{{request.GET.q}}">
-                    <input style="width: 68rem" type="text" name="q" value="{{request.GET.q}}" class="form-control"
+                    <input style="width: 69rem" type="text" name="q" value="{{request.GET.q}}" class="form-control"
                         placeholder="What service are you looking for today?"/>
                     <div class="autocomplete" style="width:300px; display:none;">
                         <input type="submit" name="submit" value="Search"/>
                     </div>
                 </form>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-auto">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                            Categories
+                            Sort by
                         </button>
                         <script>
                             $(".dropdown-toggle").click(function(){
@@ -52,10 +52,19 @@
                         <ul class="dropdown-menu-list dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li><a class="dropdown-item" href="/market/?category_id=">All category</a>
                             </li>
-                            {% for category in categories %}
-                            <li><a class="dropdown-item" href="/market/?category_id={{ category.id }}">{{category}}</a>
+
+                            <li>
+                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">Ratings</a>
                             </li>
-                            {% endfor %}
+                            <li>
+                                <a class="dropdown-item" href="/market/?low-high-price=">Low to high price</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">High to low price</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/market/?category_id={{ category.id }}">Recent</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -66,79 +75,200 @@
 <br><br><br>
 <div class="container">
     {% if products|length > 0 %}
-    <div class="row p-2" id="articles">
+    <div class="row p-2" >
         <div class="col-lg-3">
-            <div class="box-element">
-                {% for category in categories %}
-                <h6>{{ category }}</h6>
-                <hr>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="col-lg-9">
-            <div class="row">
-            {% for product in products %}
-            <div class="col-lg-4 col-md-6 col-sm-4 col-6">
-                <style>
-                    .col-6 {
-                        padding: 6px;
-                    }
-                </style>
-                <a href="{{ product.get_absolute_url }}">
-                    {% if product.productimage_set.all %}
+            <div class="sticky-top" style="top: 110px">
+                <div class="box-element">
+                    <h4><b>Categories</b></h4>
+                    <hr>
+                    {% for category in categories %}
+                    <h6><a class="dropdown-item" href="/market/?category_id={{ category.id }}">{{ category }}</a></h6>
+                    <hr>
+                    {% endfor %}
 
-                        {% for product_image in product.productimage_set.all %}
-                            {% if forloop.first %}
-
-                            <div class="single-testimonial text-center">
-                                <img loading="lazy" src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
-                                     class="thumbnail-product">
+                    <br>
+                    <h4><b>Price Range</b></h4>
+                    <hr>
+                    <form value="{{request.GET.min_price}}&{{request.GET.max_price}}" method="get">
+                        <div class="range_container">
+                            <div class="sliders_control">
+                                <input id="fromSlider" type="range" name="min_price" value="{% if request.GET.min_price %}{{request.GET.min_price}}{% else %}10{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
+                                <input id="toSlider" type="range" name="max_price" value="{% if request.GET.max_price %}{{request.GET.max_price}}{% else %}{{half_max_price}}{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
                             </div>
-                            {% endif %}
-
-                        {% endfor %}
-
-                    {% else %}
-                    <img src="{{ product.image.url }}" alt=""
-                         class="thumbnail-product">
-                    {% endif %}
-
-                </a>
-
-                <div class="card p-2 ">
-                    <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
-                        <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
-                        <div class="media">
-                            <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
-                            <div class="media-body ">
-                                <div class="float-right  badge badge-warning alert alert-warning py-2">
-                                    <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
-                                         fill="currentColor"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                        <path fill-rule="evenodd"
-                                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                    </svg>
-                                    <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                            <div class="form_control">
+                                <div class="form_control_container">
+                                    <div class="form_control_container__time">Min Price</div>
+                                    <input class="form_control_container__time__input" type="number" name="min_price" id="fromInput" value="{% if request.GET.min_price %}{{request.GET.min_price}}{% else %}10{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
+                                </div>
+                                <div class="form_control_container">
+                                    <div class="form_control_container__time">Max Price</div>
+                                    <input class="form_control_container__time__input" name="max_price" type="number" id="toInput" value="{% if request.GET.max_price %}{{request.GET.max_price}}{% else %}{{half_max_price}}{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
                                 </div>
                             </div>
+                            <br>
+                            <div class="autocomplete">
+                                <input type="submit" class="btn btn-block" name="range-value" value="Search"/>
+                            </div>
                         </div>
+                    </form>
+                    <br>
+                    <!-- Title -->
+                    <h4><b>Rating Star</b></h4>
+                    <hr>
+                    <!-- Rating Star group -->
+                    <ul class="list-inline mb-0 g-3">
+                        <!-- Item -->
+                        <li class="list-inline-item mb-0">
+                            <a href="/market/?ratings=1" class="btn btn-sm btn-light btn-primary-soft-check" >1
+                                <i class="fa fa-star "></i>
+                            </a>
+                        </li>
+                        <!-- Item -->
+                        <li class="list-inline-item mb-0">
+                            <a href="/market/?ratings=2" class="btn btn-sm btn-light btn-primary-soft-check" >2
+                                <i class="fa fa-star "></i>
+                            </a>
+                        </li>
+                        <!-- Item -->
+                        <li class="list-inline-item mb-0">
+                            <a href="/market/?ratings=3" class="btn btn-sm btn-light btn-primary-soft-check">3
+                                <i class="fa fa-star "></i>
+                            </a>
+                        </li>
+                        <!-- Item -->
+                        <li class="list-inline-item mb-0">
+                            <a href="/market/?ratings=4" class="btn btn-sm btn-light btn-primary-soft-check" >4
+                                <i class="fa fa-star "></i>
+                            </a>
+                        </li>
+                        <!-- Item -->
+                        <li class="list-inline-item mb-0">
+                            <a href="/market/?ratings=5" class="btn btn-sm btn-light btn-primary-soft-check" >5
+                                <i class="fa fa-star ">
+
+                                </i>
+                            </a>
+                        </li>
+                    </ul>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9" >
+            <div class="headline">
+                <div class="market-started">
+
+                    <div class="market-get-started container">
+                         <h3><b> Easily find the <i>Talent</i> and <i>Gigs</i> needed to get your business <i>growing</i>.</b></h3>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row" id="articles">
+                {% for product in products %}
+                <div class="col-lg-4 col-md-6 col-sm-4 mb-2 col-6">
+                    <style>
+                        .col-6 {
+                            padding: 6px;
+                        }
+                    </style>
+                    <a href="{{ product.get_absolute_url }}">
+                        {% if product.productimage_set.all %}
+
+                            {% for product_image in product.productimage_set.all %}
+                                {% if forloop.first %}
+
+                                <div class="single-testimonial text-center">
+                                    <img loading="lazy" src="{{ product_image.image.url }}" fill="777" background="#777" color="#777" alt=""
+                                         class="thumbnail-product">
+                                </div>
+                                {% endif %}
+
+                            {% endfor %}
+
+                        {% else %}
+                        <img src="{{ product.image.url }}" alt=""
+                             class="thumbnail-product">
+                        {% endif %}
 
                     </a>
 
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
-                            <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
-                                <h6 class="mt-1">{{ product.vendor }}</h6></a>
+                    <div class="card p-2 shadow">
+                        <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
+                            <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                            <p class="fs--1">
+                                    <span class="fa fa-star checked text-warning"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="text-500 text-grey fw-semi-bold ms-1">
+                                        ({{product.productreview_set.count}} people rated)</span>
+                                </p>
+                                <style>
 
-                        </li>
-                    </ul>
+                                    .fw-semi-bold {
+                                        font-weight: 500 !important;
+                                        color: grey !important;
+                                    }
+
+                                </style>
+                            <div class="media">
+                                <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
+                                <div class="media-body ">
+                                    <div class="float-right  badge badge-warning alert alert-warning py-2">
+                                        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                        </svg>
+                                        <strong class="ml-2"> {{ product.product_purchase }} </strong> sales
+                                    </div>
+                                </div>
+                            </div>
+
+                        </a>
+
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
+                                <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                                    <h6 class="mt-1">{{ product.vendor }}</h6></a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
+            </div>
+            <br>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-auto">
+                    {% for i in page_list %}
+                    <button class="btn" onclick="ajax_paginate_products_function('{{i}}')">{{i}}</button>
+                    {% endfor %}
                 </div>
             </div>
-            {% endfor %}
+            <br>
+            <br>
+            <br>
+            <div class="headline">
+                <div class="get-started">
+                    <div class="container-get-started container">
+                         <h2 class=""><b>Find the <i>talent</i> needed to get your business <i>growing</i>.</b></h2>
+                        <br>
+                        <br>
+                        <a href="{% url 'create' %}" class="btn shadow">Get started</a>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
     <style>
@@ -149,36 +279,8 @@
         }
     </style>
     <br>
-    <div class="pagination">
-    {% for i in page_range %}
-<!-- box-shadow:hsl(0, 0%, 80%) 0 0 16px;    <a style="margin-left: 5px; " class="test" href="" data-url="{{i}}">{{i}}</a>-->
-    <a class="btn-sm btn btn-outline-info ml-2 mb-7" data-url="{{i}}" href="">{{i}}</a>
-    {% endfor %}
-		</div>
-    {% if products.has_other_pages %}
-    <div class="container mt-2" align="center">
-        {% if products.has_previous %}
-        <a class="btn-sm btn btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
-        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.previous_page_number }}#shop">&laquo;
-            Previous
-        </a>
-        {% endif %}
-        {% for num in products.paginator.page_range %}
-        {% if products.number == num %}
-        <a class="btn-sm btn btn-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
-        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
-        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
-        {% endif %}
-        {% endfor %}
-        {% if products.has_next %}
-        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.next_page_number }}#shop">Next
-            &raquo;</a>
-        <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ products.paginator.num_pages }}#shop">Last
-            Page
-            &raquo;</a>
-        {% endif %}
-    </div>
-    {% endif %}
+    <br>
+    <br>
 
     {% else %}
     <div class="container" id="product" align="center" style="opacity: 0.7" fill="#000">
@@ -187,6 +289,281 @@
     </div>
     {% endif %}
 </div>
+<style>
+    .get-started{
+        background-image: linear-gradient(45deg, orange, #f5803e, #fd5631, #db3717, yellow);
+        animation: gradient 10s ease infinite;
+        background-size: 400% 400%;
+        color: #fff;
+        height: 40vh;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        border-radius: 25px;
+    }
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    .container-get-started h2{
+        align-items: center;
+        display: inline-block;
+        justify-content: center;
+    }
+
+    .market-started{
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% static 'images/product-package-boxes-shopping-bag-cart-with-laptop-online-shopping-delivery-concept_38716-138.jpg' %}') no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: relative;
+        background-size: cover;
+        color: #fff;
+        height: 20vh;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        border-radius: 5px;
+    }
+
+    .market-get-started h2{
+        align-items: center;
+        display: inline-block;
+        justify-content: center;
+    }
+    .range_container {
+      display: flex;
+      flex-direction: column;
+      width: 90%;
+      margin: 15% auto;
+    }
+
+    .sliders_control {
+      position: relative;
+      min-height: 50px;
+    }
+
+    .form_control {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      pointer-events: all;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px #C6C6C6;
+      cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      -webkit-appearance: none;
+      pointer-events: all;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px #C6C6C6;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      background: #f7f7f7;
+    }
+
+    input[type=range]::-webkit-slider-thumb:active {
+      box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+      -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+    }
+
+    input[type="number"] {
+      width: 100px;
+      height: 30px;
+      font-size: 20px;
+      border: none;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+       opacity: 1;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 2px;
+      width: 100%;
+      position: absolute;
+      background-color: #C6C6C6;
+      pointer-events: none;
+    }
+
+    #fromSlider {
+      height: 0;
+      z-index: 1;
+    }
+
+</style>
+<script>
+    function ajax_paginate_products_function(page) {
+        $.ajax({
+            url: '{% url "paginate_products" %}',
+            type: "get",
+            data: {
+                'page': page,
+            },
+            dataType: 'json',
+            success: function (data) {
+                //$('#articles').empty();
+                $('#articles').html('');
+
+                for (i = 0; i < data.length; i++) {
+                    let obj = data[i];
+                    var property_object = `<div class="col-lg-4 px-1 py-1 col-md-6 col-sm-4 mb-2 col-6">
+
+					    <a href="/product/` + obj.id + `">
+                            <img src="` + obj.products_images[0].image + `" fill="777" background="#777" color="#777" alt=""
+                                 class="thumbnail-product">
+                        </a>
+
+                        <div class="card p-2 shadow">
+                            <a href="` + obj.url + `" class="text-dark text-decoration-none">
+                                <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
+                                <div class="media">
+                                    <h5 class="mt-1"><b>` + obj.edited_price + `</b></h5>
+                                    <div class="media-body ">
+                                        <div class="float-right  badge badge-warning alert alert-warning py-2">
+                                            <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                                 fill="currentColor"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                      d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path fill-rule="evenodd"
+                                                      d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            <strong class="ml-2">` + obj.product_purchase + `</strong> sales
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </a>
+
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <a href="` + obj.vendor_url + `" class="d-flex text-decoration-none">
+                                    <img src="` + obj.vendor.user.image + `" width="30" height="30" class="rounded-circle" alt="">
+                                        <h6 class="mt-1">` + obj.vendor.user.username + `</h6></a>
+
+                                </li>
+                            </ul>
+                        </div>
+					    </div>`;
+					$('#articles').append(property_object);
+                }
+            }
+        })
+    }
+
+    function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
+    const [from, to] = getParsed(fromInput, toInput);
+    fillSlider(fromInput, toInput, '#C6C6C6', '#fd5631', controlSlider);
+    if (from > to) {
+        fromSlider.value = to;
+        fromInput.value = to;
+    } else {
+        fromSlider.value = from;
+    }
+}
+
+function controlToInput(toSlider, fromInput, toInput, controlSlider) {
+    const [from, to] = getParsed(fromInput, toInput);
+    fillSlider(fromInput, toInput, '#C6C6C6', '#fd5631', controlSlider);
+    setToggleAccessible(toInput);
+    if (from <= to) {
+        toSlider.value = to;
+        toInput.value = to;
+    } else {
+        toInput.value = from;
+    }
+}
+
+function controlFromSlider(fromSlider, toSlider, fromInput) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  fillSlider(fromSlider, toSlider, '#C6C6C6', '#fd5631', toSlider);
+  if (from > to) {
+    fromSlider.value = to;
+    fromInput.value = to;
+  } else {
+    fromInput.value = from;
+  }
+}
+
+function controlToSlider(fromSlider, toSlider, toInput) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  fillSlider(fromSlider, toSlider, '#C6C6C6', '#fd5631', toSlider);
+  setToggleAccessible(toSlider);
+  if (from <= to) {
+    toSlider.value = to;
+    toInput.value = to;
+  } else {
+    toInput.value = from;
+    toSlider.value = from;
+  }
+}
+
+function getParsed(currentFrom, currentTo) {
+  const from = parseInt(currentFrom.value, 10);
+  const to = parseInt(currentTo.value, 10);
+  return [from, to];
+}
+
+function fillSlider(from, to, sliderColor, rangeColor, controlSlider) {
+    const rangeDistance = to.max-to.min;
+    const fromPosition = from.value - to.min;
+    const toPosition = to.value - to.min;
+    controlSlider.style.background = `linear-gradient(
+      to right,
+      ${sliderColor} 0%,
+      ${sliderColor} ${(fromPosition)/(rangeDistance)*100}%,
+      ${rangeColor} ${((fromPosition)/(rangeDistance))*100}%,
+      ${rangeColor} ${(toPosition)/(rangeDistance)*100}%,
+      ${sliderColor} ${(toPosition)/(rangeDistance)*100}%,
+      ${sliderColor} 100%)`;
+}
+
+function setToggleAccessible(currentTarget) {
+  const toSlider = document.querySelector('#toSlider');
+  if (Number(currentTarget.value) <= 0 ) {
+    toSlider.style.zIndex = 2;
+  } else {
+    toSlider.style.zIndex = 0;
+  }
+}
+
+const fromSlider = document.querySelector('#fromSlider');
+const toSlider = document.querySelector('#toSlider');
+const fromInput = document.querySelector('#fromInput');
+const toInput = document.querySelector('#toInput');
+fillSlider(fromSlider, toSlider, '#C6C6C6', '#fd5631', toSlider);
+setToggleAccessible(toSlider);
+
+fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
+toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
+fromInput.oninput = () => controlFromInput(fromSlider, fromInput, toInput, toSlider);
+toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);
+</script>
 
 
 {% endblock %}

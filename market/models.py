@@ -1,4 +1,6 @@
 import secrets
+from statistics import mean
+
 from django.db import models
 from django.conf import settings
 from datetime import datetime, date
@@ -91,6 +93,7 @@ class Product(models.Model):
     description = RichTextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_purchase = models.IntegerField(default=0)
+    rating_count = models.FloatField(default=0)
     vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(default=datetime.now)
     date_updated = models.DateTimeField(auto_now=True)
@@ -158,8 +161,14 @@ class Order(models.Model):
 
 
 class ProductReview(models.Model):
+    RATING_TYPES = (
+        (1, "★☆☆☆☆ (1/5)"), (2, "★★☆☆☆ (2/5)"), (3, "★★★☆☆ (3/5)"),
+        (4, "★★★★☆ (4/5)"), (5, "★★★★★ (5/5)")
+    )
+
     customer_info = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=RATING_TYPES, null=True, blank=True)
     review = models.TextField()
     date_added = models.DateTimeField(default=datetime.now)
 

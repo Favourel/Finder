@@ -4,17 +4,22 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order, Payment
-from django.db.models import Q, F
+from django.db.models import Q, F, Min, Max
 from users.models import User, Notification
 import datetime
 from .forms import CreateProductForm, CategoryField, ImageField, ReviewBox
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms.models import modelformset_factory
 from django.conf import settings
 import json
 from .middlewares.market_middleware import checkout_middleware
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import ProductSerializer
+from statistics import mean
+from .filters import ProductPriceFilter
 
 
 # Create your views here.
@@ -43,45 +48,78 @@ def market_view(request):
     notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
     categories = Category.objects.all()
-    product_list = Product.objects.all()
+    product_list = Product.objects.all().order_by("-product_purchase")
+    maximum_price = Product.objects.all().aggregate(Max("price"))
+    half_max_price = maximum_price["price__max"] / 2
 
-    products = Paginator(product_list, 4)
-    first_page = products.page(1).object_list
-    page_range = products.page_range
-    # page_number = request.GET.get('page')
-    # products = paginator.get_page(page_number)
+    price_filter = ProductPriceFilter(request.GET, queryset=product_list)
+    product_list = price_filter.qs
 
-    if request.method == 'POST':
-        # getting page number
-        page_no = request.POST.get('page_no', None)
-        results = list(products.page(page_no).object_list.values('name', 'price', 'image',
-                                                                 "product_purchase", "vendor__username",
-                                                                 "vendor__image", "pk"))
-        return JsonResponse({"results": results})
-    # else:
-    #     return render(request, 'market/search.html', )
+    paginator = Paginator(product_list, 5)
+    page = request.GET.get('page', 1)
+
+    try:
+        product_list = paginator.page(page)
+    except PageNotAnInteger:
+        product_list = paginator.page(1)
+    except EmptyPage:
+        product_list = paginator.page(paginator.num_pages)
+
+    page_list = product_list.paginator.page_range
+
+    if request.GET.get('ratings'):
+        query = request.GET.get('ratings')
+        lookup = Q(rating_count__icontains=query)
+        result = Product.objects.filter(lookup).distinct()
+
+        return render(request, 'market/market.html', {"products": result,
+                                                      # "page_list": page_list,
+                                                      "categories": categories,
+                                                      "product": product_list,
+                                                      "notification_count": notification_count,
+                                                      "notification": notification,
+                                                      "get_cart_items": total_cart_items(request)
+                                                      })
 
     if request.GET.get('category_id'):
         filterProduct = Product.getProductByFilter(request.GET['category_id']).order_by('-id')
-        filter_category_product = filterProduct.all().order_by('-id')
+        filter_category_product = filterProduct.all().order_by('-product_purchase')
 
         return render(request, 'market/market.html', {"products": filter_category_product,
+                                                      # "page_list": page_list,
                                                       "categories": categories,
-                                                      'product': products,
+                                                      "product": product_list,
                                                       "notification_count": notification_count,
                                                       "notification": notification,
                                                       "get_cart_items": total_cart_items(request)
                                                       })
     context = {
-        # "products": first_page,
         "products": product_list,
-        "page_range": page_range,
+        "price_filter": price_filter,
+        "maximum_price": maximum_price,
+        "half_max_price": half_max_price,
         "categories": categories,
         "notification_count": notification_count,
         "notification": notification,
+        "page_list": page_list,
         "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/market.html", context)
+
+
+@login_required
+@api_view(["GET", "POST"])
+def paginate_products(request):
+    page = request.GET.get('page', None)
+
+    starting_number = (int(page) - 1) * 5
+    ending_number = int(page) * 5
+
+    instance = Product.objects.all().order_by("-product_purchase")[starting_number:ending_number]
+    print(instance)
+    data = ProductSerializer(instance, many=True).data
+
+    return Response(data)
 
 
 @login_required
@@ -100,14 +138,33 @@ def product_detail(request, pk):
     for image in obj.productimage_set.all():
         image
 
+    ratings = [i.rating for i in obj.productreview_set.all()]
+    if len(ratings) < 1:
+        overall_rating = 0
+    else:
+        overall_rating = mean(ratings)
+
+    one_star = (ratings.count(1) * 100) / len(ratings)
+    two_star = (ratings.count(2) * 100) / len(ratings)
+    three_star = (ratings.count(3) * 100) / len(ratings)
+    four_star = float(ratings.count(4) * 100) / len(ratings)
+    five_star = (ratings.count(5) * 100) / len(ratings)
+
     context = {
         "product": obj,
+        "overall_rating": str(overall_rating)[:3],
         "notification_count": notification_count,
         "notification": notification,
         "product_image": image,
         "form": ReviewBox(),
         "seller_products": seller_products,
-        "get_cart_items": total_cart_items(request)
+        "get_cart_items": total_cart_items(request),
+
+        "one_star": str(one_star)[:5],
+        "two_star": str(two_star)[:5],
+        "three_star": str(three_star)[:5],
+        "four_star": str(four_star)[:5],
+        "five_star": str(five_star)[:5],
     }
     return render(request, "market/product_detail.html", context)
 
@@ -439,6 +496,10 @@ def product_review(request, pk):
             form.customer_info = request.user
             form.product = product
             form.save()
+
+            ratings = [i.rating for i in product.productreview_set.all()]
+            product.rating_count = round(mean(ratings))
+            product.save()
 
     data = {
         "comment": request.POST.get('comment', None),

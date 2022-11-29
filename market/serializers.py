@@ -1,29 +1,57 @@
 from rest_framework import serializers
-from .models import Order, Checkout
+from .models import Order, Checkout, Product, ProductImage
 from django.contrib.humanize.templatetags.humanize import intcomma
+from rest_framework.reverse import reverse
 
 
 class UserPublicSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
+    image = serializers.ImageField(read_only=True)
 
 
 class VendorPublicSerializer(serializers.Serializer):
     user = UserPublicSerializer(read_only=True)
 
 
-class CheckoutSerializer(serializers.ModelSerializer):
-    # orders = serializers.ManyRelatedField(child_relation="order", read_only=True)
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    edited_price = serializers.SerializerMethodField(read_only=True)
+    url = serializers.SerializerMethodField(read_only=True)
+    vendor = VendorPublicSerializer(read_only=True)
+    vendor_url = serializers.SerializerMethodField(read_only=True)
+    products_images = ProductImageSerializer(source="productimage_set", read_only=True, many=True)
 
     class Meta:
-        model = Checkout
+        model = Product
         fields = [
             "id",
-            "user",
-            "product",
-            "quantity",
-            "complete",
-            "date_posted",
+            "url",
+            "name",
+            "price",
+            "edited_price",
+            "image",
+            "product_purchase",
+            "vendor",
+            "vendor_url",
+            "products_images"
         ]
+
+    @classmethod
+    def get_edited_price(cls, obj):
+        return f"${intcomma(obj.price)}0"
+
+    def get_url(self, obj):
+        request = self.context.get("request")
+        return reverse("product-detail", kwargs={"pk": obj.id}, request=request)
+
+    def get_vendor_url(self, obj):
+        request = self.context.get("request")
+        return reverse("vendor", kwargs={"username": obj.vendor.user}, request=request)
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -31,14 +59,12 @@ class OrderSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField(read_only=True)
     user = UserPublicSerializer(read_only=True)
     # order_item = serializers.SerializerMethodField(read_only=True)
-    # order_item = CheckoutSerializer(read_only=True, many=True)
     vendor = VendorPublicSerializer(read_only=True)
     order_item_data = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
         fields = [
-            "id",
             "user",
             "username",
             "transaction_id",
@@ -50,16 +76,18 @@ class OrderSerializer(serializers.ModelSerializer):
             "date_posted",
         ]
 
-    def get_total_order_item_price(self, obj):
+    @classmethod
+    def get_total_order_item_price(cls, obj):
         total = obj.order_item.all()
         total_price = sum([i.get_total for i in total])
         return f"${intcomma(total_price)}0"
 
-    def get_username(self, obj):
+    @classmethod
+    def get_username(cls, obj):
         return obj.user.username
 
-    def get_order_item_data(self, obj):
+    @classmethod
+    def get_order_item_data(cls, obj):
         all_order = obj.order_item.all()
-        print([str(i) for i in all_order])
-        order_item_list = [str(i) for i in all_order]
+        order_item_list = [str(order) for order in all_order]
         return order_item_list

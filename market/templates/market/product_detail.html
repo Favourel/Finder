@@ -23,8 +23,8 @@
 }
 
 </style>
-
-<div class="container mt-2">
+<br>
+<div class="container">
     <div class="row">
         <div class="col-lg-9">
             <div class="box-elemennt">
@@ -363,7 +363,7 @@
             <br>
 
             <section class="box-elemente">
-                {% if product.productreview_set.all|length > 1 %}
+                {% if product.productreview_set.all|length > 3 %}
                 <h4>
                     <b>Customer Reviews</b>
                 </h4>
@@ -553,7 +553,7 @@
                         <div class="row">
                             <div class="col p-3">
                                 <div class="testimonial-one-active">
-                                    {% if product.productreview_set.all|length > 1 %}
+                                    {% if product.productreview_set.all|length > 3 %}
                                     {% for review in product.productreview_set.all %}
                                     <div class="col-lg-3">
                                         <div class="single-testimonial text-center">
@@ -628,8 +628,106 @@
                 </script>
 
                 <br>
+                <br>
+                <br>
+<!--                <div class="progress">-->
+<!--                  <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;"-->
+<!--                       aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>-->
+<!--                </div>-->
+                <div class="box-element  mb-4">
+                    <h4>
+                        <b>Customer Ratings</b>
+                    </h4>
+                    <div class="row g-4 p-4 align-items-center">
+                        <!-- Rating info -->
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <!-- Info -->
+                                <h2 class="mb-0"><strong>{{overall_rating}}</strong></h2>
+                                <p class="mb-2">Based on {{product.productreview_set.all|length}} Reviews</p>
+                                <!-- Star -->
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>
+                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>
+                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star-half checked text-warning"></i></li>
+                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star"></i></li>
+                                    <li class="list-inline-item me-0"><i class="fa fa-star"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Progress-bar START -->
+                        <div class="col-md-8">
+                            <div class="card-body p-0">
+                                <div class="row gx-3 g-2 align-items-center">
+                                    <!-- Progress bar and Rating -->
+                                    <div class="col-9 col-sm-10">
+                                        <!-- Progress item -->
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-sm bg-warning" role="progressbar" style="width: {{five_star}}%" aria-valuenow="{{five_star}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Percentage -->
+                                    <div class="col-3 col-sm-2 text-end">
+                                        <span class="h6 fw-light mb-0">{{five_star}}%</span>
+                                    </div>
+
+                                    <!-- Progress bar and Rating -->
+                                    <div class="col-9 col-sm-10">
+                                        <!-- Progress item -->
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-sm bg-warning" role="progressbar" style="width: {{four_star}}%" aria-valuenow="{{four_star}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Percentage -->
+                                    <div class="col-3 col-sm-2 text-end">
+                                        <span class="h6 fw-light mb-0">{{four_star}}%</span>
+                                    </div>
+
+                                    <!-- Progress bar and Rating -->
+                                    <div class="col-9 col-sm-10">
+                                        <!-- Progress item -->
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-sm bg-warning" role="progressbar" style="width: {{three_star}}%" aria-valuenow="{{three_star}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Percentage -->
+                                    <div class="col-3 col-sm-2 text-end">
+                                        <span class="h6 fw-light mb-0">{{three_star}}%</span>
+                                    </div>
+
+                                    <!-- Progress bar and Rating -->
+                                    <div class="col-9 col-sm-10">
+                                        <!-- Progress item -->
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-sm bg-warning" role="progressbar" style="width: {{two_star}}%" aria-valuenow="{{two_star}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Percentage -->
+                                    <div class="col-3 col-sm-2 text-end">
+                                        <span class="h6 fw-light mb-0">{{two_star}}%</span>
+                                    </div>
+
+                                    <!-- Progress bar and Rating -->
+                                    <div class="col-9 col-sm-10">
+                                        <!-- Progress item -->
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-sm bg-warning" role="progressbar" style="width: {{one_star}}%" aria-valuenow="{{one_star}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Percentage -->
+                                    <div class="col-3 col-sm-2 text-end">
+                                        <span class="h6 fw-light mb-0">{{one_star}}%</span>
+                                    </div>
+                                </div> <!-- Row END -->
+                            </div>
+                        </div>
+                        <!-- Progress-bar END -->
+
+                    </div>
+                </div>
                 <h5>
-                    <b>Post Review</b>
+                    <b>Product Review</b>
                 </h5>
                 <form id="my-ajax-form" method="POST" action="." data-url="{% url 'productReview' product.id %}">
                     {% csrf_token %}
@@ -841,7 +939,11 @@
         <div class="col-lg-12 mt-2">
             <div class="box-element">
                 <h4><b>More gigs from this seller</b></h4>
-
+                <style>
+                    .checked {
+                      color: orange;
+                    }
+                </style>
                 <div class="row p-2">
                     {% for query in seller_products %}
                     <div class="col-lg-3 col-md-4 col-sm-3 col-6">
@@ -866,6 +968,24 @@
                                 <h6 class="text-truncate">
                                     {{ query.name}}
                                 </h6>
+                                <p class="fs--1">
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="text-500 text-grey fw-semi-bold ms-1">
+                                        ({{query.productreview_set.count}} people rated)</span>
+                                </p>
+                                <style>
+                                    .fw-semi-bold {
+                                        font-weight: 500 !important;
+                                        color: grey !important;
+                                    }
+                                    .progress.progress-sm {
+                                        height: 5px;
+                                    }
+                                </style>
 
                                 <h5>${{ query.price|floatformat:2 }}</h5>
                             </div>
@@ -891,10 +1011,8 @@ function scrollFunction() {
   if (document.body.scrollTop > 160 || document.documentElement.scrollTop > 160) {
     document.getElementById("checkout").style.display = "block";
 
-
   } else {
     document.getElementById("checkout").style.display = "none";
-
 
   }
 }

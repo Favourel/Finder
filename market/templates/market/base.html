@@ -35,7 +35,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>{% block title %}{% endblock %} | CONNECT</title>
 </head>
@@ -402,13 +402,6 @@ main {
     border: 0!important;
 }
 .form-control {
-    display: block;
-    width: 100%;
-    padding: .75rem 1rem;
-    font-size: 1.1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: #181c32;
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #e4e6ef;
@@ -419,80 +412,17 @@ main {
 }
 
 </style>
-
-<!--<script>-->
-<!--	$('a').click(function(event){-->
-<!--		// preventing default actions-->
-<!--		event.preventDefault();-->
-<!--		var page_no = $(this).attr('data-url');-->
-
-<!--		// ajax call-->
-<!--			$.ajax({-->
-<!--					type: "POST",-->
-<!--					// define url name-->
-<!--					url: "{% url 'market' %}",-->
-<!--					data : {-->
-<!--					page_no : page_no,-->
-<!--					csrfmiddlewaretoken: '{{ csrf_token }}',-->
-<!--				},-->
-<!--				// handle a successful response-->
-<!--				success: function (response) {-->
-<!--					$('#articles').html('')-->
-<!--					$.each(response.results, function(i, val) {-->
-<!--					 //append to post-->
-<!--					 var property_object = `<div class="col-lg-3 col-md-4 col-sm-4 col-6">-->
-
-<!--					    <a href="/product/` + val.pk + `">-->
-<!--                            <img src="/images/` + val.image + `" fill="777" background="#777" color="#777" alt=""-->
-<!--                                 class="thumbnail-product">-->
-
-<!--                        </a>-->
-
-<!--                        <div class="card p-2 shadow">-->
-<!--                            <a href="/product/` + val.pk + `" class="text-dark text-decoration-none">-->
-<!--                                <h6 class="mb-2 mt-2 text-truncate">` + val.name + `</h6>-->
-<!--                                <div class="media">-->
-<!--                                    <h5 class="mt-1"><b>₦` + val.price + `</b></h5>-->
-<!--                                    <div class="media-body ">-->
-<!--                                        <div class="float-right  badge badge-warning alert alert-warning py-2">-->
-<!--                                            <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"-->
-<!--                                                 fill="currentColor"-->
-<!--                                                 xmlns="http://www.w3.org/2000/svg">-->
-<!--                                                <path fill-rule="evenodd"-->
-<!--                                                      d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>-->
-<!--                                                <path fill-rule="evenodd"-->
-<!--                                                      d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>-->
-<!--                                            </svg>-->
-<!--                                            <strong class="ml-2">` + val.product_purchase + `</strong> sales-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                            </a>-->
-
-<!--                            <ul class="list-group">-->
-<!--                                <li class="list-group-item">-->
-<!--                                    <a href=" " class="d-flex text-decoration-none">-->
-<!--                                    <img src="/images/` + val.vendor__image + `" width="30" height="30" class="rounded-circle" alt="">-->
-<!--                                        <h6 class="mt-1">` + val.vendor__username + `</h6></a>-->
-
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </div>-->
-
-<!--					    </div>`;-->
-
-<!--					$('#articles').append(property_object);-->
-<!--					/// $('#articles').append('<h2>' + val.title + '</h2><p>'+ val.content +'</p>')-->
-<!--				   });-->
-<!--				},-->
-<!--				error: function () {-->
-<!--					alert('Error Occured');-->
-<!--				}-->
-<!--			});-->
-<!--	});-->
-<!--</script>-->
-
+<!--    <style>-->
+<!--        .form-control{-->
+<!--            display: block;-->
+<!--    width: 100%;-->
+<!--    padding: 1rem 1rem;-->
+<!--    font-size: 2.1rem;-->
+<!--    font-weight: 500;-->
+<!--    line-height: 3.5;-->
+<!--    color: #181c32;-->
+<!--        }-->
+<!--    </style>-->
 <a class="scroll-to-top shadow-lg rounded-circle" href="#page-top">
     <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor"
          xmlns="http://www.w3.org/2000/svg">

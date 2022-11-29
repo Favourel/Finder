@@ -9,12 +9,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import authentication, permissions, serializers
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from market.serializers import OrderSerializer
 from django.db.models import F
+from django.http import HttpResponse
+import csv
 
 
 # Create your views here.
@@ -149,11 +151,13 @@ def vendor_dashboard(request):
         orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
+        weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
+                                            date_posted__gte=datetime.now()-timedelta(days=7))
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
 
         previous = len(all_order)
-        current = len(today_order) + previous
-        percentage = ((current - previous) / previous) * 100
+        current = len(weekly_order) + previous
+        percentage_order = ((current - previous) / previous) * 100
 
         customers = Order.objects.filter(vendor=vendor)
         iter_customers = [i.user for i in customers]
@@ -166,6 +170,11 @@ def vendor_dashboard(request):
         earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
         today_earning = sum([j.get_total for i in today_order for j in i.order_item.all()])
         monthly_earning = sum([j.get_total for i in monthly_order for j in i.order_item.all()])
+        weekly_earning = sum([j.get_total for i in weekly_order for j in i.order_item.all()])
+
+        previous = int(earnings)
+        current = int(weekly_earning) + previous
+        percentage_earnings = ((current - previous) / previous) * 100
 
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
@@ -197,7 +206,8 @@ def vendor_dashboard(request):
         "all_order": all_order,
         "today_order": today_order,
         "monthly_order": monthly_order,
-        "percentage": str(percentage)[:4],
+        "percentage_order": str(percentage_order)[:4],
+        "percentage_earnings": str(percentage_earnings)[:4],
 
         "chart_products": get_values,
         "DOW_CHOICES": list(get_keys),
@@ -425,13 +435,13 @@ def settings(request):
     page = request.GET.get('page', 1)
 
     try:
-        blogs = paginator.page(page)
+        all_order = paginator.page(page)
     except PageNotAnInteger:
-        blogs = paginator.page(1)
+        all_order = paginator.page(1)
     except EmptyPage:
-        blogs = paginator.page(paginator.num_pages)
+        all_order = paginator.page(paginator.num_pages)
 
-    page_list = blogs.paginator.page_range
+    page_list = all_order.paginator.page_range
 
     paginator = Paginator(reviews, 7)
     page_number = request.GET.get('page')
@@ -465,10 +475,12 @@ def settings(request):
         "total_spent": total_spent,
 
         "page_list": page_list,
+        "list_orders": all_order,
     }
     return render(request, "users/settings.html", context)
 
 
+@login_required
 @api_view(["GET", "POST"])
 def paginate(request):
     page = request.GET.get('page', None)
@@ -477,10 +489,7 @@ def paginate(request):
     starting_number = (int(page) - 1) * 7
     ending_number = int(page) * 7
 
-    "here you should multiply the 'page' by the number of results you want per page, in my example it's 10"
-
     instance = Order.objects.filter(user=user, ordered=True).order_by("-date_posted")[starting_number:ending_number]
-    print(instance)
     data = OrderSerializer(instance, many=True).data
 
     "By [starting_number:ending_number] we specify the interval of results. Order them by date or whatever you want"
@@ -503,3 +512,19 @@ def delete_account(request, username):
         return render(request, 'users/settings.html', {'err': e.message})
 
     return redirect("/")
+
+
+@login_required
+def export_products(request):
+    vendor = request.user.vendor
+    queryset = Product.objects.filter(vendor=vendor)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="products.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['id', 'name', 'price', 'description',
+                     'category', "product_purchase", "date_posted"])
+    products = queryset.values_list('id', 'name', 'price', 'description',
+                                    'category__name', "product_purchase", "date_posted")
+    for product in products:
+        writer.writerow(product)
+    return response

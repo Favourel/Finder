@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'channels',
     'ckeditor',
     "djrichtextfield",
-    "rest_framework"
+    "rest_framework",
+    'django_filters',
+
 ]
 
 MIDDLEWARE = [

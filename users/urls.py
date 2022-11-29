@@ -15,5 +15,6 @@ urlpatterns = [
     path('settings/', user_view.settings, name='settings'),
     path('ajax/paginate/', user_view.paginate, name='paginate'),
     path('delete_account/<str:username>/', user_view.delete_account, name='delete_account'),
+    path('export_products/', user_view.export_products, name='export_products'),
 
 ]
