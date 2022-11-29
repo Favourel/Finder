@@ -260,9 +260,15 @@
     <br>
 
     {% else %}
-    <div class="container" id="product" align="center" style="opacity: 0.7" fill="#000">
-        <img class="img-fluid" src="{% static 'images/product-icon-png-19.jpg' %}" style="opacity: 0.8" alt="">
-        <h3 class="font-weight-strong">No product here!</h3><br>
+    <div class="container" id="product" align="center" >
+        <img class="img-fluid" src="{% static 'images/open-box.png' %}" width="150rem" height="150rem" alt="">
+        <h3><b>We didn't find any product/gig of your choice.</b></h3>
+        <h5>To find what you need, simply check the spelling of your typed search and try again.</h5>
+        <a href="javascript:history.go(-1)" class="btn mt-2 btn-lg">
+            GO BACK?
+        </a>
+        <br>
+        <br>
     </div>
     {% endif %}
 </div>
