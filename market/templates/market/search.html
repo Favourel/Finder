@@ -1,7 +1,7 @@
 {% extends 'market/base.html' %}
 {% load humanize %}
 {% load static %}
-
+{% load filtertags %}
 {% block title %} "{{ request.GET.q }}" | CONNECT Search {% endblock %}
 
 
@@ -81,14 +81,30 @@
                             transform: translateY(-6px);
                             box-shadow:hsl(0, 0%, 80%) 0 0 16px;
                         }
-
-
                     </style>
                 </a>
 
                 <div class="card p-2 shadow">
                 <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
                     <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
+                    <p class="fs--1">
+                        {% for i in product.rating_count|times %}
+                            <span class="fa fa-star checked text-warning"></span>
+                        {% endfor %}
+                        {% for i in product.rating_count|times_minus %}
+                        <span class="fa fa-star"></span>
+                        {% endfor %}
+                        <span class="text-500 text-grey fw-semi-bold ms-1">
+                            ({{product.productreview_set.count}} people rated)</span>
+                    </p>
+                    <style>
+
+                        .fw-semi-bold {
+                            font-weight: 500 !important;
+                            color: grey !important;
+                        }
+
+                    </style>
                     <div class="media">
                         <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
                         <div class="media-body ">

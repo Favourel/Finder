@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 {% block title %}{{ product }}{% endblock %}
 {% block content %}
+{% load filtertags %}
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -210,6 +211,24 @@
                     <br>
                     <div class="col-lg-5 col-md-6 col-sm-7">
                         <h4 style="margin-top: 5px;" class="font-weight-light">{{ product.name|safe }}</h4>
+                        <p class="fs--1">
+                            {% for i in product.rating_count|times %}
+                                <span class="fa fa-star checked text-warning"></span>
+                            {% endfor %}
+                            {% for i in product.rating_count|times_minus %}
+                            <span class="fa fa-star"></span>
+                            {% endfor %}
+                            <span class="text-500 text-grey fw-semi-bold ms-1">
+                                ({{product.productreview_set.count}} people rated)</span>
+                        </p>
+                        <style>
+
+                            .fw-semi-bold {
+                                font-weight: 500 !important;
+                                color: grey !important;
+                            }
+
+                        </style>
                         <hr>
                         <h5 style="display: inline-block;float: left"><strong>
                             ${{ product.price|floatformat:2 }}</strong>
@@ -391,7 +410,7 @@
                 }
                 .testimonial-one .section-title-seven span {
                   text-transform: uppercase;
-                  color: var(--primary);
+                  color: red;
                   display: inline-block;
                   margin-bottom: 8px;
                   font-size: 15px;
@@ -400,7 +419,7 @@
                 .testimonial-one .section-title-seven h5 {
                   font-weight: 600;
                   margin-bottom: 7px;
-                  color: var(--primary);
+                  color: red;
                   text-transform: uppercase;
                   font-size: 1rem;
                 }
@@ -426,7 +445,7 @@
                   bottom: 0;
                   height: 3px;
                   width: 50px;
-                  background-color: var(--primary);
+                  background-color: red;
                 }
                 @media only screen and (min-width: 768px) and (max-width: 991px) {
                   .testimonial-one .section-title-seven h2 {
@@ -464,7 +483,7 @@
                   width: 12px;
                   height: 12px;
                   border-radius: 50%;
-                  background-color: var(--secondary);
+                  background-color: #fd5631;
                   opacity: 0.3;
                   border: 0;
                   margin: 0 3px;
@@ -493,7 +512,7 @@
                   bottom: 0;
                   height: 4px;
                   width: 0%;
-                  background-color: var(--primary);
+                  background-color: red;
                   -webkit-transition: all 0.4s ease-out 0s;
                   -moz-transition: all 0.4s ease-out 0s;
                   -ms-transition: all 0.4s ease-out 0s;
@@ -571,6 +590,22 @@
                                                 </div>
                                             </div>
                                             <div class="testimonial-content">
+                                                <p class="fs--1">
+                                                    {% for i in review.rating|times %}
+                                                        <span class="fa fa-star checked text-warning"></span>
+                                                    {% endfor %}
+                                                    {% for i in review.rating|times_minus %}
+                                                    <span class="fa fa-star"></span>
+                                                    {% endfor %}
+                                                </p>
+                                                <style>
+
+                                                    .fw-semi-bold {
+                                                        font-weight: 500 !important;
+                                                        color: grey !important;
+                                                    }
+
+                                                </style>
                                                 <p class="text">
                                                     {{ review.review }}
                                                 </p>
@@ -630,11 +665,8 @@
                 <br>
                 <br>
                 <br>
-<!--                <div class="progress">-->
-<!--                  <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;"-->
-<!--                       aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>-->
-<!--                </div>-->
-                <div class="box-element  mb-4">
+
+                <div class="box-element mt-2 mb-4">
                     <h4>
                         <b>Customer Ratings</b>
                     </h4>
@@ -646,13 +678,29 @@
                                 <h2 class="mb-0"><strong>{{overall_rating}}</strong></h2>
                                 <p class="mb-2">Based on {{product.productreview_set.all|length}} Reviews</p>
                                 <!-- Star -->
-                                <ul class="list-inline mb-0">
-                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>
-                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>
-                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star-half checked text-warning"></i></li>
-                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star"></i></li>
-                                    <li class="list-inline-item me-0"><i class="fa fa-star"></i></li>
-                                </ul>
+                                <p class="fs--1">
+                                    {% for i in product.rating_count|times %}
+                                        <span class="fa fa-star checked text-warning"></span>
+                                    {% endfor %}
+                                    {% for i in product.rating_count|times_minus %}
+                                    <span class="fa fa-star"></span>
+                                    {% endfor %}
+                                </p>
+                                <style>
+
+                                    .fw-semi-bold {
+                                        font-weight: 500 !important;
+                                        color: grey !important;
+                                    }
+
+                                </style>
+<!--                                <ul class="list-inline mb-0">-->
+<!--                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>-->
+<!--                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star checked text-warning"></i></li>-->
+<!--                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star-half checked text-warning"></i></li>-->
+<!--                                    <li class="list-inline-item me-0"><i class="fa-solid fa fa-star"></i></li>-->
+<!--                                    <li class="list-inline-item me-0"><i class="fa fa-star"></i></li>-->
+<!--                                </ul>-->
                             </div>
                         </div>
 
@@ -823,14 +871,33 @@
                 </div>
                 <br>
                 <div class="box-element" id="checkout" style="transition: .5s; display:none">
-                    <div class="media p-3">
-                        <h6 class="">{{product}}</h6>
-                        <div class="media-body">
+                    <div class="row p-2">
+                        <div class="col">
+                            <h6 class="">{{product}}</h6>
+                            <p class="fs--1">
+                                {% for i in product.rating_count|times %}
+                                    <span class="fa fa-star checked text-warning"></span>
+                                {% endfor %}
+                                {% for i in product.rating_count|times_minus %}
+                                <span class="fa fa-star"></span>
+                                {% endfor %}
+                            </p>
+                            <style>
+
+                                .fw-semi-bold {
+                                    font-weight: 500 !important;
+                                    color: grey !important;
+                                }
+
+                            </style>
+                        </div>
+                        <div class="col-auto">
                             <div class="d-flex float-right">
                                 <h6><b>${{ product.price|floatformat:2 }}</b></h6>
                             </div>
                         </div>
                     </div>
+
                     <hr>
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                          fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
@@ -928,11 +995,6 @@
         /* Add a blue color to the author */
         .author {color: cornflowerblue;}
 
-
-
-
-
-
         </style>
 
         {% if seller_products|length > 0 %}
@@ -969,22 +1031,22 @@
                                     {{ query.name}}
                                 </h6>
                                 <p class="fs--1">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
+                                    {% for i in query.rating_count|times %}
+                                        <span class="fa fa-star checked text-warning"></span>
+                                    {% endfor %}
+                                    {% for i in query.rating_count|times_minus %}
                                     <span class="fa fa-star"></span>
-                                    <span class="fa fa-star"></span>
+                                    {% endfor %}
                                     <span class="text-500 text-grey fw-semi-bold ms-1">
                                         ({{query.productreview_set.count}} people rated)</span>
                                 </p>
                                 <style>
+
                                     .fw-semi-bold {
                                         font-weight: 500 !important;
                                         color: grey !important;
                                     }
-                                    .progress.progress-sm {
-                                        height: 5px;
-                                    }
+
                                 </style>
 
                                 <h5>${{ query.price|floatformat:2 }}</h5>
@@ -1017,5 +1079,15 @@ function scrollFunction() {
   }
 }
 </script>
+<style>
+.progress.progress-sm {
+    height: 5px;
+}
+.fw-light {
+    font-weight: 300 !important;
+    font-size: .92rem;
+}
+
+</style>
 <br>
 {% endblock content %}

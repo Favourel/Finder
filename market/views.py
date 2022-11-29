@@ -71,10 +71,15 @@ def market_view(request):
         query = request.GET.get('ratings')
         lookup = Q(rating_count__icontains=query)
         result = Product.objects.filter(lookup).distinct()
+        price_filter = ProductPriceFilter(request.GET, queryset=result)
+        product_list = price_filter.qs
 
         return render(request, 'market/market.html', {"products": result,
                                                       # "page_list": page_list,
+                                                      "price_filter": price_filter,
                                                       "categories": categories,
+                                                      "maximum_price": maximum_price,
+                                                      "half_max_price": half_max_price,
                                                       "product": product_list,
                                                       "notification_count": notification_count,
                                                       "notification": notification,
@@ -144,11 +149,30 @@ def product_detail(request, pk):
     else:
         overall_rating = mean(ratings)
 
-    one_star = (ratings.count(1) * 100) / len(ratings)
-    two_star = (ratings.count(2) * 100) / len(ratings)
-    three_star = (ratings.count(3) * 100) / len(ratings)
-    four_star = float(ratings.count(4) * 100) / len(ratings)
-    five_star = (ratings.count(5) * 100) / len(ratings)
+    if len(ratings) < 1:
+        one_star = 0
+    else:
+        one_star = (ratings.count(1) * 100) / len(ratings)
+
+    if len(ratings) < 1:
+        two_star = 0
+    else:
+        two_star = (ratings.count(2) * 100) / len(ratings)
+
+    if len(ratings) < 1:
+        three_star = 0
+    else:
+        three_star = (ratings.count(3) * 100) / len(ratings)
+
+    if len(ratings) < 1:
+        four_star = 0
+    else:
+        four_star = float(ratings.count(4) * 100) / len(ratings)
+
+    if len(ratings) < 1:
+        five_star = 0
+    else:
+        five_star = (ratings.count(5) * 100) / len(ratings)
 
     context = {
         "product": obj,

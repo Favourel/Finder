@@ -1,5 +1,6 @@
 {% extends 'market/base.html' %}
 {% load static %}
+{% load filtertags %}
 {% load humanize %}
 {% load crispy_forms_tags %}
 {% block title %}{{ vendor }}{% endblock %}
@@ -217,6 +218,24 @@
                                 </a>
                             </p>
                             <h6 class="mb-3 mt-2 text-truncate">{{ product.name }}</h6>
+                            <p class="fs--1">
+                                {% for i in product.rating_count|times %}
+                                    <span class="fa fa-star checked text-warning"></span>
+                                {% endfor %}
+                                {% for i in product.rating_count|times_minus %}
+                                <span class="fa fa-star"></span>
+                                {% endfor %}
+                                <span class="text-500 text-grey fw-semi-bold ms-1">
+                                    ({{product.productreview_set.count}} people rated)</span>
+                            </p>
+                            <style>
+
+                                .fw-semi-bold {
+                                    font-weight: 500 !important;
+                                    color: grey !important;
+                                }
+
+                            </style>
                             <div class="media">
                                 <div class="d-block">
                                     <img src="{% static 'images/cart.png' %}" width="23px" height="23px" alt="">

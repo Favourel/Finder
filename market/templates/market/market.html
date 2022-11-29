@@ -1,6 +1,7 @@
 {% extends 'market/base.html' %}
 {% block title %}Market{% endblock %}
 {% load static %}
+{% load filtertags %}
 {% block content %}
 <style>
    .section {
@@ -198,22 +199,23 @@
                         <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
                             <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
                             <p class="fs--1">
+                                {% for i in product.rating_count|times %}
                                     <span class="fa fa-star checked text-warning"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star"></span>
-                                    <span class="fa fa-star"></span>
-                                    <span class="text-500 text-grey fw-semi-bold ms-1">
-                                        ({{product.productreview_set.count}} people rated)</span>
-                                </p>
-                                <style>
+                                {% endfor %}
+                                {% for i in product.rating_count|times_minus %}
+                                <span class="fa fa-star"></span>
+                                {% endfor %}
+                                <span class="text-500 text-grey fw-semi-bold ms-1">
+                                    ({{product.productreview_set.count}} people rated)</span>
+                            </p>
+                            <style>
 
-                                    .fw-semi-bold {
-                                        font-weight: 500 !important;
-                                        color: grey !important;
-                                    }
+                                .fw-semi-bold {
+                                    font-weight: 500 !important;
+                                    color: grey !important;
+                                }
 
-                                </style>
+                            </style>
                             <div class="media">
                                 <h5 class="mt-1"><b>${{ product.price|floatformat:2 }}</b></h5>
                                 <div class="media-body ">
@@ -390,8 +392,8 @@
 
     input[type="number"] {
       width: 100px;
-      height: 30px;
-      font-size: 20px;
+      height: 20px;
+      font-size: 17px;
       border: none;
     }
 
