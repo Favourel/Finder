@@ -607,6 +607,8 @@ $(document).ready(function(){
                     $("#json_messages").text(data.msg_successfully);
                     $('[type="submit"]').prop('disabled', false);
                     $(".current_balance").text(data.current_balance);
+                    $("#insufficient_result").text("");
+                    $("#password_result").text("");
                 }
                 else if (data.msg_insufficient) {
                     $('.toast').toast('show');
@@ -614,14 +616,15 @@ $(document).ready(function(){
                     $('[type="submit"]').prop('disabled', false);
                     $("#insufficient_result").text(data.msg_insufficient);
                     $("#insufficient_result").addClass("text-danger");
+                    $("#password_result").text("");
                 }
                 else if (data.msg_wrong_password) {
                     $('.toast').toast('show');
                     $("#json_messages").text(data.msg_wrong_password);
-                    $("#json_messages").text(data.msg_wrong_password);
                     $('[type="submit"]').prop('disabled', false);
                     $("#password_result").text(data.msg_wrong_password);
                     $("#password_result").addClass("text-danger");
+                    $("#insufficient_result").text("");
                 }
             },
             error: handleFormError,

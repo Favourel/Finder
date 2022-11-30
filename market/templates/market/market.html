@@ -438,12 +438,11 @@
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
-                                    {% with str="` + obj.times + `" %}
-                                    {% for i in str %}
+                                    {% for i in 3|times %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
-                                    {% endwith %}
-                                    {% for i in str %}
+
+                                    {% for i in 2|times %}
                                     <span class="fa fa-star"></span>
                                     {% endfor %}
 
@@ -511,12 +510,11 @@
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
-                                    {% with str="` + obj.times + `" %}
-                                    {% for i in str %}
+                                    {% for i in 3|times %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
-                                    {% endwith %}
-                                    {% for i in str %}
+
+                                    {% for i in 2|times %}
                                     <span class="fa fa-star"></span>
                                     {% endfor %}
 
@@ -586,7 +584,7 @@
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
-                                    {% for i in obj.times %}
+                                    {% for i in 3|times %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
 
