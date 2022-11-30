@@ -141,10 +141,19 @@ class StoreCreateForm(forms.ModelForm):
         'name': 'education',
 
     }))
+    withdrawal_password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'placeholder': 'Password',
+            'type': 'password',
+            'name': 'password',
+            'id': 'password',
+            'class': 'form-control'
+        }
+    ))
 
     class Meta:
         model = Vendor
         fields = [
             "full_name", "phone_number", "about", "location",
-            "twitter_url", "instagram_url", "education", "skills"
+            "twitter_url", "instagram_url", "education", "skills", "withdrawal_password"
         ]

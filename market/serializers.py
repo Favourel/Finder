@@ -59,7 +59,6 @@ class ProductSerializer(serializers.ModelSerializer):
     @classmethod
     def get_times(cls, obj):
         range_round = range(round(obj.rating_count))
-        print(range(round(obj.rating_count)))
         return str(range_round)
 
 
@@ -89,7 +88,7 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_total_order_item_price(cls, obj):
         total = obj.order_item.all()
         total_price = sum([i.get_total for i in total])
-        return f"${intcomma(total_price)}0"
+        return f"₦{intcomma(total_price)}0"
 
     @classmethod
     def get_username(cls, obj):

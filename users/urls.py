@@ -16,5 +16,8 @@ urlpatterns = [
     path('ajax/paginate/', user_view.paginate, name='paginate'),
     path('delete_account/<str:username>/', user_view.delete_account, name='delete_account'),
     path('export_products/', user_view.export_products, name='export_products'),
+    path('request_withdrawal/', user_view.request_withdrawal, name='request_withdrawal'),
+
+    path('ajax/validate_username/', user_view.validate_username, name='validate_username'),
 
 ]

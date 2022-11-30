@@ -69,10 +69,10 @@ def market_view(request):
 
     if request.GET.get('ratings'):
         query = request.GET.get('ratings')
-        lookup = Q(rating_count__icontains=query)
+        lookup = Q(rating_count=query)
         result = Product.objects.filter(lookup).distinct()
         price_filter = ProductPriceFilter(request.GET, queryset=result)
-        product_list = price_filter.qs
+        result = price_filter.qs
 
         return render(request, 'market/market.html', {"products": result,
                                                       # "page_list": page_list,
@@ -81,10 +81,32 @@ def market_view(request):
                                                       "maximum_price": maximum_price,
                                                       "half_max_price": half_max_price,
                                                       "product": product_list,
+                                                      "rating_query": query,
                                                       "notification_count": notification_count,
                                                       "notification": notification,
                                                       "get_cart_items": total_cart_items(request)
                                                       })
+
+    if request.GET.get('high-low-price'):
+        query = request.GET.get('high-low-price')
+        result = Product.objects.all().order_by(f"{query}")
+        price_filter = ProductPriceFilter(request.GET, queryset=result)
+        product_list = price_filter.qs
+
+        context = {"products": result,
+                   # "page_list": page_list,
+                   "price_filter": price_filter,
+                   "categories": categories,
+                   "maximum_price": maximum_price,
+                   "half_max_price": half_max_price,
+                   "product": product_list,
+                   "rating_query": query,
+                   "notification_count": notification_count,
+                   "notification": notification,
+                   "get_cart_items": total_cart_items(request)
+                   }
+
+        return render(request, 'market/market.html', context)
 
     if request.GET.get('category_id'):
         filterProduct = Product.getProductByFilter(request.GET['category_id']).order_by('-id')
@@ -110,6 +132,26 @@ def market_view(request):
         "get_cart_items": total_cart_items(request)
     }
     return render(request, "market/market.html", context)
+
+
+@login_required
+@api_view(["GET", "POST"])
+def high_low_price_products(request):
+    query = request.GET.get('high_low_price', None)
+    instance = Product.objects.all().order_by(f"{query}")[:5]
+    data = ProductSerializer(instance, many=True).data
+
+    return Response(data)
+
+
+@login_required
+@api_view(["GET", "POST"])
+def recent_products(request):
+    query = request.GET.get('recent', None)
+    instance = Product.objects.all().order_by(f"{query}")[:5]
+    data = ProductSerializer(instance, many=True).data
+
+    return Response(data)
 
 
 @login_required
@@ -472,6 +514,12 @@ def process_order(request):
         queryset.append(item.complete == True)
         item.complete = True
         item.save()
+
+    vendor_current_balance = sum([item.get_total for item in check_out_list])
+    receiver[0].current_balance += vendor_current_balance
+    receiver[0].total_earnings += vendor_current_balance
+    receiver[0].save()
+
     order = Order.objects.create(
         user=request.user,
         transaction_id=transaction_id,

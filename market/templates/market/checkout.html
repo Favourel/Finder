@@ -129,7 +129,7 @@
                                                 <div class="row">
                                                     <div class="d-md-none text-muted col-6">Price per item</div>
                                                     <b class="text-right text-md-center col-6 col-md-12">
-                                                        ${{ item.product.price|floatformat:'2'|intcomma }}
+                                                        ₦{{ item.product.price|floatformat:'2'|intcomma }}
                                                     </b>
                                                 </div>
                                             </div>
@@ -138,14 +138,6 @@
                                                     <div class="text-muted d-md-none col-7 col-sm-9">Quantity</div>
                                                     <div class="col-5 col-sm-3 col-md-12">
                                                         <div class="d-flex align-items-center">
-                                                            <a data-product="{{ item.product.id }}"
-                                                                    href="{% url 'add_to_checkout' item.product.pk %}"
-                                                                    class="update-cart text-decoration-none btn-sm btn-info">
-                                                                <b>+</b>
-                                                            </a>
-                                                            <b class="text-center border-0 border-md input-items form-control">
-                                                                {{ item.quantity }}
-                                                            </b>
                                                             {% if item.quantity > 1 %}
                                                             <a data-product="{{ item.product.id }}"
                                                                     href="{% url 'remove_from_checkout' item.product.pk %}"
@@ -159,6 +151,14 @@
                                                                 <b>-</b>
                                                             </button>
                                                             {% endif %}
+                                                            <b class="text-center border-0 border-md input-items form-control">
+                                                                {{ item.quantity }}
+                                                            </b>
+                                                            <a data-product="{{ item.product.id }}"
+                                                                    href="{% url 'add_to_checkout' item.product.pk %}"
+                                                                    class="update-cart text-decoration-none btn-sm btn-info">
+                                                                <b>+</b>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -167,9 +167,9 @@
                                                 <div class="row">
                                                     <div class="d-md-none text-muted col-6">Total price</div>
                                                     <b class="text-right text-md-center col-6 col-md-12">
-                                                        ${{ item.get_total|floatformat:'2'|intcomma }}
+                                                        ₦{{ item.get_total|floatformat:'2'|intcomma }}
                                                         <br>
-                                                        <small>${{ item.product.price|floatformat:'2'|intcomma }} x {{ item.quantity }}</small>
+                                                        <small>₦{{ item.product.price|floatformat:'2'|intcomma }} x {{ item.quantity }}</small>
                                                     </b>
                                                 </div>
                                             </div>
@@ -233,7 +233,7 @@
                         </tr>
                         <tr>
                             <th><h5 class="mt-2">Subtotal: </h5></th>
-                            <th><h5 id="amount" class="mt-2">${{ get_cart_total|floatformat:2|intcomma }}</h5></th>
+                            <th><h5 id="amount" class="mt-2">₦{{ get_cart_total|floatformat:2|intcomma }}</h5></th>
                         </tr>
                     </table>
                     <hr>

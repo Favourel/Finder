@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, Http404
 from django.contrib.auth.models import auth
 from .forms import *
+from django.conf import settings as setting
+
 from django.contrib import messages
 from .models import *
 from market.models import *
@@ -17,6 +19,7 @@ from market.serializers import OrderSerializer
 from django.db.models import F
 from django.http import HttpResponse
 import csv
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 # Create your views here.
@@ -28,26 +31,77 @@ def total_cart_items(request):
 
 
 def register(request):
-    if request.method == "POST":
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form_password = form.clean_password2()
-            form = form.save(commit=False)
-            email = form.email
-            if User.objects.filter(email=email).exists():
-                messages.error(request, "A user with that email already exists.")
-                return redirect("register")
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            if User.objects.filter(username__iexact=username).exists():
+                messages.error(request, 'A user with that username already exists.')
+                return redirect('register')
+            elif User.objects.filter(email__iexact=email).exists():
+                messages.error(request, 'A user with that email address already exists.')
+                return redirect('register')
+            elif len(password1) < 8 and len(password2) < 8:
+                messages.error(request, 'Password can not be less than 8')
+                return redirect('register')
+            elif password1 and password2 == username:
+                messages.error(request, 'Password can not similar to username')
+                return redirect('register')
             else:
-                form.save()
-                auth_login = auth.authenticate(username=form.username, password=form_password)
+                user = User.objects.create_user(username=username, email=email, password=password1)
+
+                user.save()
+                auth_login = auth.authenticate(username=username, password=password1)
                 auth.login(request, auth_login)
-                return redirect("market")
-    else:
-        form = UserRegisterForm()
+                messages.success(request, f"Account has been successfully created for {username}")
+                return redirect('market')
+        else:
+            messages.error(request, "The two password fields didn’t match.")
+            return redirect('register')
     context = {
-        "form": form
+
     }
-    return render(request, "users/register.html", context)
+    return render(request, 'users/register.html', context)
+
+
+def validate_username(request):
+    username = request.GET.get('username', None)
+    email = request.GET.get('email', None)
+    password1 = request.GET.get('password1', None)
+    password2 = request.GET.get('password2', None)
+    updated = False
+
+    if password1 != password2:
+        not_match = "The two password fields didn’t match."
+        data = {
+            'is_taken': User.objects.filter(username__iexact=username).exists(),
+            'is_taken_email': User.objects.filter(email__iexact=email).exists(),
+            "not_match": not_match,
+            "updated": updated,
+        }
+        return JsonResponse(data)
+
+    elif password1 and password2 is not None:
+        if len(password1) < 8 and len(password2) < 8:
+            lt_password = "Passwords can not be less than 8"
+            data = {
+                # 'is_taken': User.objects.filter(username__iexact=username).exists(),
+                # 'is_taken_email': User.objects.filter(email__iexact=email).exists(),
+                "updated": updated,
+                "lt_password": lt_password,
+            }
+            return JsonResponse(data)
+
+    updated = True
+
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists(),
+        'is_taken_email': User.objects.filter(email__iexact=email).exists(),
+        "updated": updated
+    }
+    return JsonResponse(data)
 
 
 @login_required
@@ -62,7 +116,6 @@ def create_store(request):
                 u_form = u_form.save(commit=False)
                 u_form.user = request.user
                 u_form.save()
-                print(u_form)
                 messages.success(request, f'Your store has been created by {user}.')
                 return redirect('create')
         else:
@@ -157,7 +210,10 @@ def vendor_dashboard(request):
 
         previous = len(all_order)
         current = len(weekly_order) + previous
-        percentage_order = ((current - previous) / previous) * 100
+        if previous > 0:
+            percentage_order = ((current - previous) / previous) * 100
+        else:
+            percentage_order = 0
 
         customers = Order.objects.filter(vendor=vendor)
         iter_customers = [i.user for i in customers]
@@ -174,7 +230,10 @@ def vendor_dashboard(request):
 
         previous = int(earnings)
         current = int(weekly_earning) + previous
-        percentage_earnings = ((current - previous) / previous) * 100
+        if previous > 0:
+            percentage_earnings = ((current - previous) / previous) * 100
+        else:
+            percentage_earnings = 0
 
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
 
@@ -221,8 +280,9 @@ def vendor_dashboard(request):
         "now": datetime.now().hour,
         "form": StoreCreateForm(instance=vendor),
         "customers": len(uniques),
+        "paystack_public_key": setting.PAYSTACK_PUBLIC_KEY,
 
-        "account_visit": vendor.account_visit
+        "account_visit": vendor.account_visit,
     }
     return render(request, "users/dashboard.html", context)
 
@@ -528,3 +588,30 @@ def export_products(request):
     for product in products:
         writer.writerow(product)
     return response
+
+
+@login_required
+def request_withdrawal(request):
+    vendor = request.user.vendor
+    if request.method == "POST":
+        amount = request.POST.get('amount', None)  # getting data from amount input
+        password = request.POST.get('password', None)  # getting data from amount input
+        if password == vendor.withdrawal_password:
+            if float(amount) < float(vendor.current_balance):
+                vendor.current_balance -= float(amount)
+                vendor.save()
+                data = {
+                    'msg_successfully': 'Withdrawal was successfully',  # response message
+                    "current_balance": f"₦{intcomma(vendor.current_balance)}0"
+                }
+                return JsonResponse(data)
+            else:
+                data = {
+                    'msg_insufficient': 'Insufficient funds'  # response message
+                }
+                return JsonResponse(data)
+        else:
+            data = {
+                'msg_wrong_password': 'You have inputted a wrong password.'  # response message
+            }
+            return JsonResponse(data)

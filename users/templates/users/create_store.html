@@ -27,6 +27,15 @@
 </div>
 <br>
 <div class="container mb-5">
+    {% if u_form.errors %}
+    <div class="alert alert-danger" role="alert">
+        {% for field, errors in u_form.errors.items %}
+        {% for error in errors %}
+        <b>{{ field }}</b>: {{ error }}
+        {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="row mb-5">
         <div class="col-lg-9">
             <form method="POST" action="{% url 'create_store' %}">
@@ -69,14 +78,9 @@
                         {{ u_form.skills }}
                     </div>
                 </div>
-<!--                <div class="form-group">-->
-<!--                    <div class="form-check">-->
-<!--                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>-->
-<!--                        <label class="form-check-label" for="invalidCheck2">-->
-<!--                            Agree to terms and conditions-->
-<!--                        </label>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="form-row mt-3 mb-3">
+                <label>Withdrawal Password</label>
+                {{ u_form.withdrawal_password }}</div>
                 <button class="btn btn-block" type="submit">Submit Form</button>
             </form>
         </div>

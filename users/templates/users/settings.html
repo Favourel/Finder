@@ -44,7 +44,7 @@
                     <div class="col">
                         <b>TOTAL SPENT</b>
                         <br>
-                        <p>${{total_spent|floatformat:"2"|intcomma}}</p>
+                        <p>₦{{total_spent|floatformat:"2"|intcomma}}</p>
                     </div>
                     <div class="col">
                         <b>LAST ORDER</b>
@@ -156,7 +156,7 @@
                             <b><span class="badge badge-warning">Order incomplete</span></b>
                             {% endif %}
                         </td>
-                        <td>${{ order.total_order_item_price|floatformat:"2"|intcomma }}</td>
+                        <td>₦{{ order.total_order_item_price|floatformat:"2"|intcomma }}</td>
                         <td>{{ order.date_posted }}</td>
                     </tr>
                     {% endfor %}
@@ -173,26 +173,48 @@
 
             {% if all_order.has_other_pages %}
                 {% if all_order.has_previous %}
-                <a class="btn-sm btn btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
-                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.previous_page_number }}#shop">&laquo;
+                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
+                <a class="btn-sm text-decoration-none btn-outline-info mr-1 mb-7" href="?page={{ all_order.previous_page_number }}">&laquo;
                     Previous
                 </a>
                 {% endif %}
                 {% for num in all_order.paginator.page_range %}
-                {% if all_order.number == num %}
-                <a class="btn-sm btn btn-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
-                {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}
-                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ num }}#shop">{{ num }}</a>
-                {% endif %}
+                    {% if all_order.number == num %}
+                    <a class="btn-sm text-decoration-none btn-info mb-7" href="?page={{ num }}">{{ num }}</a>
+                    {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}
+                    <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
                 {% endfor %}
                 {% if all_order.has_next %}
-                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}#shop">Next
+                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}">Next
                     &raquo;</a>
-                <a class="btn-sm btn btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}#shop">Last
+                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}">Last
                     Page
                     &raquo;</a>
                 {% endif %}
             {% endif %}
+            <style>
+                .btn-outline-info {
+                    color: #fd5631;
+                    border: 1px solid #fd5631;
+                    border-radius: 3px;
+                }
+                .btn-outline-info:hover {
+                    color: #fff;
+                    background: #fd5631;
+                    border-color: #fd5631;
+                }
+                .btn-info{
+                    background: #fd5631;
+                    border-color: #fd5631;
+                    color: #fff;
+                }
+                .btn-info:hover{
+                    background: #db3717;
+                    border-color: #db3717;
+                    color: #fff;
+                }
+            </style>
         </div>
         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
             <table class="table table-hover">

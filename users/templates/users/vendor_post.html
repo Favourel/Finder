@@ -264,16 +264,10 @@
             {% else %}
             <br><br>
             <div class="box-element mb-2" style="height: 70px;padding: 10px">
-                <strong style="font-size: 20px" class="mt-2">It seems that you don't have any active Gigs. Get
-                    selling!
+                <strong style="font-size: 20px" class="mt-2">It seems "{{vendor.user}}" doesn't have any active Gigs yet.
                 </strong>
-                {% if request.user == vendor %}
-                {% if request.user.vendor %}
+                {% if request.user == vendor.user %}
                 <a href="{% url 'create' %}" class="mr-auto btn right float-right text-right">Create a New Gig</a>
-                {% else %}
-                <a href="{% url 'create_store' %}" class="mr-auto btn right float-right text-right">Create a New Gig</a>
-
-                {% endif %}
                 {% endif %}
             </div>
             <br>

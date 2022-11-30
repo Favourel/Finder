@@ -131,8 +131,6 @@ a:hover{color:#fd5631}
             .col-lg-6 {
                 padding: 5px;
             }
-
-
         </style>
         <div style="margin-bottom: 20px;" class="box-element rounded overflow-hidden">
 
@@ -172,9 +170,145 @@ a:hover{color:#fd5631}
                         <div class="d-flex flex-column">
                             <form id="signup-form" action="{% url 'register' %}" method="POST">
                                 {% csrf_token %}
-                                {{ form|crispy }}
+                                <div class="form-group">
+                                    <label for="username">Username*</label>
+                                    <input name="username" type="text" class="form-control" id="username"
+                                           aria-describedby="emailHelp" placeholder="Enter Username" required>
+                                    <p><b id="username_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                    <small style="float: center" id="usernameHelpBlock"
+                                           class="form-text justify-content-center align-items-center text-center text-muted">
+                                        Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                                    </small>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email Address*</label>
+                                    <input name="email" type="email" class="form-control" id="email"
+                                           aria-describedby="emailHelp" placeholder="Enter Email" required>
+                                    <p><b id="email_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password*</label>
+                                    <input name="password1" type="password" id="myInput" class="form-control"
+                                           placeholder="Enter Password" required>
+                                    <p><b id="password1_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password Confirmation*</label>
+                                    <input name="password2" type="password" id="myInputConfirm" class="form-control"
+                                           placeholder="Confirm Password" required>
+                                    <p><b id="password2_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                    <small style="float: center" id="passwordHelpBlock"
+                                           class="form-text justify-content-center align-items-center text-center text-muted">
+                                         Enter the same password as before, for verification.
+                                    </small>
+                                </div>
+                                <script>
+                                    $("#username").change(function () {
+                                      var username = $(this).val();
+                                      //var email = $("#email").val();
+
+                                      $.ajax({
+                                        url: '/ajax/validate_username/',
+                                        data: {
+                                          'username': username,
+                                          //'email': email,
+                                        },
+                                        dataType: 'json',
+                                        success: function (data) {
+                                        console.log(data)
+                                          if (data.is_taken) {
+                                            $("#username_result").text("A user with that username already exists.");
+                                            $("#username_result").addClass("text-danger");
+                                          }
+
+                                          else {
+                                            $("#username_result").text("");
+                                            $("#username_result").addClass("text-success");
+                                          }
+
+                                        }
+                                      });
+
+                                    });
+
+
+                                    $("#email").change(function () {
+                                      var email = $(this).val();
+
+                                      $.ajax({
+                                        url: '/ajax/validate_username/',
+                                        data: {
+                                          'email': email,
+                                        },
+                                        dataType: 'json',
+                                        success: function (data) {
+                                        console.log(data)
+                                          if (data.is_taken_email) {
+                                            $("#email_result").text("A user with that email address already exists.");
+                                            $("#email_result").addClass("text-danger");
+                                          }
+                                          else {
+                                            $("#email_result").text("");
+                                            $("#email_result").addClass("text-success");
+                                          }
+                                        }
+                                      });
+
+                                    });
+
+                                    $("#myInputConfirm, #myInput").change(function () {
+                                      var password2 = $("#myInputConfirm").val();
+                                      var password1 = $("#myInput").val();
+
+                                      $.ajax({
+                                        url: '/ajax/validate_username/',
+                                        data: {
+                                          'password2': password2,
+                                         'password1': password1,
+                                        },
+                                        dataType: 'json',
+                                        success: function (data) {
+                                        console.log(data)
+                                          if (data.not_match) {
+                                            $("#password2_result").text(data.not_match);
+                                            $("#password1_result").text(data.not_match);
+                                            $("#password2_result").addClass("text-danger");
+                                            $("#password1_result").addClass("text-danger");
+                                          }
+                                          else if (data.lt_password) {
+                                            $("#password2_result").text(data.lt_password);
+                                            $("#password1_result").text(data.lt_password);
+                                            $("#password2_result").addClass("text-danger");
+                                            $("#password1_result").addClass("text-danger");
+                                          }
+                                          else {
+                                            $("#password2_result").text("");
+                                            $("#password1_result").text("");
+                                            $("#password2_result").addClass("text-success");
+                                            $("#password1_result").addClass("text-success");
+                                          }
+                                        }
+                                      });
+
+                                    });
+                                </script>
+                                <style>
+
+                                </style>
+
+                                <small class="text-muted float-left">
+                                    Show password
+                                </small>
                                 <br>
-                                <button id="submit" type="submit" class="btn btn-block btn-info">
+                                <div align="left">
+                                    <label class="switch">
+                                        <input type="checkbox" class="float-left" id="togglePassword">
+                                        <span class="slider round float-left"></span>
+                                    </label>
+                                </div>
+                                <br>
+                                <button id="submit" type="submit" class="btn btn-block ">
                                     <div class="spinner-border text-light hidden" id="spinner" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
@@ -213,7 +347,72 @@ a:hover{color:#fd5631}
         display:flex;
         align-items: left;
     }
+.switch {
+position: relative;
+display: inline-block;
+width: 40px;
+height: 14px;
+}
 
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 13px;
+width: 13px;
+left: 2px;
+right: 14px;
+align-items: center;
+
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+.slider:after {
+right: 4px;
+}
+input:checked + .slider {
+background-color: #fd5631;
+
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(24px);
+-ms-transform: translateX(24px);
+transform: translateX(24px);
+
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 14px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
 
 </style>
 <script>
@@ -239,7 +438,18 @@ a:hover{color:#fd5631}
         }
     };
 
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#myInput');
+const password_confirm = document.querySelector('#myInputConfirm');
 
+togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    const password_confirm_type = password_confirm.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    password_confirm.setAttribute('type', password_confirm_type);
+    // toggle the eye slash icon
+});
 
 </script>
 

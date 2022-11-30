@@ -33,8 +33,9 @@ class Vendor(models.Model):
     twitter_url = models.URLField(default="")
     instagram_url = models.URLField(default="")
     skills = models.CharField(max_length=20, default="")
-    paystack_public_key = models.CharField(max_length=100, null=True, blank=True)
-    paystack_secret_key = models.CharField(max_length=100, null=True, blank=True)
+    total_earnings = models.FloatField(default=0)
+    current_balance = models.FloatField(default=0)
+    withdrawal_password = models.CharField(max_length=4, default="")
     paid_until = models.DateField(
         null=True,
         blank=True

@@ -5,6 +5,7 @@
 {% block title %}{{ vendor }}{% endblock %}
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <div class="container">
     <div class="row gx-3">
@@ -179,7 +180,7 @@
                                             {{ customers|intword }}</h4>
                                     <span class="badge badge-light-success mb-1 ml-2 badge-info"
                                           style="width: 55px;background-color: #f5803e!important;">
-                                         ↑4.89%
+                                         ↑0.00%
                                     </span>
                                 </div>
 
@@ -212,9 +213,10 @@
                             <div class="col">
                                 <div class="d-flex align-items-center">
                                     <h4 class="text-truncate text-info" id="earnings-count" data-toggle="tooltip"
-                                           title="${{ earnings|floatformat:'2'|intcomma }}" data-placement="left"
+                                           title="₦{{ earnings|floatformat:'2'|intcomma }}" data-placement="left"
                                             style="font-size: calc(1.2625rem + .15vw);cursor:pointer">
-                                        ${{ earnings|floatformat:"2"|intcomma }}</h4>
+                                         ₦{{request.user.vendor.total_earnings|floatformat:"2"|intcomma}}
+                                    </h4>
                                     <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 55px">
                                          ↑{{percentage_earnings}}%
                                     </span>
@@ -230,11 +232,11 @@
                         <div class="order-row">
                             <div style="display:block">
                                 <small class="fs-6 text-muted text-uppercase mb-0">Today</small><br>
-                                <small><b>${{today_earning|floatformat:"2"|intcomma}}</b></small>
+                                <small><b>₦{{today_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                             <div class="ml-auto">
                                 <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
-                                <small><b>${{monthly_earning|floatformat:"2"|intcomma}}</b></small>
+                                <small><b>₦{{monthly_earning|floatformat:"2"|intcomma}}</b></small>
                             </div>
                         </div>
                     </div>
@@ -243,27 +245,19 @@
 
             <br>
             {% if DOW_CHOICES|length >= 2 %}
-            <div class="box-element text-light mb-4 bg-gradient rounded">
+            <div class="box-element mb-4 text-light bg-gradient">
                 <style>
                 .bg-gradient {
-                    background-imae: -o-linear-gradient(135deg,#014ba7,#0183d0);
-                    background-imag: linear-gradient(-45deg,#014ba7,#0183d0);
                     background-color: #152e4d;
                     background-position: center;
-                    font-color: white;
-                    text-color: '#fff';
+                    font-color: black;
+                    text-color: #000;
                 }
-
-
-
-
-
-
                 </style>
                 <h6 style="margin-bottom: .5rem;
                 font-family: vremenagrotesk,sans-serif;
                 font-weight: 900;
-                line-height: 1.5;color: #fff">Product Sales</h6>
+                line-height: 1.5;">Product Sales</h6>
                 <hr>
                 <canvas class="my-2 w-100 p-2 rounded" id="pie-chart" width="900" height="250"
                         style="font-color: white;text-color: #fff;">
@@ -294,15 +288,17 @@
                                     <img src="{% static 'images/wallet.png' %}" height="50" width="50" alt="">
                                     <div class="media-body ml-2">
                                         <h6 class="text-secondary text-uppercase mb-1">Current Balance</h6>
-                                        <h4 class="text-truncate text-info" style="font-size: calc(1.2625rem + .15vw);">
-                                            $1,120.00
+                                        <h4 id="current_balance" class="text-truncate current_balance text-info"
+                                            style="font-size: calc(1.2625rem + .15vw);">
+                                            ₦{{request.user.vendor.current_balance|floatformat:"2"|intcomma}}
                                         </h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <span class="badge badge-light-success badge-info">
-                                       <a href="" class="text-light"> Request withdrawal </a>
+                                       <a href="#" data-target="#withdrawalModal"
+                                          data-toggle="modal" class="text-light"> Request withdrawal </a>
                                 </span>
                             </div>
                         </div>
@@ -389,9 +385,8 @@
                                     </a>
                                 </td>
                                 <td>{{ p.date_posted }}</td>
-                                <td>${{ p.price|floatformat:"2"|intcomma }}</td>
+                                <td>₦{{ p.price|floatformat:"2"|intcomma }}</td>
                                 <td>{{ p.product_purchase }}</td>
-<!--                                <td>${{ p.amount|floatformat:"2"|intcomma }}</td>-->
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -429,7 +424,7 @@
                                     {{ p.date_posted|naturalday }},
                                     {{ p.date_posted|time }}
                                 </td>
-                                <td>${{ p.total_order_item_price|intword|intcomma }}</td>
+                                <td>₦{{ p.total_order_item_price|intword|intcomma }}</td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -495,6 +490,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="orderModal" tabindex="-3" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" role="document">
@@ -543,7 +539,7 @@
                             <b><span class="badge badge-warning">Order incomplete</span></b>
                             {% endif %}
                         </td>
-                        <td>${{ p.total_order_item_price|intword|intcomma }}</td>
+                        <td>₦{{ p.total_order_item_price|intword|intcomma }}</td>
                         <td>{{ p.date_posted }}</td>
                     </tr>
                     {% endfor %}
@@ -553,7 +549,92 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="withdrawalModal" tabindex="-3" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #f6f9fc !important">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Request Withdrawal</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="#fff">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black"></rect>
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="black"></rect>
+                        </svg>
+                    </span>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="." method="post" class="my-withdrawal-form" data-url="{% url 'request_withdrawal' %}">
+                    {% csrf_token %}
+                    <input type="number" required name="amount" class="form-control mb-2" placeholder="Enter withdrawal amount">
+                    <p><b id="insufficient_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
 
+                    <b>Available balance: <span class="current_balance">
+                        ₦{{request.user.vendor.current_balance|floatformat:"2"|intcomma}}
+                    </span></b>
+                    <input type="password" required name="password" placeholder="Enter your withdrawal password" class="form-control mt-2 mb-2">
+                    <p><b id="password_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn-block btn">Withdraw</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+    var $myForm = $('.my-withdrawal-form')
+    $myForm.submit(function(event){
+        event.preventDefault()
+        var $formData = $(this).serialize()
+        var $thisURL = $myForm.attr('data-url') || window.location.href // or set your own url
+        $.ajax({
+            method: "POST",
+            url: $thisURL,
+            data: $formData,
+            success: function(data) {
+                if (data.msg_successfully) {
+                    $myForm.trigger('reset'); // reset form data
+                    $('#withdrawalModal').modal('toggle');
+                    $('.toast').toast('show');
+                    $("#json_messages").text(data.msg_successfully);
+                    $('[type="submit"]').prop('disabled', false);
+                    $(".current_balance").text(data.current_balance);
+                }
+                else if (data.msg_insufficient) {
+                    $('.toast').toast('show');
+                    $("#json_messages").text(data.msg_insufficient);
+                    $('[type="submit"]').prop('disabled', false);
+                    $("#insufficient_result").text(data.msg_insufficient);
+                    $("#insufficient_result").addClass("text-danger");
+                }
+                else if (data.msg_wrong_password) {
+                    $('.toast').toast('show');
+                    $("#json_messages").text(data.msg_wrong_password);
+                    $("#json_messages").text(data.msg_wrong_password);
+                    $('[type="submit"]').prop('disabled', false);
+                    $("#password_result").text(data.msg_wrong_password);
+                    $("#password_result").addClass("text-danger");
+                }
+            },
+            error: handleFormError,
+        })
+    })
+
+    function handleFormError(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR)
+        console.log(textStatus)
+        console.log(errorThrown)
+    }
+})
+</script>
 <script>
   function animateValue(obj, start, end, duration) {
   let startTimestamp = null;
@@ -569,10 +650,10 @@
 }
 
 const obj = document.getElementById("client-count");
-animateValue(obj, 0, {{customers}}, 2000);
+animateValue(obj, 0, {{customers}}, 4000);
 
 const obj_order_count = document.getElementById("order-count");
-animateValue(obj_order_count, 0, {{all_order.count}}, 2000);
+animateValue(obj_order_count, 0, {{all_order.count}}, 4000);
 
 //const obj_earnings_count = document.getElementById("earnings-count");
 //animateValue(obj_earnings_count, 0, {{earnings}}, 2000);

@@ -231,34 +231,13 @@
                         </style>
                         <hr>
                         <h5 style="display: inline-block;float: left"><strong>
-                            ${{ product.price|floatformat:2 }}</strong>
+                            ₦{{ product.price|floatformat:2 }}</strong>
                         </h5>
                         <br>
 
                         <a href="{% url 'add_to_checkout' product.pk %}" class="float-left shadow btn mb-3 btn-block">
                             Proceed to checkout
                         </a>
-
-                        <div class="modal fade" id="add-wishlist" tabindex="-1" aria-labelledby="exampleModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-                                <div class="modal-content" style="background-color: #f6f9fc !important">
-                                    <div class="modal-body">
-                                        <b style="color: #007bff">{{ product }}</b> has been added to you cart.
-                                        <br>
-                                        <div class="d-flex mt-2"
-                                             style="justify-content: center; align-items: center">
-                                            <button style="box-shadow: 4px 6px 5px grey;" type="button"
-                                                    class="btn mt-2 mr-2 btn-outline-secondary" data-dismiss="modal">Ok,
-                                                close
-                                            </button>
-                                            <a style="box-shadow: 4px 6px 5px grey;" href=""
-                                               class="btn btn-info mt-2">View Cart</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         {% if product.vendor.user == request.user %}
                         <div class="mb-3 ">
@@ -386,7 +365,7 @@
                 <h4>
                     <b>Customer Reviews</b>
                 </h4>
-                {% endif %}
+
                 <style>
                     /*===== TESTIMONIAL STYLE ONE =====*/
 
@@ -623,6 +602,7 @@
                     </div>
 
                 </section>
+                {% endif %}
 
                 <!--====== TESTIMONIAL ONE PART ENDS ======-->
 
@@ -893,7 +873,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="d-flex float-right">
-                                <h6><b>${{ product.price|floatformat:2 }}</b></h6>
+                                <h6><b>₦{{ product.price|floatformat:2 }}</b></h6>
                             </div>
                         </div>
                     </div>
@@ -1049,7 +1029,7 @@
 
                                 </style>
 
-                                <h5>${{ query.price|floatformat:2 }}</h5>
+                                <h5>₦{{ query.price|floatformat:2 }}</h5>
                             </div>
                         </a>
                     </div>

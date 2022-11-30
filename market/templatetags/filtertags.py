@@ -12,3 +12,8 @@ def times(number):
 def times_minus(number):
     rating = 5 - round(number)
     return range(rating)
+
+
+@register.filter(name='actual_value')
+def actual_value(number):
+    return int(number)
