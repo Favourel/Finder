@@ -134,6 +134,8 @@
         </div>
         <br>
         {% endfor %}
+        {% else %}
+        Make all necessary migrations
         {% endif %}
     </div>
 </div>
@@ -272,6 +274,7 @@
     <br>
     <br>
     <div class="row headline p-2">
+        {% if products %}
         {% for product in products %}
         <div class="col-lg-3 col-md-4 col-sm-4 col-6">
             <style>
@@ -342,6 +345,9 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        Make all necessary migrations
+        {% endif %}
     </div>
     <br>
     <br>

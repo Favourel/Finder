@@ -447,7 +447,7 @@
                                     {% endfor %}
 
                                     <span class="text-500 text-grey fw-semi-bold ms-1">
-                                        ({{product.productreview_set.count}} people rated)</span>
+                                        (` + obj.people_rating + ` people rated)</span>
                                 </p>
                                 <div class="media">
                                     <h5 class="mt-1"><b>` + obj.edited_price + `</b></h5>
@@ -510,16 +510,18 @@
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
-                                    {% for i in 3|times %}
+                                    {% with str="` + obj.rating_count + `" %}
+                                    {% for i in 3|times_ajax %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
+                                    {% endwith %}
 
                                     {% for i in 2|times %}
                                     <span class="fa fa-star"></span>
                                     {% endfor %}
 
                                     <span class="text-500 text-grey fw-semi-bold ms-1">
-                                        ({{product.productreview_set.count}} people rated)</span>
+                                        (` + obj.people_rating + ` people rated)</span>
                                 </p>
                                 <div class="media">
                                     <h5 class="mt-1"><b>` + obj.edited_price + `</b></h5>
@@ -593,7 +595,7 @@
                                     {% endfor %}
 
                                     <span class="text-500 text-grey fw-semi-bold ms-1">
-                                        ({{product.productreview_set.count}} people rated)</span>
+                                        (` + obj.people_rating + ` people rated)</span>
                                 </p>
                                 <div class="media">
                                     <h5 class="mt-1"><b>` + obj.edited_price + `</b></h5>

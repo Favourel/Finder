@@ -25,6 +25,7 @@ class ProductSerializer(serializers.ModelSerializer):
     vendor = VendorPublicSerializer(read_only=True)
     vendor_url = serializers.SerializerMethodField(read_only=True)
     times = serializers.SerializerMethodField(read_only=True)
+    people_rating = serializers.SerializerMethodField(read_only=True)
     products_images = ProductImageSerializer(source="productimage_set", read_only=True, many=True)
 
     class Meta:
@@ -42,6 +43,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "products_images",
             "rating_count",
             "times",
+            "people_rating"
         ]
 
     @classmethod
@@ -60,6 +62,10 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_times(cls, obj):
         range_round = range(round(obj.rating_count))
         return str(range_round)
+
+    @classmethod
+    def get_people_rating(cls, obj):
+        return obj.productreview_set.count()
 
 
 class OrderSerializer(serializers.ModelSerializer):
