@@ -342,9 +342,10 @@
             <br>
 
             {% if request.user.vendor %}
-            {% if best_selling_products|length > 0 %}
+
 
             <div class="row">
+                {% if best_selling_products|length > 0 %}
                 <div class="col-lg-9">
                     <div class="card shadow" style="overflow:auto;">
                         <div class="row">
@@ -393,7 +394,8 @@
                         </table>
                     </div>
                 </div>
-
+                {% endif %}
+                {% if orders|length > 0 %}
                 <div class="col-lg-3">
                     <div class="card shadow" style="overflow:auto;">
                         <div class="order-row">
@@ -431,8 +433,9 @@
                         </table>
                     </div>
                 </div>
+                 {% endif %}
             </div>
-            {% endif %}
+
             {% endif %}
             <br>
             <br>
@@ -569,7 +572,14 @@
             <div class="modal-body">
                 <form action="." method="post" class="my-withdrawal-form" data-url="{% url 'request_withdrawal' %}">
                     {% csrf_token %}
-                    <input type="number" required name="amount" class="form-control mb-2" placeholder="Enter withdrawal amount">
+                    <select name="Bank" class="form-control mb-2 select">
+                        <option value="1">First City Monument Bank</option>
+                        <option value="2">Union Bank</option>
+                        <option value="3" selected="">First Bank</option>
+                        <option value="4" >Heritage Bank</option>
+                    </select>
+                    <input type="number" required name="account_number" class="form-control mb-2" placeholder="Enter account number">
+                    <input type="number" required name="amount" class="form-control mb-1" placeholder="Enter withdrawal amount">
                     <p><b id="insufficient_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
 
                     <b>Available balance: <span class="current_balance">

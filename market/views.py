@@ -274,7 +274,7 @@ def create_view(request):
                     notify = Notification(product=form, sender=form.vendor, user=user_noti, notification_type=3)
                     notify.save()
                 messages.success(request, 'Your product has been created.')
-                return redirect(f'/{request.user.vendor}/vendor/')
+                return redirect(f'/vendor/{request.user.vendor}/')
         else:
             form = CreateProductForm()
             education_field = CategoryField()

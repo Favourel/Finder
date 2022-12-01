@@ -116,6 +116,13 @@ def create_store(request):
                 u_form = u_form.save(commit=False)
                 u_form.user = request.user
                 u_form.save()
+                notification = Notification.objects.create(
+                    user=user,
+                    sender=User.objects.first(),
+                    notification_type=4,
+                    # vendor=user
+                )
+                notification.save()
                 messages.success(request, f'Your store has been created by {user}.')
                 return redirect('create')
         else:

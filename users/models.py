@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from datetime import datetime
-from market.models import Product, Checkout
+from market.models import Product, Checkout, Vendor
 
 # Create your models here.
 
@@ -24,7 +24,7 @@ class User(AbstractUser):
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
-        (1, "Order"), (2, "follow"), (3, "Post Notification"),
+        (1, "Order"), (2, "follow"), (3, "Post Notification"), (4, "Became a Vendor"),
                           )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
@@ -35,6 +35,7 @@ class Notification(models.Model):
     notification_type = models.IntegerField(choices=NOTIFICATION_TYPES)
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.CASCADE)
     orders = models.ManyToManyField(Checkout, blank=True)
+    # vendor = models.ForeignKey(Vendor, blank=True, on_delete=models.CASCADE)
 
     date_posted = models.DateTimeField(default=datetime.now)
     is_seen = models.BooleanField(default=False)

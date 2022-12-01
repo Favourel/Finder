@@ -142,6 +142,38 @@
     </a>
     <hr class="my-3">
     {% endif %}
+    {% if follow_notification.notification_type == 4 %}
+    <a class="dropdown-ietem px-4" href="#">
+        <div class="media">
+            <img src="{% static 'images/user.png' %}" width="40px" height="40px"
+                 class="rounded-circle user-image" alt="">
+            <div class="media-body ml-1">
+                <div class="small text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                         fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                    </svg>
+                    {{ follow_notification.date_posted }}
+                </div>
+                <span class="font-weight-bold">
+                    Admin
+                    {% if follow_notification.sender.is_verified %}
+                    <img width="15px" height="15px" class="mb-1"
+                         src="{% static 'images/verify.png' %}" alt="">
+                    {% endif %}: congratulations you have created an account as a Vendor!
+                    You can now create Gigs, market yourself, get paid & view dashboard.
+                </span>
+            </div>
+        </div>
+        <div class="dropdown-list-image mr-2">
+
+        </div>
+
+
+    </a>
+    <hr class="my-3">
+    {% endif %}
     {% endfor %}
     <p class="d-flex align-items-center justify-content-center"><a href="{% url 'notification' %}">See more Notifications</a></p>
     {% else %}

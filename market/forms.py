@@ -57,7 +57,8 @@ class ImageField(forms.ModelForm):
         "name": "images",
         "required": True,
         "multiple": True,
-        "type": "file"
+        "type": "file",
+        "accept": "image/*"
     }
     )
     )
