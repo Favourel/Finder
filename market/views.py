@@ -1,4 +1,6 @@
 from abc import ABC
+
+from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -7,7 +9,7 @@ from .models import Product, Category, Vendor, ProductImage, Checkout, ProductRe
 from django.db.models import Q, F, Min, Max
 from users.models import User, Notification
 import datetime
-from .forms import CreateProductForm, CategoryField, ImageField, ReviewBox
+from .forms import CreateProductForm, CategoryField, ImageField, ReviewBox, ImgFormSet
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -20,6 +22,7 @@ from rest_framework.decorators import api_view
 from .serializers import ProductSerializer
 from statistics import mean
 from .filters import ProductPriceFilter
+import os
 
 
 # Create your views here.
@@ -177,13 +180,13 @@ def product_detail(request, pk):
     seller_products = Product.objects.filter(vendor=obj.vendor).exclude(name=obj).order_by("?")[:4]
     if request.method == 'POST':
         if obj.vendor.user == request.user:
+            for i in obj.productimage_set.all():
+                image_path = i.image.path
+                if os.path.exists(image_path):
+                    os.remove(image_path)
             obj.delete()
         messages.success(request, f'{obj} HAS BEEN SUCCESSFULLY DELETED!')
-        return redirect(f'/{obj.vendor}/vendor/')
-
-    image = []
-    for image in obj.productimage_set.all():
-        image
+        return redirect(f'/vendor/{obj.vendor}/')
 
     ratings = [i.rating for i in obj.productreview_set.all()]
     if len(ratings) < 1:
@@ -221,7 +224,7 @@ def product_detail(request, pk):
         "overall_rating": str(overall_rating)[:3],
         "notification_count": notification_count,
         "notification": notification,
-        "product_image": image,
+        # "product_image": image,
         "form": ReviewBox(),
         "seller_products": seller_products,
         "get_cart_items": total_cart_items(request),
@@ -271,7 +274,7 @@ def create_view(request):
                     ProductImage.objects.create(image=image, product=form)
                     # images.save()
                 for user_noti in request.user.post_notification.all():
-                    notify = Notification(product=form, sender=form.vendor, user=user_noti, notification_type=3)
+                    notify = Notification(product=form, sender=form.vendor.user, user=user_noti, notification_type=3)
                     notify.save()
                 messages.success(request, 'Your product has been created.')
                 return redirect(f'/vendor/{request.user.vendor}/')
@@ -349,17 +352,43 @@ def search(request):
 
 
 class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView, ABC):
+    template_name = 'market/update_product.html'
+    form_class = CreateProductForm
     model = Product
-    fields = ['category', 'name', 'price', 'description', ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['formset'] = ImgFormSet(instance=self.object)
+        context['get_cart_items'] = total_cart_items(self.request)
+        context["notification"] = Notification.objects.filter(user=self.request.user, is_seen=False).order_by("-id")[:10]
+        context["notification_count"] = Notification.objects.filter(user=self.request.user, is_seen=False).count()
+        context["category_field"] = CategoryField(instance=self.object)
+
+        return context
 
     def form_valid(self, form):
-        form.instance.vendor = self.request.user
+        context = self.get_context_data()
+        # context['formset'] = ImgFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        formset = context['formset']
+
+        with transaction.atomic():
+            form.instance.category = self.object.category
+            form.instance.category = Category.objects.get(id=self.request.POST.get('category'))
+            form.vendor = self.request.user
+
+            self.object = form.save()
+
+            if formset.is_valid():
+                formset.instance = self.object
+                formset.save()
+
         messages.success(self.request, f"{form.instance.name} HAS BEEN SUCCESSFULLY UPDATED")
-        return super().form_valid(form)
+
+        return super(UpdateProductView, self).form_valid(form)
 
     def test_func(self):
         product = self.get_object()
-        if self.request.user == product.vendor:
+        if self.request.user == product.vendor.user:
             return True
         return False
 
@@ -527,6 +556,8 @@ def process_order(request):
         vendor=receiver[0]
     )
     order.order_item.set([item for item in check_out_list])
+    order.default_order_item = [str(item) for item in order.order_item.all()]
+    order.default_price = sum([item.get_total for item in check_out_list])
     order.save()
     product_queryset = []
     # Product.objects.filter(name__in=list_product).update(product_purchase=F('product_purchase') + 1)
@@ -567,6 +598,7 @@ def product_review(request, pk):
             form = form.save(commit=False)
             form.customer_info = request.user
             form.product = product
+            form.default_product = str(product)
             form.save()
 
             ratings = [i.rating for i in product.productreview_set.all()]

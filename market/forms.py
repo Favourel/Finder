@@ -1,6 +1,8 @@
 from django import forms
 from .models import *
 from djrichtextfield.widgets import RichTextWidget
+from ckeditor.fields import RichTextFormField
+from django.forms import ModelForm, inlineformset_factory
 
 
 class CreateProductForm(forms.ModelForm):
@@ -23,7 +25,15 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
-    description = forms.CharField(widget=RichTextWidget())
+    description = RichTextFormField(widget=forms.Textarea(attrs={
+        'placeholder': 'Product Description',
+        'type': 'text',
+        'name': 'product_description',
+        'id': 'product_description',
+        'class': 'form-control'
+    }
+    )
+    )
     delivery_period = forms.IntegerField(widget=forms.NumberInput(attrs={
         'placeholder': 'Product delivery period',
         'type': 'number',
@@ -33,8 +43,8 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
-    # category_type = Category.objects.all().values_list("name", "name")
-    # category = forms.CharField(widget=forms.Select(choices=category_type, attrs={
+    # category_type = Category.objects.all().values_list("id", "name")
+    # category = forms.CharField(widget=forms.Select(choices=[item for item in category_type], attrs={
     #     'class': 'form-control',
     #     'name': 'category',
     #
@@ -66,6 +76,12 @@ class ImageField(forms.ModelForm):
     class Meta:
         model = ProductImage
         fields = ["image"]
+
+
+ImgFormSet = inlineformset_factory(
+    parent_model=Product, model=ProductImage,
+    fields=['image'], extra=0,
+)
 
 
 class ReviewBox(forms.ModelForm):

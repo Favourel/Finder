@@ -229,11 +229,10 @@ def vendor_dashboard(request):
             if number not in uniques:
                 uniques.append(number)
 
-        orders_earnings = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by('-date_posted')
-        earnings = sum([(i.product.price * i.quantity) for i in orders_earnings])
-        today_earning = sum([j.get_total for i in today_order for j in i.order_item.all()])
-        monthly_earning = sum([j.get_total for i in monthly_order for j in i.order_item.all()])
-        weekly_earning = sum([j.get_total for i in weekly_order for j in i.order_item.all()])
+        earnings = sum([i.default_price for i in all_order])
+        today_earning = sum([i.default_price for i in today_order])
+        monthly_earning = sum([i.default_price for i in monthly_order])
+        weekly_earning = sum([i.default_price for i in weekly_order])
 
         previous = int(earnings)
         current = int(weekly_earning) + previous

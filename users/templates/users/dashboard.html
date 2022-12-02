@@ -2,6 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% load crispy_forms_tags %}
+{% load filtertags %}
 {% block title %}{{ vendor }}{% endblock %}
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -426,7 +427,13 @@
                                     {{ p.date_posted|naturalday }},
                                     {{ p.date_posted|time }}
                                 </td>
-                                <td>₦{{ p.total_order_item_price|intword|intcomma }}</td>
+                                <td>
+                                    {% if p.total_order_item_price %}
+                                    ₦{{ p.total_order_item_price|floatformat:"2"|intcomma }}
+                                    {% else %}
+                                    ₦{{ p.default_price|floatformat:"2"|intcomma }}
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -531,9 +538,13 @@
                         <td>{{ p.user.username }}</td>
                         <td></td>
                         <td>
+                            {% if p.order_item.all %}
                             {% for i in p.order_item.all %}
                             {{ i }}<br>
                             {% endfor %}
+                            {% else %}
+                            {{ p.default_order_item }}
+                            {% endif %}
                         </td>
                         <td>
                             {% if p.ordered %}
@@ -542,7 +553,12 @@
                             <b><span class="badge badge-warning">Order incomplete</span></b>
                             {% endif %}
                         </td>
-                        <td>₦{{ p.total_order_item_price|intword|intcomma }}</td>
+                        <td>
+                            {% if p.total_order_item_price %}
+                            ₦{{ p.total_order_item_price|floatformat:"2"|intcomma }}
+                            {% else %}
+                            ₦{{ p.default_price|floatformat:"2"|intcomma }}
+                            {% endif %}</td>
                         <td>{{ p.date_posted }}</td>
                     </tr>
                     {% endfor %}

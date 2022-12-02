@@ -21,6 +21,15 @@
 <div class="section">
     <div class="container py-5 mt-1">
         <h3><b>Create New Item</b></h3>
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <b>{{ field }}</b>: {{ error }}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
 <br><br>
@@ -66,8 +75,9 @@
                     </div>
 
                 </div>
+                Description
+                <br class="my-2">
                 <div class="form-group">
-                    <label>Description</label>
                     {{ form.description }}
                     {{ form.media }}
                 </div>

@@ -31,9 +31,9 @@
             {% endfor %}
         </div>
         {% endif %}
-        {% if imageset.errors %}
+        {% if formset.errors %}
         <div class="alert alert-danger" role="alert">
-            {% for field, errors in imageset.errors.items %}
+            {% for field, errors in formset.errors.items %}
             {% for error in errors %}
             <b>{{ field }}</b>: {{ error }}
             {% endfor %}
@@ -57,7 +57,7 @@
                         <br>
                         <p>Upload image</p>
                         <!--                        <input type="file" name="images" multiple>-->
-                        {% for i in imageset %}
+                        {% for i in formset %}
                         {{ i.image }}
                         {% endfor %}
                         <br>
@@ -67,9 +67,7 @@
                     #wrapper {
                         border: 1px solid #000;
                         border-radius: 15px;
-                        background-size: 30rem;
-                        height: 10rem;
-
+                        padding-bottom: 20px;
                     }
                 </style>
                 <br><br>
@@ -80,6 +78,8 @@
                 <div class="form-row mt-3">
                     <div class="col-md-6 mb-3">
                         {{ category_field|crispy }}
+<!--                        <label>Category</label>-->
+<!--                        {{ form.category }}-->
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Price</label>

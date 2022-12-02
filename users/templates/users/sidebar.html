@@ -53,7 +53,7 @@
                           style="fill: currentColor"></path>
                     <path d="M2.61,14.63a1.5,1.5,0,0,0-2.22,2l4.59,5a1.52,1.52,0,0,0,2.11.09,1.49,1.49,0,0,0,.1-2.12Z" style="fill: currentColor"></path><path d="M10.3,13a1.41,1.41,0,0,0,2-.54L16.89,4.1a1.5,1.5,0,1,0-2.62-1.45L9.68,11A1.41,1.41,0,0,0,10.3,13Z" style="fill: currentColor"></path></g></svg>
             </a>
-            <h5 onclick="closeNav()"><b>X</b></h5>
+            <h5 class="btn-close-sidebar" onclick="closeNav()"><b>X</b></h5>
         </div>
     </div>
     <hr class="my-1 mb-2">
@@ -147,7 +147,7 @@
         <div class="media">
             <img src="{% static 'images/user.png' %}" width="40px" height="40px"
                  class="rounded-circle user-image" alt="">
-            <div class="media-body ml-1">
+            <div class="media-body ml-2">
                 <div class="small text-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                          fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
@@ -208,12 +208,31 @@
 function openNav() {
   var x = document.getElementById("mySidenav");
   x.style.width = "390px";
+  //document.querySelector(".screen-overlay.show").style.backgroundColor = "red";
  // document.getElementById("counter").innerHTML= "0";
 }
-function closeNav() {
-    var x = document.getElementById("mySidenav");
-    x.style.width = "0";
-}
+//function closeNav() {
+  //  var x = document.getElementById("mySidenav");
+    //x.style.width = "0";
+//}
+$(document).ready(function() {
+    $(".btn-close-sidebar, .screen-overlay").click(function(e){
+        $(".screen-overlay").removeClass("show");
+    	$("#mySidenav").css("width", "0");
+    	$(".screen-overlay").removeClass("show");
+
+    });
+
+    // Close menu when pressing ESC
+    $(document).on('keydown', function(event) {
+        if(event.keyCode === 27) {
+           $("#mySidenav").css("width", "0");
+        }
+    });
+
+
+});
+
 function readBtn(){
     document.getElementById("counter").innerHTML= "0";
 }

@@ -73,6 +73,12 @@ class VendorReview(models.Model):
     message = models.TextField()
     date_posted = models.DateTimeField(default=datetime.now)
 
+    class Meta:
+        ordering = ["-date_posted"]
+
+    def __str__(self):
+        return f"{self.sender}"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, default="Select Category")
@@ -99,6 +105,9 @@ class Product(models.Model):
     date_posted = models.DateTimeField(default=datetime.now)
     date_updated = models.DateTimeField(auto_now=True)
     delivery_period = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ["-date_posted"]
 
     def __str__(self):
         return self.name
@@ -134,6 +143,9 @@ class Checkout(models.Model):
     complete = models.BooleanField(default=False, null=True, blank=True)
     date_posted = models.DateTimeField(default=datetime.now)
 
+    class Meta:
+        ordering = ["-date_posted"]
+
     def __str__(self):
         return f'{self.user}: {self.quantity} of {self.product}'
 
@@ -147,9 +159,14 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=30)
     order_item = models.ManyToManyField(Checkout, related_name="order_item")
+    default_order_item = models.CharField(max_length=1000, null=True, blank=True)
+    default_price = models.FloatField(default=0)
     vendor = models.ForeignKey(Vendor, blank=True, null=True, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
     date_posted = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        ordering = ["-date_posted"]
 
     def __str__(self):
         return f'{self.user}'
@@ -168,10 +185,14 @@ class ProductReview(models.Model):
     )
 
     customer_info = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL,  null=True, blank=True)
+    default_product = models.CharField(max_length=1000, null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, null=True, blank=True)
     review = models.TextField()
     date_added = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        ordering = ["-date_added"]
 
     def __str__(self):
         return f'{self.customer_info.username} comment'

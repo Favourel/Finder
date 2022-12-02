@@ -145,9 +145,13 @@
                             {{order.transaction_id}}
                         </td>
                         <td>
+                            {% if order.order_item.all %}
                             {% for i in order.order_item.all %}
                             {{ i }}<br>
                             {% endfor %}
+                            {% else %}
+                            {{ order.default_order_item }}
+                            {% endif %}
                         </td>
                         <td>
                             {% if order.ordered %}
@@ -156,7 +160,13 @@
                             <b><span class="badge badge-warning">Order incomplete</span></b>
                             {% endif %}
                         </td>
-                        <td>₦{{ order.total_order_item_price|floatformat:"2"|intcomma }}</td>
+                        <td>
+                            {% if order.total_order_item_price %}
+                            ₦{{ order.total_order_item_price|floatformat:"2"|intcomma }}
+                            {% else %}
+                            ₦{{ order.default_price|floatformat:"2"|intcomma }}
+                            {% endif %}
+                        </td>
                         <td>{{ order.date_posted }}</td>
                     </tr>
                     {% endfor %}
@@ -231,7 +241,11 @@
                 {% for review in reviews %}
                 <tr class="p-1">
                     <td>
+                        {% if review.product %}
                         {{review.product}}
+                        {% else %}
+                        {{review.default_product}}
+                        {% endif %}
                     </td>
                     <td>
                         {{review.rating}}
