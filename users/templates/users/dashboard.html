@@ -181,7 +181,7 @@
                                             {{ customers|intword }}</h4>
                                     <span class="badge badge-light-success mb-1 ml-2 badge-info"
                                           style="width: 55px;background-color: #f5803e!important;">
-                                         ↑0.00%
+                                         ↑{{percentage_customers}}%
                                     </span>
                                 </div>
 
@@ -197,11 +197,11 @@
                         <div class="order-row">
                             <div style="display:block">
                                 <small class="fs-6 text-muted text-uppercase mb-0">Today</small><br>
-                                <small><b>0</b></small>
+                                <small><b>{{customers_today|intword}}</b></small>
                             </div>
                             <div class="ml-auto">
                                 <small class="fs-6 text-muted text-uppercase mb-0">This Month </small><br>
-                                <small><b>{{ customers|intword }}</b></small>
+                                <small><b>{{ customers_monthly|intword }}</b></small>
                             </div>
                         </div>
                     </div>
@@ -403,7 +403,8 @@
                             <h5 class=" p-2"><b>Recent orders</b></h5>
                             <div style="flex:2">
                                 <div class="mt-2 ml-2 ml-right ">
-                                    <a href="#" data-target="#orderModal" data-toggle="modal">See all</a>
+                                    <a onclick="ajax_all_order_function()" href="#" data-target="#orderModal" data-toggle="modal">
+                                        See all</a>
                                 </div>
                             </div>
                         </div>
@@ -506,7 +507,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content" style="background-color: #f6f9fc !important">
             <div class="modal-header">
-                <h5 class="modal-title"><strong>Order listing</strong></h5>
+                <h5 class="modal-title"><strong>Order listing ({{all_order.count}})</strong></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">
                     <span class="svg-icon svg-icon-1">
@@ -531,39 +532,39 @@
                         <th>DATE POSTED</th>
                     </tr>
                     </thead>
-                    <tbody>
-
-                    {% for p in all_order %}
-                    <tr>
-                        <td>{{ p.user.username }}</td>
-                        <td></td>
-                        <td>
-                            {% if p.order_item.all %}
-                            {% for i in p.order_item.all %}
-                            {{ i }}<br>
-                            {% endfor %}
-                            {% else %}
-                            {{ p.default_order_item }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if p.ordered %}
-                            <b><span class="badge badge-success">Completed</span></b>
-                            {% else %}
-                            <b><span class="badge badge-warning">Order incomplete</span></b>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if p.total_order_item_price %}
-                            ₦{{ p.total_order_item_price|floatformat:"2"|intcomma }}
-                            {% else %}
-                            ₦{{ p.default_price|floatformat:"2"|intcomma }}
-                            {% endif %}</td>
-                        <td>{{ p.date_posted }}</td>
-                    </tr>
-                    {% endfor %}
+                    <tbody id="all-ajax-order">
+<!--                    {% for p in all_order %}-->
+<!--                    <tr>-->
+<!--                        <td>{{ p.user.username }}</td>-->
+<!--                        <td></td>-->
+<!--                        <td>-->
+<!--                            {% if p.order_item.all %}-->
+<!--                            {% for i in p.order_item.all %}-->
+<!--                            {{ i }}<br>-->
+<!--                            {% endfor %}-->
+<!--                            {% else %}-->
+<!--                            {{ p.default_order_item }}-->
+<!--                            {% endif %}-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            {% if p.ordered %}-->
+<!--                            <b><span class="badge badge-success">Completed</span></b>-->
+<!--                            {% else %}-->
+<!--                            <b><span class="badge badge-warning">Order incomplete</span></b>-->
+<!--                            {% endif %}-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            {% if p.total_order_item_price %}-->
+<!--                            ₦{{ p.total_order_item_price|floatformat:"2"|intcomma }}-->
+<!--                            {% else %}-->
+<!--                            ₦{{ p.default_price|floatformat:"2"|intcomma }}-->
+<!--                            {% endif %}</td>-->
+<!--                        <td>{{ p.date_posted }}</td>-->
+<!--                    </tr>-->
+<!--                    {% endfor %}-->
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -614,6 +615,45 @@
         </div>
     </div>
 </div>
+<script>
+    function ajax_all_order_function() {
+        $.ajax({
+            url: '{% url "ajax_all_order" %}',
+            type: "get",
+            data: {
+
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('#all-ajax-order').empty();
+                for (i = 0; i < data.length; i++) {
+                    let obj = data[i];
+                    var new_message =
+                    `<tr>
+                        <td>
+                            ` + obj.username + `
+                        </td>
+                        <td></td>
+                        <td>
+                             ` + obj.default_order_item + `
+                        </td>
+                        <td>
+
+                            <b><span class="badge badge-success">Completed</span></b>
+
+                        </td>
+                        <td>
+                            ` + obj.edited_default_price + `
+                        </td>
+                        <td>` + obj.edited_date + `</td>
+                    </tr>`;
+                    $('#all-ajax-order').append(new_message);
+                }
+            }
+        })
+    }
+</script>
+
 <script>
 $(document).ready(function(){
     var $myForm = $('.my-withdrawal-form')

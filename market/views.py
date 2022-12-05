@@ -1,7 +1,6 @@
 from abc import ABC
 
-from django.db import transaction
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
+from django.shortcuts import render, reverse, get_object_or_404, redirect, HttpResponseRedirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,9 +8,11 @@ from .models import Product, Category, Vendor, ProductImage, Checkout, ProductRe
 from django.db.models import Q, F, Min, Max
 from users.models import User, Notification
 import datetime
-from .forms import CreateProductForm, CategoryField, ImageField, ReviewBox, ImgFormSet
-from django.views.generic import UpdateView
+from .forms import ProductForm, CategoryField, ImageField, ReviewBox, ImageFormSet
+from django.views.generic import UpdateView, FormView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.views.generic.detail import SingleObjectMixin
+
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms.models import modelformset_factory
 from django.conf import settings
@@ -262,7 +263,7 @@ def create_view(request):
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         product = Product.objects.last()
         if request.method == "POST":
-            form = CreateProductForm(request.POST, request.FILES)
+            form = ProductForm(request.POST, request.FILES)
             education_field = CategoryField(request.POST)
             imageset = ImageField(request.POST, request.FILES)
             images = request.FILES.getlist('images')
@@ -279,7 +280,7 @@ def create_view(request):
                 messages.success(request, 'Your product has been created.')
                 return redirect(f'/vendor/{request.user.vendor}/')
         else:
-            form = CreateProductForm()
+            form = ProductForm()
             education_field = CategoryField()
             imageset = ImageField()
         context = {
@@ -351,98 +352,67 @@ def search(request):
         return render(request, "market/search.html", context)
 
 
-class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView, ABC):
-    template_name = 'market/update_product.html'
-    form_class = CreateProductForm
+class ProductInline(object):
+    form_class = ProductForm
     model = Product
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['formset'] = ImgFormSet(instance=self.object)
-        context['get_cart_items'] = total_cart_items(self.request)
-        context["notification"] = Notification.objects.filter(user=self.request.user, is_seen=False).order_by("-id")[:10]
-        context["notification_count"] = Notification.objects.filter(user=self.request.user, is_seen=False).count()
-        context["category_field"] = CategoryField(instance=self.object)
-
-        return context
+    template_name = "market/update_product.html"
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        # context['formset'] = ImgFormSet(self.request.POST, self.request.FILES, instance=self.object)
-        formset = context['formset']
+        named_formsets = self.get_named_formsets()
+        if not all((x.is_valid() for x in named_formsets.values())):
+            return self.render_to_response(self.get_context_data(form=form))
 
-        with transaction.atomic():
-            form.instance.category = self.object.category
-            form.instance.category = Category.objects.get(id=self.request.POST.get('category'))
-            form.vendor = self.request.user
+        self.object = form.save()
 
-            self.object = form.save()
-
-            if formset.is_valid():
-                formset.instance = self.object
+        # for every formset, attempt to find a specific formset save function
+        # otherwise, just save.
+        for name, formset in named_formsets.items():
+            formset_save_func = getattr(self, 'formset_{0}_valid'.format(name), None)
+            if formset_save_func is not None:
+                formset_save_func(formset)
+            else:
                 formset.save()
-
         messages.success(self.request, f"{form.instance.name} HAS BEEN SUCCESSFULLY UPDATED")
 
-        return super(UpdateProductView, self).form_valid(form)
+        return redirect(form.instance.get_absolute_url())
+
+    def formset_images_valid(self, formset):
+        """
+        Hook for custom formset saving. Useful if you have multiple formsets
+        """
+        images = formset.save(commit=False)  # self.save_formset(formset, contact)
+        # add this 2 lines, if you have can_delete=True parameter
+        # set in inlineformset_factory func
+        for obj in formset.deleted_objects:
+            obj.delete()
+        for image in images:
+            image.product = self.object
+            image.save()
+
+
+class ProductUpdate(LoginRequiredMixin, UserPassesTestMixin, ProductInline, UpdateView):
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ProductUpdate, self).get_context_data(**kwargs)
+        ctx['named_formsets'] = self.get_named_formsets()
+        ctx['get_cart_items'] = total_cart_items(self.request)
+        ctx["notification"] = Notification.objects.filter(user=self.request.user, is_seen=False).order_by("-id")[:10]
+        ctx["notification_count"] = Notification.objects.filter(user=self.request.user, is_seen=False).count()
+        ctx["category_field"] = CategoryField(instance=self.object)
+
+        return ctx
+
+    def get_named_formsets(self):
+        return {
+            'images': ImageFormSet(self.request.POST or None, self.request.FILES or None,
+                                   instance=self.object, prefix='images'),
+        }
 
     def test_func(self):
         product = self.get_object()
         if self.request.user == product.vendor.user:
             return True
         return False
-
-
-@login_required
-def update_product(request, pk):
-    obj = get_object_or_404(Product, pk=pk)
-    obj_image = obj.productimage_set.all()
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-id")[:10]
-    notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-    if request.user == obj.vendor.user:
-        if request.method == "POST":
-            queryset_forms = []
-            for item in obj_image:
-                queryset_forms.append(ImageField(request.POST or None, request.FILES, instance=item))
-
-            my_forms = all([i.is_valid() for i in queryset_forms])
-
-            form = CreateProductForm(request.POST, request.FILES, instance=obj)
-            category_field = CategoryField(request.POST, instance=obj)
-            # ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
-            # formset = ImageFormset(request.POST, request.FILES, queryset=obj_image)
-            if my_forms and form.is_valid():
-                form = form.save(commit=False)
-                form.vendor.user = request.user
-                form.save()
-                for form_2 in queryset_forms:
-                    forms = form_2.save(commit=False)
-                    forms.product = form
-                    forms.save()
-                messages.success(request, 'Your product has been updated.')
-                return redirect(form.get_absolute_url())
-        else:
-            form = CreateProductForm(instance=obj)
-            category_field = CategoryField(instance=obj)
-            # ImageFormset = modelformset_factory(ProductImage, form=ImageField, extra=0)
-            # formset = ImageFormset(queryset=obj_image)
-            queryset_forms = []
-            for item in obj_image:
-                queryset_forms.append(ImageField(request.POST or None, request.FILES, instance=item))
-
-        context = {
-            "notification_count": notification_count,
-            "product": obj,
-            "notification": notification,
-            "form": form,
-            "category_field": category_field,
-            "imageset": queryset_forms,
-            "get_cart_items": total_cart_items(request)
-        }
-        return render(request, "market/update_product.html", context)
-    else:
-        messages.error(request, "You are not allowed!")
-        return redirect("error404")
 
 
 @login_required

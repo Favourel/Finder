@@ -138,7 +138,7 @@
                 </tr>
                 </thead>
 
-                <tbody><section id="all-order">
+                <tbody id="all-order">
                     {% for order in all_order %}
                     <tr class="p-1">
                         <td>
@@ -170,61 +170,84 @@
                         <td>{{ order.date_posted }}</td>
                     </tr>
                     {% endfor %}
-<!--                    <tr id="show-more"></tr>--></section>
+<!--                    <tr id="show-more"></tr>-->
                 </tbody>
 
                 </table>
 
-<!--            <div id="all-order"></div>-->
             <br>
-<!--            {% for i in page_list %}-->
-<!--            <button class="btn" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</button>-->
-<!--            {% endfor %}-->
-
-            {% if all_order.has_other_pages %}
-                {% if all_order.has_previous %}
-                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>
-                <a class="btn-sm text-decoration-none btn-outline-info mr-1 mb-7" href="?page={{ all_order.previous_page_number }}">&laquo;
-                    Previous
-                </a>
-                {% endif %}
-                {% for num in all_order.paginator.page_range %}
-                    {% if all_order.number == num %}
-                    <a class="btn-sm text-decoration-none btn-info mb-7" href="?page={{ num }}">{{ num }}</a>
-                    {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}
-                    <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ num }}">{{ num }}</a>
-                    {% endif %}
-                {% endfor %}
-                {% if all_order.has_next %}
-                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}">Next
-                    &raquo;</a>
-                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}">Last
-                    Page
-                    &raquo;</a>
-                {% endif %}
+            {% for i in page_list %}
+            {% if forloop.first %}
+            <a class="btn-sm text-decoration-none btn-outline-info btn-info" href="#" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
+            {% else %}
+            <a class="btn-sm text-decoration-none btn-outline-info" href="#" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
             {% endif %}
+            {% endfor %}
+
+<!--            {% if all_order.has_other_pages %}-->
+<!--                {% if all_order.has_previous %}-->
+<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>-->
+<!--                <a class="btn-sm text-decoration-none btn-outline-info mr-1 mb-7" href="?page={{ all_order.previous_page_number }}">&laquo;-->
+<!--                    Previous-->
+<!--                </a>-->
+<!--                {% endif %}-->
+<!--                {% for num in all_order.paginator.page_range %}-->
+<!--                    {% if all_order.number == num %}-->
+<!--                    <a class="btn-sm text-decoration-none btn-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
+<!--                    {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}-->
+<!--                    <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
+<!--                    {% endif %}-->
+<!--                {% endfor %}-->
+<!--                {% if all_order.has_next %}-->
+<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}">Next-->
+<!--                    &raquo;</a>-->
+<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}">Last-->
+<!--                    Page-->
+<!--                    &raquo;</a>-->
+<!--                {% endif %}-->
+<!--            {% endif %}-->
             <style>
                 .btn-outline-info {
-                    color: #fd5631;
-                    border: 1px solid #fd5631;
-                    border-radius: 3px;
+                    color: #fd5631 !important;
+                    border: 1px solid #fd5631 !important;
+                    border-radius: 3px !important;
                 }
                 .btn-outline-info:hover {
-                    color: #fff;
-                    background: #fd5631;
-                    border-color: #fd5631;
+                    color: #fff !important;
+                    background: #fd5631 !important;
+                    border-color: #fd5631 !important;
                 }
                 .btn-info{
-                    background: #fd5631;
-                    border-color: #fd5631;
-                    color: #fff;
+                    background: #fd5631 !important;
+                    border-color: #fd5631 !important;
+                    border: 1px solid #fd5631 !important;
+                    color: #fff !important;
                 }
                 .btn-info:hover{
-                    background: #db3717;
-                    border-color: #db3717;
-                    color: #fff;
+                    background: #db3717 !important;
+                    border-color: #db3717 !important;
+                    color: #fff !important;
                 }
             </style>
+            <script type="text/javascript">
+                let thumbnails = document.getElementsByClassName('btn-outline-info')
+
+                let activeImages = document.getElementsByClassName('btn-info')
+
+                for (var i=0; i < thumbnails.length; i++){
+
+                    thumbnails[i].addEventListener('click', function(){
+                        console.log(activeImages)
+
+                        if (activeImages.length > 0){
+                            activeImages[0].classList.remove('btn-info')
+                        }
+
+                        this.classList.add('btn-info')
+                    })
+                }
+
+            </script>
         </div>
         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
             <table class="table table-hover">
@@ -248,7 +271,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{review.rating}}
+                        {{review.rating}}/5
                     </td>
                     <td>
                         {{review.review}}
@@ -312,31 +335,21 @@
                 for (i = 0; i < data.length; i++) {
                     let obj = data[i];
                     var new_message =
-                    `<table class="table table-hover">
-                     <thead>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr class="p-1">
-                            <td>
-                                ` + obj.transaction_id + `
-                            </td>
-                            <td>
-                                ` + obj.order_item_data + `
-                            </td>
-                            <td>
-                                <b><span class="badge badge-success">Completed</span></b>
-                            </td>
-                            <td>` + obj.total_order_item_price + ` </td>
-                            <td>` + obj.date_posted + `</td>
-                        </tr>
-                    </tbody></table>`;
+                    `<tr class="p-1">
+                        <td>
+                            ` + obj.transaction_id + `
+                        </td>
+                        <td>
+                            ` + obj.default_order_item + `<br>
+                        </td>
+                        <td>
+                            <b><span class="badge badge-success">Completed</span></b>
+                        </td>
+                        <td>
+                            ` + obj.edited_default_price + `
+                        </td>
+                        <td>` + obj.edited_date + `</td>
+                    </tr>`;
                     $('#all-order').append(new_message);
                 }
             }

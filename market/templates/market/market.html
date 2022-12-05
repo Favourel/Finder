@@ -116,30 +116,30 @@
                     <ul class="list-inline mb-0 g-3">
                         <!-- Item -->
                         {% if rating_query %}
-                        {% for i in 5|times %}
-                        <li class="list-inline-item mb-0">
-                            {% if rating_query|actual_value == forloop.counter %}
-                            <a class="btn-sm btn" href="/market/?ratings={{forloop.counter}}">
-                                {{ forloop.counter }}
-                                <i class="fa fa-star text-warning"></i>
-                            </a>
-                            {% elif forloop.counter > rating_query|add:'-5' and forloop.counter < rating_query|add:'5' %}
-                            <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
-                                {{forloop.counter}}
-                                <i class="fa fa-star "></i>
-                            </a>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
+                            {% for i in 5|times %}
+                            <li class="list-inline-item mb-0">
+                                {% if rating_query|actual_value == forloop.counter %}
+                                <a class="btn-sm btn" href="/market/?ratings={{forloop.counter}}">
+                                    {{ forloop.counter }}
+                                    <i class="fa fa-star text-warning"></i>
+                                </a>
+                                {% elif forloop.counter > rating_query|add:'-5' and forloop.counter < rating_query|add:'5' %}
+                                <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
+                                    {{forloop.counter}}
+                                    <i class="fa fa-star "></i>
+                                </a>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
                         {% else %}
-                        {% for i in 5|times %}
-                        <li class="list-inline-item mb-0">
-                            <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
-                                {{forloop.counter}}
-                                <i class="fa fa-star "></i>
-                            </a>
-                        </li>
-                        {% endfor %}
+                            {% for i in 5|times %}
+                            <li class="list-inline-item mb-0">
+                                <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
+                                    {{forloop.counter}}
+                                    <i class="fa fa-star "></i>
+                                </a>
+                            </li>
+                            {% endfor %}
                         {% endif %}
                     </ul>
                     <br>
@@ -241,9 +241,63 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="col-auto">
+<!--                    {% for i in page_list %}-->
+<!--                    <button class="btn" onclick="ajax_paginate_products_function('{{i}}')">{{i}}</button>-->
+<!--                    {% endfor %}-->
                     {% for i in page_list %}
-                    <button class="btn" onclick="ajax_paginate_products_function('{{i}}')">{{i}}</button>
+                    {% if forloop.first %}
+                    <a class="btn-sm text-decoration-none btn-outline-info btn-info" href="#"
+                       onclick="ajax_paginate_products_function('{{i}}')">{{i}}</a>
+                    {% else %}
+                    <a class="btn-sm text-decoration-none btn-outline-info" href="#"
+                       onclick="ajax_paginate_products_function('{{i}}')">{{i}}</a>
+                    {% endif %}
                     {% endfor %}
+                    <style>
+                        .btn-outline-info {
+                            color: #fd5631 !important;
+                            border: 1px solid #fd5631 !important;
+                            border-radius: 3px !important;
+                        }
+                        .btn-outline-info:hover {
+                            color: #fff !important;
+                            background: #fd5631 !important;
+                            border-color: #fd5631 !important;
+                        }
+                        .btn-info{
+                            background: #fd5631 !important;
+                            border-color: #fd5631 !important;
+                            border: 1px solid #fd5631 !important;
+                            color: #fff !important;
+                        }
+                        .btn-info:hover{
+                            background: #db3717 !important;
+                            border-color: #db3717 !important;
+                            color: #fff !important;
+                        }
+                        .btn-sm {
+                            padding: .5rem;
+                        }
+                    </style>
+                    <script type="text/javascript">
+                        let thumbnails = document.getElementsByClassName('btn-outline-info')
+
+                        let activeImages = document.getElementsByClassName('btn-info')
+
+                        for (var i=0; i < thumbnails.length; i++){
+
+                            thumbnails[i].addEventListener('click', function(){
+                                console.log(activeImages)
+
+                                if (activeImages.length > 0){
+                                    activeImages[0].classList.remove('btn-info')
+                                }
+
+                                this.classList.add('btn-info')
+                            })
+                        }
+
+                    </script>
                 </div>
             </div>
             <br>
@@ -438,9 +492,11 @@
                             <a href="` + obj.url + `" class="text-dark text-decoration-none">
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
-                                    {% for i in 3|times %}
+                                    {% with int='` + obj.times + `' %}
+                                    {% for i in int %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
+                                    {% endwith %}
 
                                     {% for i in 2|times %}
                                     <span class="fa fa-star"></span>

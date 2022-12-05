@@ -143,10 +143,10 @@ class StoreCreateForm(forms.ModelForm):
     }))
     withdrawal_password = forms.CharField(widget=forms.PasswordInput(
         attrs={
-            'placeholder': 'Password',
+            'placeholder': 'Withdrawal Password',
             'type': 'password',
-            'name': 'password',
-            'id': 'password',
+            'name': 'withdrawal_password',
+            'id': 'withdrawal_password',
             'class': 'form-control'
         }
     ))

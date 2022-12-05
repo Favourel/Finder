@@ -5,15 +5,15 @@ from ckeditor.fields import RichTextFormField
 from django.forms import ModelForm, inlineformset_factory
 
 
-class CreateProductForm(forms.ModelForm):
+class ProductForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={
         'placeholder': 'Product Name',
         'type': 'text',
         'name': 'product_name',
         'id': 'product_name',
         'class': 'form-control'
-            }
-        )
+    }
+    )
     )
     price = forms.IntegerField(widget=forms.NumberInput(attrs={
         'placeholder': 'Product Price',
@@ -43,6 +43,7 @@ class CreateProductForm(forms.ModelForm):
     }
     )
     )
+
     # category_type = Category.objects.all().values_list("id", "name")
     # category = forms.CharField(widget=forms.Select(choices=[item for item in category_type], attrs={
     #     'class': 'form-control',
@@ -56,7 +57,6 @@ class CreateProductForm(forms.ModelForm):
 
 
 class CategoryField(forms.ModelForm):
-
     class Meta:
         model = Product
         fields = ["category"]
@@ -78,9 +78,9 @@ class ImageField(forms.ModelForm):
         fields = ["image"]
 
 
-ImgFormSet = inlineformset_factory(
-    parent_model=Product, model=ProductImage,
-    fields=['image'], extra=0,
+ImageFormSet = inlineformset_factory(
+    Product, ProductImage, fields=['image'],
+    extra=1, can_delete=True, can_delete_extra=True
 )
 
 

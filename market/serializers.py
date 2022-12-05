@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Order, Checkout, Product, ProductImage
 from django.contrib.humanize.templatetags.humanize import intcomma
 from rest_framework.reverse import reverse
+from django.template.defaultfilters import date, timesince_filter
 
 
 class UserPublicSerializer(serializers.Serializer):
@@ -56,7 +57,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_vendor_url(self, obj):
         request = self.context.get("request")
-        return reverse("vendor", kwargs={"username": obj.vendor.user}, request=request)
+        return reverse("vendor", kwargs={"username": obj.vendor}, request=request)
 
     @classmethod
     def get_times(cls, obj):
@@ -69,12 +70,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    total_order_item_price = serializers.SerializerMethodField(read_only=True)
+    # total_order_item_price = serializers.SerializerMethodField(read_only=True)
     username = serializers.SerializerMethodField(read_only=True)
     user = UserPublicSerializer(read_only=True)
     # order_item = serializers.SerializerMethodField(read_only=True)
     vendor = VendorPublicSerializer(read_only=True)
     order_item_data = serializers.SerializerMethodField(read_only=True)
+    edited_date = serializers.SerializerMethodField(read_only=True)
+    edited_default_price = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
@@ -82,19 +85,27 @@ class OrderSerializer(serializers.ModelSerializer):
             "user",
             "username",
             "transaction_id",
+            "default_price",
+            "edited_default_price",
             "order_item",
             "order_item_data",
+            "default_order_item",
             "vendor",
             "ordered",
-            "total_order_item_price",
+            # "total_order_item_price",
             "date_posted",
+            "edited_date"
         ]
 
+    # @classmethod
+    # def get_total_order_item_price(cls, obj):
+    #     total = obj.order_item.all()
+    #     total_price = sum([i.get_total for i in total])
+    #     return f"₦{intcomma(total_price)}0"
+
     @classmethod
-    def get_total_order_item_price(cls, obj):
-        total = obj.order_item.all()
-        total_price = sum([i.get_total for i in total])
-        return f"₦{intcomma(total_price)}0"
+    def get_edited_default_price(cls, obj):
+        return f"₦{intcomma(obj.default_price)}0"
 
     @classmethod
     def get_username(cls, obj):
@@ -104,4 +115,8 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_order_item_data(cls, obj):
         all_order = obj.order_item.all()
         order_item_list = [str(order) for order in all_order]
-        return order_item_list
+        return '\n\n'.join(order_item_list)
+
+    @classmethod
+    def get_edited_date(cls, obj):
+        return date(obj.date_posted)

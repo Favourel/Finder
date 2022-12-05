@@ -212,7 +212,7 @@ def vendor_dashboard(request):
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
         weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
-                                            date_posted__gte=datetime.now()-timedelta(days=7))
+                                            date_posted__gte=datetime.now() - timedelta(days=6))
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
 
         previous = len(all_order)
@@ -222,12 +222,36 @@ def vendor_dashboard(request):
         else:
             percentage_order = 0
 
-        customers = Order.objects.filter(vendor=vendor)
-        iter_customers = [i.user for i in customers]
+        iter_customers = [i.user for i in all_order]
         uniques = []
         for number in iter_customers:
             if number not in uniques:
                 uniques.append(number)
+
+        iter_customers_today = [i.user for i in today_order]
+        uniques_customers_today = []
+        for number in iter_customers_today:
+            if number not in uniques_customers_today:
+                uniques_customers_today.append(number)
+
+        iter_customers_weekly = [i.user for i in weekly_order]
+        uniques_customers_weekly = []
+        for number in iter_customers_weekly:
+            if number not in uniques_customers_weekly:
+                uniques_customers_weekly.append(number)
+
+        iter_customers_monthly = [i.user for i in monthly_order]
+        uniques_customers_monthly = []
+        for number in iter_customers_monthly:
+            if number not in uniques_customers_monthly:
+                uniques_customers_monthly.append(number)
+
+        previous = len(uniques)
+        current = len(iter_customers_weekly) + previous
+        if previous > 0:
+            percentage_customers = ((current - previous) / previous) * 100
+        else:
+            percentage_customers = 0
 
         earnings = sum([i.default_price for i in all_order])
         today_earning = sum([i.default_price for i in today_order])
@@ -242,10 +266,12 @@ def vendor_dashboard(request):
             percentage_earnings = 0
 
         chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
+        # chart_products = Order.objects.filter(vendor=vendor, ordered=True).order_by("date_posted")
 
         date_list = []
 
         for i in Order.objects.filter(order_item__product__vendor=vendor, ordered=True).order_by("date_posted"):
+            # for i in Order.objects.filter(vendor=vendor, ordered=True).order_by("date_posted"):
             date_list.append(DateExtendedEncoder.default(i.date_posted, i.date_posted))
             # uniques = []
             # for number in date_list:
@@ -253,6 +279,7 @@ def vendor_dashboard(request):
             #         uniques.append(number)
 
         chart_value = solution(date_list, [i.quantity for i in chart_products])
+        # chart_value = solution(date_list, [j.quantity for i in chart_products for j in i.order_item.all()])
         get_values = chart_value.values()
         get_keys = chart_value.keys()
 
@@ -286,6 +313,10 @@ def vendor_dashboard(request):
         "now": datetime.now().hour,
         "form": StoreCreateForm(instance=vendor),
         "customers": len(uniques),
+        "customers_today": len(uniques_customers_today),
+        "customers_monthly": len(uniques_customers_monthly),
+        "percentage_customers": str(percentage_customers)[:4],
+
         "paystack_public_key": setting.PAYSTACK_PUBLIC_KEY,
 
         "account_visit": vendor.account_visit,
@@ -621,3 +652,13 @@ def request_withdrawal(request):
                 'msg_wrong_password': 'You have inputted a wrong password.'  # response message
             }
             return JsonResponse(data)
+
+
+@login_required
+@api_view(["GET", "POST"])
+def ajax_all_order(request):
+    vendor = request.user.vendor
+    all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
+    data = OrderSerializer(all_order, many=True).data
+
+    return Response(data)
