@@ -591,3 +591,5 @@ def error_404(request, exception):
 def error_500(request):
     data = {}
     return render(request, 'market/error404.html', data)
+
+
