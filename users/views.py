@@ -217,7 +217,7 @@ def vendor_dashboard(request):
 
         current = len(all_order)
         previous = current - len(weekly_order)
-        if current > 0:
+        if current & previous > 0:
             percentage_order = ((current - previous) / previous) * 100
         else:
             percentage_order = 0
@@ -248,7 +248,7 @@ def vendor_dashboard(request):
 
         current = len(uniques)
         previous = current - len(iter_customers_weekly)
-        if current > 0:
+        if current & previous > 0:
             percentage_customers = ((current - previous) / previous) * 100
         else:
             percentage_customers = 0
@@ -261,7 +261,7 @@ def vendor_dashboard(request):
         current = int(earnings)
         previous = current - int(weekly_earning)
 
-        if current > 0:
+        if current & previous > 0:
             percentage_earnings = ((current - previous) / previous) * 100
         else:
             percentage_earnings = 0
