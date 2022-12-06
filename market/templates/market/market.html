@@ -119,12 +119,14 @@
                             {% for i in 5|times %}
                             <li class="list-inline-item mb-0">
                                 {% if rating_query|actual_value == forloop.counter %}
-                                <a class="btn-sm btn" href="/market/?ratings={{forloop.counter}}">
+                                <a class="btn-sm text-decoration-none btn-info"
+                                   href="/market/?ratings={{forloop.counter}}">
                                     {{ forloop.counter }}
                                     <i class="fa fa-star text-warning"></i>
                                 </a>
                                 {% elif forloop.counter > rating_query|add:'-5' and forloop.counter < rating_query|add:'5' %}
-                                <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
+                                <a href="/market/?ratings={{forloop.counter}}"
+                                   class="btn-outline-info text-decoration-none btn-sm btn-light" >
                                     {{forloop.counter}}
                                     <i class="fa fa-star "></i>
                                 </a>

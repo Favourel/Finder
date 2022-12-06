@@ -530,7 +530,6 @@ def process_order(request):
     order.default_price = sum([item.get_total for item in check_out_list])
     order.save()
     product_queryset = []
-    # Product.objects.filter(name__in=list_product).update(product_purchase=F('product_purchase') + 1)
     for item in check_out_list:
         product_queryset.append(item.product.product_purchase + item.quantity)
         item.product.product_purchase += item.quantity

@@ -108,6 +108,45 @@ $(document).ready(function(){
 
 <body id="page-top">
 <main id="main">
+    <div class="preloader">
+      <img src="{% static 'images/falcon_LGfm6ox.png' %}" width="65px" height="65px" alt="spinner">
+    </div>
+    <style>
+        .preloader {
+          align-items: center;
+          background: #FFF;
+          display: flex;
+          height: 100vh;
+          justify-content: center;
+          left: 0;
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 9999;
+          opacity: 1;
+          overflow-y: hidden;
+          transform: opacity 1s linear;
+          animation: zoom-in-zoom-out 2s ease infinite;
+        }
+        @keyframes zoom-in-zoom-out {
+          0% {
+            transform: scale(1, 1);
+          }
+          50% {
+            transform: scale(1.5, 1.5);
+          }
+          100% {
+            transform: scale(1, 1);
+          }
+        }
+    </style>
+    <script>
+        function fadeOutEffect() {
+          window.setTimeout("document.querySelector('.preloader').style.display='none';", 200);
+        };
+
+        window.addEventListener('load', fadeOutEffect);
+    </script>
 
     <style>
     .alert-success {
