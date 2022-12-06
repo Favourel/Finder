@@ -322,11 +322,6 @@
                                             <h4 class="text-truncate text-info " style="color: #f5803e!important;font-size: calc(1.2625rem + .15vw);">
                                                 {{account_visit|intword}}
                                             </h4>
-
-                                            <span class="badge text-light badge-light-success mb-1 ml-2 badge-warning"
-                                                  style="width: 45px;background-color: #f5803e!important;">
-                                                2.34%
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -380,6 +375,7 @@
                             <tbody>
 
                             {% for p in best_selling_products %}
+                            {% if p.product_purchase >= 1 %}
                             <tr class="p-1">
                                 <td>
                                     <a class="text-dark text-decoration-none" href="{{p.get_absolute_url}}">
@@ -390,6 +386,7 @@
                                 <td>₦{{ p.price|floatformat:"2"|intcomma }}</td>
                                 <td>{{ p.product_purchase }}</td>
                             </tr>
+                            {% endif %}
                             {% endfor %}
                             </tbody>
                         </table>
@@ -429,11 +426,7 @@
                                     {{ p.date_posted|time }}
                                 </td>
                                 <td>
-                                    {% if p.total_order_item_price %}
-                                    ₦{{ p.total_order_item_price|floatformat:"2"|intcomma }}
-                                    {% else %}
                                     ₦{{ p.default_price|floatformat:"2"|intcomma }}
-                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}

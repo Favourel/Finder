@@ -212,12 +212,12 @@ def vendor_dashboard(request):
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
         weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
-                                            date_posted__gte=datetime.now() - timedelta(days=6))
+                                            date_posted__gte=datetime.now() - timedelta(days=7))
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
 
-        previous = len(all_order)
-        current = len(weekly_order) + previous
-        if previous > 0:
+        current = len(all_order)
+        previous = current - len(weekly_order)
+        if current > 0:
             percentage_order = ((current - previous) / previous) * 100
         else:
             percentage_order = 0
@@ -246,9 +246,9 @@ def vendor_dashboard(request):
             if number not in uniques_customers_monthly:
                 uniques_customers_monthly.append(number)
 
-        previous = len(uniques)
-        current = len(iter_customers_weekly) + previous
-        if previous > 0:
+        current = len(uniques)
+        previous = current - len(iter_customers_weekly)
+        if current > 0:
             percentage_customers = ((current - previous) / previous) * 100
         else:
             percentage_customers = 0
@@ -258,9 +258,10 @@ def vendor_dashboard(request):
         monthly_earning = sum([i.default_price for i in monthly_order])
         weekly_earning = sum([i.default_price for i in weekly_order])
 
-        previous = int(earnings)
-        current = int(weekly_earning) + previous
-        if previous > 0:
+        current = int(earnings)
+        previous = current - int(weekly_earning)
+
+        if current > 0:
             percentage_earnings = ((current - previous) / previous) * 100
         else:
             percentage_earnings = 0

@@ -1,6 +1,7 @@
 {% extends 'market/base.html' %}
 {% block title %}Market{% endblock %}
 {% load static %}
+{% load humanize %}
 {% load filtertags %}
 {% block content %}
 <style>
@@ -136,7 +137,7 @@
                         {% else %}
                             {% for i in 5|times %}
                             <li class="list-inline-item mb-0">
-                                <a href="/market/?ratings={{forloop.counter}}" class="btn btn-sm btn-light" >
+                                <a href="/market/?ratings={{forloop.counter}}" class="btn-outline-info btn-sm btn-light" >
                                     {{forloop.counter}}
                                     <i class="fa fa-star "></i>
                                 </a>
@@ -208,7 +209,7 @@
 
                             </style>
                             <div class="media">
-                                <h5 class="mt-1"><b>₦{{ product.price|floatformat:2 }}</b></h5>
+                                <h5 class="mt-1"><b>₦{{ product.price|floatformat:2|intcomma }}</b></h5>
                                 <div class="media-body ">
                                     <div class="float-right  badge badge-warning alert alert-warning py-2">
                                         <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
@@ -229,8 +230,15 @@
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <a href="{% url 'vendor' product.vendor %}" class="d-flex text-decoration-none">
-                                <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
-                                    <h6 class="mt-1">{{ product.vendor }}</h6></a>
+                                    <img src="{{ product.vendor.user.image.url }}" width="30" height="30" class="rounded-circle" alt="">
+                                    <h6 class="mt-1">
+                                        {{ product.vendor }}
+                                        {% if product.vendor.is_verified %}
+                                        <img width="15px" height="15px" class="mt-0"
+                                             src="{% static 'images/verify.png' %}" alt="">
+                                        {% endif %}
+                                    </h6>
+                                </a>
 
                             </li>
                         </ul>

@@ -195,7 +195,7 @@
                         </style>
                         <hr>
                         <h5 style="display: inline-block;float: left"><strong>
-                            ₦{{ product.price|floatformat:2 }}</strong>
+                            ₦{{ product.price|floatformat:2|intcomma }}</strong>
                         </h5>
                         <br>
 
@@ -225,8 +225,16 @@
                                 <a href="{% url 'vendor' product.vendor %}">
                                     {% if product.seller.first_name %}
                                     {{ product.vendor.full_name }}
+                                    {% if product.vendor.is_verified %}
+                                    <img width="15px" height="15px" class="mt-0"
+                                         src="{% static 'images/verify.png' %}" alt="">
+                                    {% endif %}
                                     {% else %}
                                     {{ product.vendor }}
+                                    {% if product.vendor.is_verified %}
+                                    <img width="15px" height="15px" class="mb-1"
+                                         src="{% static 'images/verify.png' %}" alt="">
+                                    {% endif %}
                                     {% endif %}
                                 </a>
                                 <br>
@@ -837,7 +845,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="d-flex float-right">
-                                <h6><b>₦{{ product.price|floatformat:2 }}</b></h6>
+                                <h6><b>₦{{ product.price|floatformat:2|intcomma }}</b></h6>
                             </div>
                         </div>
                     </div>
@@ -993,7 +1001,7 @@
 
                                 </style>
 
-                                <h5>₦{{ query.price|floatformat:2 }}</h5>
+                                <h5>₦{{ query.price|floatformat:2|intcomma }}</h5>
                             </div>
                         </a>
                     </div>
