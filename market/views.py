@@ -91,8 +91,8 @@ def market_view(request):
                                                       "get_cart_items": total_cart_items(request)
                                                       })
 
-    if request.GET.get('high-low-price'):
-        query = request.GET.get('high-low-price')
+    if request.GET.get('low-high-price'):
+        query = request.GET.get('low-high-price')
         result = Product.objects.all().order_by(f"{query}")
         price_filter = ProductPriceFilter(request.GET, queryset=result)
         product_list = price_filter.qs
@@ -115,11 +115,18 @@ def market_view(request):
     if request.GET.get('category_id'):
         filterProduct = Product.getProductByFilter(request.GET['category_id']).order_by('-id')
         filter_category_product = filterProduct.all().order_by('-product_purchase')
+        price_filter = ProductPriceFilter(request.GET, queryset=filter_category_product)
+        result = price_filter.qs
+        maximum_price = Product.objects.all().aggregate(Max("price"))
+        half_max_price = maximum_price["price__max"] / 2
 
-        return render(request, 'market/market.html', {"products": filter_category_product,
+        return render(request, 'market/market.html', {"products": result,
                                                       # "page_list": page_list,
+                                                      "price_filter": price_filter,
                                                       "categories": categories,
                                                       "product": product_list,
+                                                      "maximum_price": maximum_price,
+                                                      "half_max_price": half_max_price,
                                                       "notification_count": notification_count,
                                                       "notification": notification,
                                                       "get_cart_items": total_cart_items(request)
@@ -192,33 +199,18 @@ def product_detail(request, pk):
     ratings = [i.rating for i in obj.productreview_set.all()]
     if len(ratings) < 1:
         overall_rating = 0
-    else:
-        overall_rating = mean(ratings)
-
-    if len(ratings) < 1:
         one_star = 0
-    else:
-        one_star = (ratings.count(1) * 100) / len(ratings)
-
-    if len(ratings) < 1:
         two_star = 0
-    else:
-        two_star = (ratings.count(2) * 100) / len(ratings)
-
-    if len(ratings) < 1:
         three_star = 0
-    else:
-        three_star = (ratings.count(3) * 100) / len(ratings)
-
-    if len(ratings) < 1:
         four_star = 0
-    else:
-        four_star = float(ratings.count(4) * 100) / len(ratings)
-
-    if len(ratings) < 1:
         five_star = 0
     else:
-        five_star = (ratings.count(5) * 100) / len(ratings)
+        overall_rating = mean(ratings)
+        one_star = float(ratings.count(1) * 100) / len(ratings)
+        two_star = float(ratings.count(2) * 100) / len(ratings)
+        three_star = float(ratings.count(3) * 100) / len(ratings)
+        four_star = float(ratings.count(4) * 100) / len(ratings)
+        five_star = float(ratings.count(5) * 100) / len(ratings)
 
     context = {
         "product": obj,

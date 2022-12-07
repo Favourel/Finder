@@ -247,7 +247,8 @@ def vendor_dashboard(request):
                 uniques_customers_monthly.append(number)
 
         current = len(uniques)
-        previous = current - len(iter_customers_weekly)
+        previous = current - len(uniques_customers_weekly)
+
         if current & previous > 0:
             percentage_customers = ((current - previous) / previous) * 100
         else:

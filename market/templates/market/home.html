@@ -1,5 +1,6 @@
 <!doctype html>
 {% load static %}
+{% load humanize %}
 {% load crispy_forms_tags %}
 <html lang="en">
 <head>
@@ -118,7 +119,7 @@
 }
 </style>
 
-<div align="center"  class="category-section" style="background-color: #fff !important;height: 22vh;">
+<div align="center"  class="category-section" style="background-color: #fff !important;height: 11rem;">
     <div class="row animate__animated animate__backInDown animate__delay-2s align-items-center" style="animated-duration: 2s;">
         {% if categories %}
         {% for category in categories %}
@@ -143,7 +144,7 @@
     .features-section{
         background: #ffff;
         color: #000;
-        height: 60vh;
+        height: 30rem;
         align-items: center;
         display: flex;
         justify-content: center;
@@ -316,7 +317,7 @@
                 <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
                     <h6 class="mb-2 mt-2 text-truncate">{{ product.name }}</h6>
                     <div class="media">
-                        <h5 class="mt-1"><b>₦{{ product.price|floatformat:2 }}</b></h5>
+                        <h5 class="mt-1"><b>₦{{ product.price|floatformat:2|intcomma }}</b></h5>
                         <div class="media-body ">
                             <div class="float-right  badge badge-warning alert alert-warning py-2">
                                 <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
@@ -510,7 +511,7 @@
     .testimonies-section{
         background: #fd5631;
         color: #fff;
-<!--        height: 90vh;-->
+<!--        height: 45rem;-->
         align-items: center;
 
         justify-content: center;
@@ -919,7 +920,7 @@
 <style>
     .section-steps{
         color: #000;
-        height: 60vh;
+        height: 30rem;
         align-items: center;
         display: flex;
         justify-content: center;
@@ -997,7 +998,7 @@
     .get-started{
         background: #db3717;
         color: #fff;
-        height: 40vh;
+        height: 20rem;
         align-items: center;
         display: flex;
         justify-content: center;

@@ -18,10 +18,6 @@
         width: 84%;
         background-color: #fff;
    }
-
-
-
-
 </style>
 <div class="section">
     <div class="container py-5 mt-1">
@@ -53,58 +49,6 @@
 <div class="container mb-5">
     <div class="row mb-5">
         <div class="col-lg-9">
-            <!--            <form method="POST" action="{% url 'product-update' product.id %}" enctype="multipart/form-data">-->
-            <!--                {% csrf_token %}-->
-            <!--                <h5><b>Upload file</b></h5>-->
-            <!--                <label>-->
-            <!--                    File types supported: PNG, JPG, GIF, WEBP. Max size: 100kb-->
-            <!--                </label>-->
-            <!--                <div id="wrapper">-->
-            <!--                    <div align="center">-->
-            <!--                        <br>-->
-            <!--                        <p>Upload image</p>-->
-            <!--                        &lt;!&ndash;                        <input type="file" name="images" multiple>&ndash;&gt;-->
-            <!--                        {% for i in formset %}-->
-            <!--                        {{ i }}-->
-            <!--                        {% endfor %}-->
-            <!--                        <br>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <style>-->
-            <!--                    #wrapper {-->
-            <!--                        border: 1px solid #000;-->
-            <!--                        border-radius: 15px;-->
-            <!--                        padding-bottom: 20px;-->
-            <!--                    }-->
-            <!--                </style>-->
-            <!--                <br><br>-->
-            <!--                <h5><b>Details</b></h5>-->
-
-            <!--                <label>Product name</label>-->
-            <!--                {{ form.name }}-->
-            <!--                <div class="form-row mt-3">-->
-            <!--                    <div class="col-md-6 mb-3">-->
-            <!--                        {{ category_field|crispy }}-->
-            <!--&lt;!&ndash;                        <label>Category</label>&ndash;&gt;-->
-            <!--&lt;!&ndash;                        {{ form.category }}&ndash;&gt;-->
-            <!--                    </div>-->
-            <!--                    <div class="col-md-6 mb-3">-->
-            <!--                        <label>Price</label>-->
-            <!--                        {{ form.price }}-->
-            <!--                    </div>-->
-
-            <!--                </div>-->
-            <!--                <div class="form-group">-->
-            <!--                    <label>Description</label>-->
-            <!--                    {{ form.description }}-->
-            <!--                    {{ form.media }}-->
-            <!--                </div>-->
-            <!--                <div class="form-group">-->
-            <!--                    <label>Delivery period</label>-->
-            <!--                    {{ form.delivery_period }}-->
-            <!--                </div>-->
-            <!--                <button class="btn btn-block" type="submit">Submit Form</button>-->
-            <!--            </form>-->
             <form enctype="multipart/form-data" method="post" id="product_form">
                 {% csrf_token %}
                 <!-- main form start --- in our case product form -->

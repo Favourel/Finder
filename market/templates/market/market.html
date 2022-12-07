@@ -201,12 +201,10 @@
                                     ({{product.productreview_set.count}} people rated)</span>
                             </p>
                             <style>
-
                                 .fw-semi-bold {
                                     font-weight: 500 !important;
                                     color: grey !important;
                                 }
-
                             </style>
                             <div class="media">
                                 <h5 class="mt-1"><b>₦{{ product.price|floatformat:2|intcomma }}</b></h5>
@@ -251,9 +249,6 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="col-auto">
-<!--                    {% for i in page_list %}-->
-<!--                    <button class="btn" onclick="ajax_paginate_products_function('{{i}}')">{{i}}</button>-->
-<!--                    {% endfor %}-->
                     {% for i in page_list %}
                     {% if forloop.first %}
                     <a class="btn-sm text-decoration-none btn-outline-info btn-info" href="#"
@@ -355,7 +350,7 @@
         animation: gradient 10s ease infinite;
         background-size: 400% 400%;
         color: #fff;
-        height: 35vh;
+        height: 17.5rem;
         align-items: center;
         display: flex;
         justify-content: center;
@@ -386,7 +381,7 @@
         background-position: relative;
         background-size: cover;
         color: #fff;
-        height: 20vh;
+        height: 10rem;
         align-items: center;
         display: flex;
         justify-content: center;
@@ -503,7 +498,7 @@
                                 <h6 class="mb-2 mt-2 text-truncate">` + obj.name + `</h6>
                                 <p class="fs--1">
                                     {% with int='` + obj.times + `' %}
-                                    {% for i in int %}
+                                    {% for i in 2|times %}
                                     <span class="fa fa-star checked text-warning"></span>
                                     {% endfor %}
                                     {% endwith %}
