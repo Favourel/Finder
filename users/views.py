@@ -207,12 +207,16 @@ def vendor_dashboard(request):
         products = Product.objects.filter(vendor=vendor)
         today_product = Product.objects.filter(vendor=vendor, date_posted__gte=date.today())
         best_selling_products = Product.objects.filter(vendor=vendor).order_by('-product_purchase')[:5]
+        product_purchase = Product.objects.filter(vendor=vendor).last()
 
         orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
+        past_monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__lt=datetime.now().month)
         weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
                                             date_posted__gte=datetime.now() - timedelta(days=7))
+        yesterday_order = Order.objects.filter(vendor=vendor, ordered=True,
+                                               date_posted__gte=datetime.now() - timedelta(days=1))
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
 
         current = len(all_order)
@@ -221,6 +225,21 @@ def vendor_dashboard(request):
             percentage_order = ((current - previous) / previous) * 100
         else:
             percentage_order = 0
+
+        previous_yesterday = current - len(yesterday_order)
+        if current & len(weekly_order) > 0:
+            percentage_order_yesterday = ((current - previous_yesterday) / previous_yesterday) * 100
+        else:
+            percentage_order_yesterday = 0
+
+        current_monthly = current - len(past_monthly_order)
+        print(current)
+        print(len(past_monthly_order))
+        print(current_monthly)
+        if current & len(past_monthly_order) > 0:
+            percentage_order_monthly = ((current_monthly - len(past_monthly_order)) / len(past_monthly_order)) * 100
+        else:
+            percentage_order_monthly = 0
 
         iter_customers = [i.user for i in all_order]
         uniques = []
@@ -256,6 +275,8 @@ def vendor_dashboard(request):
 
         earnings = sum([i.default_price for i in all_order])
         today_earning = sum([i.default_price for i in today_order])
+        yesterday_earning = sum([i.default_price for i in yesterday_order])
+        past_monthly_earning = sum([i.default_price for i in past_monthly_order])
         monthly_earning = sum([i.default_price for i in monthly_order])
         weekly_earning = sum([i.default_price for i in weekly_order])
 
@@ -267,21 +288,33 @@ def vendor_dashboard(request):
         else:
             percentage_earnings = 0
 
-        chart_products = Checkout.objects.filter(product__vendor=vendor, complete=True).order_by("date_posted")
-        # chart_products = Order.objects.filter(vendor=vendor, ordered=True).order_by("date_posted")
+        previous_yesterday = current - int(yesterday_earning)
+        if current & previous_yesterday > 0:
+            percentage_earning_yesterday = ((current - previous_yesterday) / previous_yesterday) * 100
+        else:
+            percentage_earning_yesterday = 0
+
+        current_monthly = current - int(past_monthly_earning)
+        print(current)
+        print(int(past_monthly_earning))
+        print(current_monthly)
+        if current & int(past_monthly_earning) > 0:
+            percentage_earning_monthly = ((current_monthly - int(past_monthly_earning)) / int(past_monthly_earning)) * 100
+        else:
+            percentage_earning_monthly = 0
+
+        chart_products = Order.objects.filter(vendor=vendor, ordered=True).order_by("date_posted")
 
         date_list = []
 
         for i in Order.objects.filter(order_item__product__vendor=vendor, ordered=True).order_by("date_posted"):
-            # for i in Order.objects.filter(vendor=vendor, ordered=True).order_by("date_posted"):
             date_list.append(DateExtendedEncoder.default(i.date_posted, i.date_posted))
             # uniques = []
             # for number in date_list:
             #     if number not in uniques:
             #         uniques.append(number)
 
-        chart_value = solution(date_list, [i.quantity for i in chart_products])
-        # chart_value = solution(date_list, [j.quantity for i in chart_products for j in i.order_item.all()])
+        chart_value = solution(date_list, [j.quantity for i in chart_products for j in i.order_item.all()])
         get_values = chart_value.values()
         get_keys = chart_value.keys()
 
@@ -301,15 +334,20 @@ def vendor_dashboard(request):
         "today_order": today_order,
         "monthly_order": monthly_order,
         "percentage_order": str(percentage_order)[:4],
-        "percentage_earnings": str(percentage_earnings)[:4],
+        "percentage_order_yesterday": str(percentage_order_yesterday)[:4],
+        "percentage_order_monthly": str(percentage_order_monthly)[:4],
 
         "chart_products": get_values,
         "DOW_CHOICES": list(get_keys),
+        "product_purchase": product_purchase,
         "best_selling_products": best_selling_products,
 
         "earnings": earnings,
         "today_earning": today_earning,
         "monthly_earning": monthly_earning,
+        "percentage_earning_yesterday": str(percentage_earning_yesterday)[:4],
+        "percentage_earnings": str(percentage_earnings)[:4],
+        "percentage_earning_monthly": str(percentage_earning_monthly)[:5],
 
         "get_cart_items": total_cart_items(request),
         "now": datetime.now().hour,
@@ -636,14 +674,20 @@ def request_withdrawal(request):
         amount = request.POST.get('amount', None)  # getting data from amount input
         password = request.POST.get('password', None)  # getting data from amount input
         if password == vendor.withdrawal_password:
-            if float(amount) < float(vendor.current_balance):
-                vendor.current_balance -= float(amount)
-                vendor.save()
-                data = {
-                    'msg_successfully': 'Withdrawal was successfully',  # response message
-                    "current_balance": f"₦{intcomma(vendor.current_balance)}0"
-                }
-                return JsonResponse(data)
+            if float(amount) > 0:
+                if float(amount) < float(vendor.current_balance):
+                    vendor.current_balance -= float(amount)
+                    vendor.save()
+                    data = {
+                        'msg_successfully': 'Withdrawal was successfully',  # response message
+                        "current_balance": f"₦{intcomma(vendor.current_balance)}0"
+                    }
+                    return JsonResponse(data)
+                else:
+                    data = {
+                        'msg_insufficient': 'Insufficient funds'  # response message
+                    }
+                    return JsonResponse(data)
             else:
                 data = {
                     'msg_insufficient': 'Insufficient funds'  # response message

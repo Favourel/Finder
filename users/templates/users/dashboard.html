@@ -137,15 +137,49 @@
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
                          style="background-image:url('{% static 'images/corner-22.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary text-uppercase">Total Orders</h6>
-                        <div class="row ">
+<!--                        <h6 class="text-secondary text-uppercase">Total Orders</h6>-->
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="text-secondary text-uppercase">Total Orders</h6>
+                            <div class="dropdown">
+                                <a class="dropdown-toggler" type="button" id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <h5>▪▪▪</h5>
+                                </a>
+                                <script>
+                                    $(".dropdown-toggler").click(function(){
+                                      $(".dropdown-menu-list").toggle();
+                                      $(".dropdown-menu-list1").hide();
+                                    });
+                                </script>
+                                <ul class="dropdown-menu-list dropdown-menu" style="width:12rem;top:1rem;" aria-labelledby="dropdownMenuButton1">
+                                    <li>
+                                        <button class="dropdown-item" id="show-yesterday">
+                                            Yesterday
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" id="show-week">
+                                            Last Week
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" id="show-month">
+                                            Last Month
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col">
                                 <div class="d-flex align-items-center">
                                     <h4 class="text-truncate text-info" id="order-count" style="font-size: calc(1.2625rem + .15vw);">
                                         {{ all_order.count|intword }}
                                     </h4>
                                     <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 55px">
-                                         ↑{{percentage_order}}%
+                                         <span style="display:none" id="weekly">↑{{percentage_order}}%</span>
+                                         <span  id="yesterday">↑{{percentage_order_yesterday}}%</span>
+                                         <span style="display:none" id="monthly">↑{{percentage_order_monthly}}%</span>
                                     </span>
                                 </div>
                             </div>
@@ -156,6 +190,27 @@
                             </div>
 
                         </div>
+                        <script>
+
+                            $("#show-yesterday").click(function(){
+                              $("#weekly").css("display", "none");
+                              $("#monthly").css("display", "none");
+                              $("#yesterday").css("display", "block");
+                            });
+
+                            $("#show-month").click(function(){
+                              $("#yesterday").css("display", "none");
+                              $("#weekly").css("display", "none");
+                              $("#monthly").css("display", "block");
+                            });
+
+                            $("#show-week").click(function(){
+                              $("#yesterday").css("display", "none");
+                              $("#monthly").css("display", "none");
+                              $("#weekly").css("display", "block");
+                            });
+
+                        </script>
                         <hr class="my-1">
                         <div class="order-row">
                             <div style="display:block">
@@ -172,7 +227,11 @@
                 <div class="col-lg-3 mb-2">
                     <div class="box-element p-3"
                          style="background-image:url('{% static 'images/corner-12.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary text-uppercase">Total Clients</h6>
+
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                             <h6 class="text-secondary text-uppercase">Total Clients</h6>
+
+                        </div>
                         <div class="row">
                             <div class="col">
                                 <div class="d-flex align-items-center">
@@ -209,7 +268,44 @@
                 <div class="col-lg-6 mb-2">
                     <div class="box-element p-3"
                          style="background-image:url('{% static 'images/corner-22.png' %}');background-position: right; border-top-right-radius: .375rem;">
-                        <h6 class="text-secondary text-uppercase">Total Earnings</h6>
+
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                             <h6 class="text-secondary text-uppercase">Total Earnings</h6>
+                             <div class="dropdown">
+                                <a class="dropdown-toggla" type="button" id="dropdownMenuButton2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <h5>▪▪▪</h5>
+                                </a>
+                                <script>
+                                    $(".dropdown-toggla").click(function(){
+                                      $(".dropdown-menu-list1").toggle();
+                                      $(".dropdown-menu-list").hide();
+                                    });
+
+                                </script>
+                                <ul class="dropdown-menu-list1 dropdown-menu align-items-right"
+                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px;
+                                     transform: translate(0px, 31px);"
+                                    aria-labelledby="dropdownMenuButton2" data-popper-placement="bottom-end">
+
+                                    <li>
+                                        <button class="dropdown-item" id="show-yesterday-earnings">
+                                            Yesterday
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" id="show-week-earnings">
+                                            Last Week
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" id="show-month-earnings">
+                                            Last Month
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                         <div class="row ">
                             <div class="col">
                                 <div class="d-flex align-items-center">
@@ -219,9 +315,12 @@
                                          ₦{{request.user.vendor.total_earnings|floatformat:"2"|intcomma}}
                                     </h4>
                                     <span class="badge badge-light-success mb-1 ml-2 badge-info" style="width: 55px">
-                                         ↑{{percentage_earnings}}%
+
+                                         <span style="display:none" id="weekly-earnings">↑{{percentage_earnings}}%</span>
+                                         <span  id="yesterday-earnings">↑{{percentage_earning_yesterday}}%</span>
+                                         <span style="display:none" id="monthly-earnings">↑{{percentage_earning_monthly}}%</span>
                                     </span>
-                                    <span class="text-grey ml-2 mb-1"><small>since last 7 days</small></span>
+<!--                                    <span class="text-grey ml-2 mb-1"><small>since last 7 days</small></span>-->
                                 </div>
                             </div>
                             <div class="col-auto">
@@ -229,6 +328,27 @@
                                 </svg>
                             </div>
                         </div>
+                        <script>
+
+                            $("#show-yesterday-earnings").click(function(){
+                              $("#weekly-earnings").css("display", "none");
+                              $("#monthly-earnings").css("display", "none");
+                              $("#yesterday-earnings").css("display", "block");
+                            });
+
+                            $("#show-month-earnings").click(function(){
+                              $("#yesterday-earnings").css("display", "none");
+                              $("#weekly-earnings").css("display", "none");
+                              $("#monthly-earnings").css("display", "block");
+                            });
+
+                            $("#show-week-earnings").click(function(){
+                              $("#yesterday-earnings").css("display", "none");
+                              $("#monthly-earnings").css("display", "none");
+                              $("#weekly-earnings").css("display", "block");
+                            });
+
+                        </script>
                         <hr class="my-1">
                         <div class="order-row">
                             <div style="display:block">
@@ -338,71 +458,69 @@
             <br>
 
             {% if request.user.vendor %}
-
-
             <div class="row">
                 {% if best_selling_products|length > 0 %}
-                <div class="col-lg-9">
-                    <div class="card shadow" style="overflow:auto;">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="p-2"><b>Best Selling Product</b></h5>
-                            </div>
-                            <div class="col-auto mt-2 mr-2">
-                                <a href="{% url 'export_products' %}" class="btn btn-sm btn-block ">
-                                    Export to CSV
-                                    <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
-                                         fill="currentColor"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                        <path fill-rule="evenodd"
-                                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                        <table class="table table-hover">
-                            <thead style="background-color: #f8f9fa;font-size: 13px">
-                            <tr>
-                                <th>PRODUCT</th>
-                                <th>UPLOADED</th>
-                                <th>PRICE</th>
-                                <th>PURCHASE</th>
-<!--                                <th>AMOUNT</th>-->
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            {% for p in best_selling_products %}
-                            {% if p.product_purchase >= 1 %}
-                            <tr class="p-1">
-                                <td>
-                                    <a class="text-dark text-decoration-none" href="{{p.get_absolute_url}}">
-                                        {{ p.name }}
+                    {% if product_purchase.product_purchase >= 1 %}
+                    <div class="col-lg-9">
+                        <div class="card shadow" style="overflow:auto;">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="p-2"><b>Best Selling Product</b></h5>
+                                </div>
+                                <div class="col-auto mt-2 mr-2">
+                                    <a href="{% url 'export_products' %}" class="btn btn-sm btn-block ">
+                                        Export to CSV
+                                        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-download"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                        </svg>
                                     </a>
-                                </td>
-                                <td>{{ p.date_posted }}</td>
-                                <td>₦{{ p.price|floatformat:"2"|intcomma }}</td>
-                                <td>{{ p.product_purchase }}</td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </div>
+                            </div>
+                            <table class="table table-hover">
+                                <thead style="background-color: #f8f9fa;font-size: 13px">
+                                <tr>
+                                    <th>PRODUCT</th>
+                                    <th>UPLOADED</th>
+                                    <th>PRICE</th>
+                                    <th>PURCHASE</th>
+    <!--                                <th>AMOUNT</th>-->
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for p in best_selling_products %}
+                                {% if p.product_purchase >= 1 %}
+                                <tr class="p-1">
+                                    <td>
+                                        <a class="text-dark text-decoration-none" href="{{p.get_absolute_url}}">
+                                            {{ p.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ p.date_posted }}</td>
+                                    <td>₦{{ p.price|floatformat:"2"|intcomma }}</td>
+                                    <td>{{ p.product_purchase }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                    {% endif %}
                 {% endif %}
                 {% if orders|length > 0 %}
                 <div class="col-lg-3">
                     <div class="card shadow" style="overflow-y:auto; height: 30.4rem;">
-                        <div class="order-row">
-                            <h5 class=" p-2"><b>Recent orders</b></h5>
-                            <div style="flex:2">
-                                <div class="mt-2 ml-2 ml-right ">
-                                    <a onclick="ajax_all_order_function()" href="#" data-target="#orderModal" data-toggle="modal">
+                        <div class="row p-2">
+                            <div class="col"><h5><b>Recent</b></h5></div>
+                            <div class="col-auto">
+                                <a onclick="ajax_all_order_function()" href="#" data-target="#orderModal" data-toggle="modal">
                                         See all</a>
-                                </div>
                             </div>
                         </div>
                         <table class="table table-hover">

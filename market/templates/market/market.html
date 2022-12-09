@@ -50,7 +50,10 @@
                             });
 
                         </script>
-                        <ul class="dropdown-menu-list dropdown-menu" style="width:12rem" aria-labelledby="dropdownMenuButton1">
+                        <ul class="dropdown-menu-list dropdown-menu"
+                            style="position: absolute; inset: 0px 0px auto auto; margin: 0px;
+                                     transform: translate(0px, 31px);width:12rem"
+                            aria-labelledby="dropdownMenuButton1">
                             <li><a class="dropdown-item" href="/market/">All Product</a>
                             </li>
                             <li>
@@ -74,13 +77,13 @@
 <div class="container">
     {% if products|length > 0 %}
     <div class="row p-2" >
-        <div class="col-lg-3">
+        <div class="col-lg-3 col-md-3">
             <div class="sticky-top" style="top: 110px">
                 <div class="box-element">
                     <h5><b>Categories</b></h5>
                     <hr>
                     {% for category in categories %}
-                    <h6><a class="dropdown-item" href="/market/?category_id={{ category.id }}">{{ category }}</a></h6>
+                    <h6><a class="list-item my-1 text-dark " href="/market/?category_id={{ category.id }}">{{ category }}</a></h6>
                     <hr>
                     {% endfor %}
 
@@ -95,11 +98,11 @@
                             </div>
                             <div class="form_control">
                                 <div class="form_control_container">
-                                    <div class="form_control_container__time">Min Price</div>
+                                    <div class="form_control_container__time"><b>Min Price</b></div>
                                     <input class="form_control_container__time__input" type="number" name="min_price" id="fromInput" value="{% if request.GET.min_price %}{{request.GET.min_price}}{% else %}10{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
                                 </div>
                                 <div class="form_control_container">
-                                    <div class="form_control_container__time">Max Price</div>
+                                    <div class="form_control_container__time"><b>Max Price</b></div>
                                     <input class="form_control_container__time__input" name="max_price" type="number" id="toInput" value="{% if request.GET.max_price %}{{request.GET.max_price}}{% else %}{{half_max_price}}{% endif %}" min="0" max="{{maximum_price.price__max}}"/>
                                 </div>
                             </div>
@@ -149,7 +152,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-9" >
+        <div class="col-lg-9 col-md-9" >
 
             <div class="market-started">
                 <div class="market-get-started container">
@@ -160,7 +163,7 @@
             <br>
             <div class="row" id="products-list">
                 {% for product in products %}
-                <div class="col-lg-4 col-md-6 col-sm-4 mb-2 col-6">
+                <div class="col-lg-4 col-md-6  mb-2 col-6">
                     <style>
                         .col-6 {
                             padding: 6px;
@@ -445,9 +448,8 @@
 
     input[type="number"] {
       width: 100px;
-      height: 20px;
+      height: 22px;
       font-size: 17px;
-      border: none;
     }
 
     input[type=number]::-webkit-inner-spin-button,
