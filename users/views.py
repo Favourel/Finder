@@ -586,16 +586,20 @@ def settings(request):
 
     if request.method == "POST":
         form = UserUpdateForm(request.POST, instance=user)
+        email_instance = form.instance.email
         if form.is_valid():
             form = form.save(commit=False)
             email = form.email
             if User.objects.filter(email=email).exists():
+                if request.user.email == email_instance:
+                    form.save()
+                    messages.success(request, 'Your account has been updated!')
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 messages.error(request, "A user with that email already exists.")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             else:
                 form.save()
                 messages.success(request, 'Your account has been updated!')
-                # return redirect(f"../{request.user.vendor}/vendor/")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = UserUpdateForm(instance=user)

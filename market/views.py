@@ -313,7 +313,13 @@ def search(request):
                 }
                 return render(request, "market/search.html", context)
             else:
-                return render(request, 'market/search.html', )
+                context = {
+                    'submitbutton': submitbutton,
+                    "notification_count": notification_count,
+                    "notification": notification,
+                    "get_cart_items": total_cart_items(request)
+                }
+                return render(request, 'market/search.html', context)
         return render(request, "market/search.html", {})
     else:
         if request.method == "GET":
