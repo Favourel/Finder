@@ -44,23 +44,23 @@
                 <b>CONNECT</b>
             </h3>
             </div>
-            <!--            <div class="ml-auto">-->
-            <!--            <a onclick="openNav()" data-href="#" class="nav-link ml-auto bell-btn" id="bi-bell_phone_size" role="button"-->
-            <!--                aria-haspopup="true" aria-expanded="false">-->
-            <!--                <svg xmlns="http://www.w3.org/2000/svg"  width="1.5em"-->
-            <!--                         height="1.5em"  class="bi bi-bell" viewBox="0 0 16 16">-->
-            <!--                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>-->
-            <!--                    </svg>-->
-            <!--                &lt;!&ndash; Counter - Alerts &ndash;&gt;-->
+<!--                        <div class="ml-auto">-->
+<!--                        <a onclick="openNav()" data-href="#" class="nav-link ml-auto bell-btn" id="bi-bell_phone_size" role="button"-->
+<!--                            aria-haspopup="true" aria-expanded="false">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg"  width="1.5em"-->
+<!--                                     height="1.5em"  class="bi bi-bell" viewBox="0 0 16 16">-->
+<!--                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>-->
+<!--                                </svg>-->
+<!--                            &lt;!&ndash; Counter - Alerts &ndash;&gt;-->
 
-            <!--                <span class="badge badge_ badge-danger badge-counter" id="counter_phone_size">-->
-            <!--                    {% if notification_count > 15 %}-->
-            <!--                    <small id="noti_count_phone_size" class="noti_count">15+</small>-->
-            <!--                    {% else %}-->
-            <!--                    {{ notification_count|add:get_cart_items|intword }}-->
-            <!--                    {% endif %}-->
-            <!--                </span>-->
-            <!--            </a></div>-->
+<!--                            <span class="badge badge_ badge-danger badge-counter" id="counter_phone_size">-->
+<!--                                {% if notification_count > 15 %}-->
+<!--                                <small id="noti_count_phone_size" class="noti_count">15+</small>-->
+<!--                                {% else %}-->
+<!--                                {{ notification_count|add:get_cart_items|intword }}-->
+<!--                                {% endif %}-->
+<!--                            </span>-->
+<!--                        </a></div>-->
         </a>
 
     </div>
@@ -126,17 +126,6 @@
         <hr class="my-3">
         <!-- Primary menu-->
         <ul class="navbar-nav">
-<!--            <ul class="navbar-nav mt-2">-->
-<!--                <form action="{% url 'search' %}" class="d-flex mt-2" autocomplete="off" method="GET"-->
-<!--                      value="{{request.GET.q}}">-->
-<!--                    <input style="border-radius: 2px;width: 43rem;height: 2.2rem;" type="text" name="q"-->
-<!--                           value="{{request.GET.q}}" class="form-control"-->
-<!--                           placeholder="What service are you looking for today?"/>-->
-<!--                    <div class="autocomplete" style="width:300px; display:none;">-->
-<!--                        <input type="submit" name="submit" value="Search"/>-->
-<!--                    </div>-->
-<!--                </form>-->
-<!--            </ul>-->
             <div class="d-inline">
                 <ul class="navbar-nav mt-3 mr-auto ml-2">
                     {% if user.is_authenticated %}
@@ -176,7 +165,7 @@
                                 {% if notification_count > 15 %}
                                 <small id="noti_count" class="noti_count">15+</small>
                                 {% else %}
-                                {{ notification_count|add:get_cart_items|intword }}
+                                {{ notification_count|intword }}
                                 {% endif %}
                             </span>
                         </a>
@@ -212,82 +201,6 @@
 
                         </style>
 
-                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow fade_ animated--grow-in"
-                             aria-labelledby="navbarDropdown">
-                            <h4 class="dropdown-header mt-0">
-                                {{ notifications.count }} NOTIFICATIONS
-                            </h4>
-
-                            {% for follow_notification in notification %}
-                            {% if follow_notification.notification_type == 2 %}
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img src="{{ follow_notification.sender.image.url }}"
-                                         class="avatar rounded-circle" width="30px" height="30px"
-                                         alt="{{ follow_notification.sender.image.url }}">
-                                    {% if follow_notification.user in loogedin_list %}
-                                    <div class="status-indicator bg-info"></div>
-                                    {% else %}
-                                    <div class="status-indicator bg-dark"></div>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <div class="small text-gray-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
-                                             fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                        </svg>
-                                        {{ follow_notification.date_posted }}
-                                    </div>
-                                    <span class="font-weight-bold">
-                                        {{ follow_notification.sender }}
-                                        {% if follow_notification.sender.is_verified %}
-                                        <img width="15px" height="15px" class="mb-1"
-                                             src="{% static 'images/verify.png' %}" alt="">
-                                        {% endif %}
-                                        has now started following you!
-                                    </span>
-                                </div>
-                            </a>
-                            {% elif follow_notification.notification_type == 3 %}
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img src="{{ follow_notification.sender.image.url }}"
-                                         class="avatar rounded-circle" width="30px" height="30px"
-                                         alt="{{ follow_notification.sender.image.url }}">
-                                    {% if follow_notification.user in loogedin_list %}
-                                    <div class="status-indicator bg-info"></div>
-                                    {% else %}
-                                    <div class="status-indicator bg-dark"></div>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <div class="small text-gray-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
-                                             fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                        </svg>
-                                        {{ follow_notification.date_posted }}
-                                    </div>
-                                    <span class="font-weight-bold">
-                                        {{ follow_notification.sender }}
-                                        {% if follow_notification.sender.is_verified %}
-                                        <img width="15px" height="15px" class="mb-1"
-                                             src="{% static 'images/verify.png' %}" alt="">
-                                        {% endif %} just uploaded a Gig!
-                                    </span>
-                                </div>
-                            </a>
-                            {% endif %}
-                            {% endfor %}
-                            <hr>
-                            <a class="dropdown-item text-center small text-gray-500"
-                               href="{% url 'notification' %}">
-                                See More Notifications
-                            </a>
-                        </div>
 
                     </li>
 

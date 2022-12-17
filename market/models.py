@@ -101,6 +101,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_purchase = models.IntegerField(default=0)
     rating_count = models.FloatField(default=0)
+    shipping_fee = models.FloatField(default=10)
     vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(default=datetime.now)
     date_updated = models.DateTimeField(auto_now=True)

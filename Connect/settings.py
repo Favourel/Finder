@@ -162,6 +162,11 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "market"
 LOGOUT_REDIRECT_URL = "login"
 
+
+"""
+Open a paystack account and set up country as Nigeria to unable payment gateway
+"""
+
 PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
 PAYSTACK_PUBLIC_KEY = os.environ.get("PAYSTACK_PUBLIC_KEY")
 

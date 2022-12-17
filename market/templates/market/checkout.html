@@ -232,8 +232,16 @@
                             <th><h5>{{ get_cart_items }}</h5></th>
                         </tr>
                         <tr>
+                            <th><h5>Shipping: </h5></th>
+                            <th><h5>₦{{ get_shipping_fee }}</h5></th>
+                        </tr>
+                        <tr>
                             <th><h5 class="mt-2">Subtotal: </h5></th>
-                            <th><h5 id="amount" class="mt-2">₦{{ get_cart_total|floatformat:2|intcomma }}</h5></th>
+                            <th><h5 class="mt-2">₦{{ get_cart_total|floatformat:2|intcomma }}</h5></th>
+                        </tr>
+                        <tr>
+                            <th><h5 class="mt-2">Summary: </h5></th>
+                            <th><h5 id="amount" class="mt-2">₦{{ get_cart_total|add:get_shipping_fee|floatformat:2|intcomma }}</h5></th>
                         </tr>
                     </table>
                     <hr>

@@ -212,7 +212,8 @@ def vendor_dashboard(request):
         orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
         monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
-        past_monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__lt=datetime.now().month)
+        past_monthly_order = Order.objects.filter(vendor=vendor, ordered=True,
+                                                  date_posted__month__lt=datetime.now().month)
         weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
                                             date_posted__gte=datetime.now() - timedelta(days=7))
         yesterday_order = Order.objects.filter(vendor=vendor, ordered=True,
@@ -233,9 +234,7 @@ def vendor_dashboard(request):
             percentage_order_yesterday = 0
 
         current_monthly = current - len(past_monthly_order)
-        print(current)
-        print(len(past_monthly_order))
-        print(current_monthly)
+
         if current & len(past_monthly_order) > 0:
             percentage_order_monthly = ((current_monthly - len(past_monthly_order)) / len(past_monthly_order)) * 100
         else:
@@ -295,9 +294,7 @@ def vendor_dashboard(request):
             percentage_earning_yesterday = 0
 
         current_monthly = current - int(past_monthly_earning)
-        print(current)
-        print(int(past_monthly_earning))
-        print(current_monthly)
+
         if current & int(past_monthly_earning) > 0:
             percentage_earning_monthly = ((current_monthly - int(past_monthly_earning)) / int(past_monthly_earning)) * 100
         else:
