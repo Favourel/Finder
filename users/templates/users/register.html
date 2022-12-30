@@ -60,6 +60,7 @@ h1,h2,h3,h4,h5,h6{
 
 
 
+
 </style>
 
 {% load crispy_forms_tags %}
@@ -88,6 +89,12 @@ a {color: #fd5631;}
 a:hover{color:#fd5631}
 
 
+
+
+
+
+
+
 </style>
 
 
@@ -113,6 +120,12 @@ a:hover{color:#fd5631}
     }
 
 
+
+
+
+
+
+
 </style>
 
 <br>
@@ -122,6 +135,8 @@ a:hover{color:#fd5631}
             display: none;
         }
     }
+
+
 
 </style>
 
@@ -169,41 +184,46 @@ a:hover{color:#fd5631}
                     <div style="border-radius: 3px;margin-bottom: 20px;" class=" rounded overflow-hidden ">
                         <div class="d-flex flex-column">
                             <form id="signup-form" action="{% url 'register' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="username">Username*</label>
-                                    <input name="username" type="text" class="form-control" id="username"
-                                           aria-describedby="emailHelp" placeholder="Enter Username" required>
-                                    <p><b id="username_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
-                                    <small style="float: center" id="usernameHelpBlock"
-                                           class="form-text justify-content-center align-items-center text-center text-muted">
-                                        Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-                                    </small>
+                                <div id="reg-form">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="username">Username*</label>
+                                        <input name="username" type="text" class="form-control" id="username"
+                                               aria-describedby="emailHelp" placeholder="Enter Username" required>
+                                        <p><b id="username_result" class="mb-2 mt-1"
+                                              style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                        <small style="float: center" id="usernameHelpBlock"
+                                               class="form-text justify-content-center align-items-center text-center text-muted">
+                                            Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                                        </small>
 
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email Address*</label>
-                                    <input name="email" type="email" class="form-control" id="email"
-                                           aria-describedby="emailHelp" placeholder="Enter Email" required>
-                                    <p><b id="email_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password*</label>
-                                    <input name="password1" type="password" id="myInput" class="form-control"
-                                           placeholder="Enter Password" required>
-                                    <p><b id="password1_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password Confirmation*</label>
-                                    <input name="password2" type="password" id="myInputConfirm" class="form-control"
-                                           placeholder="Confirm Password" required>
-                                    <p><b id="password2_result" class="mb-2 mt-1" style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
-                                    <small style="float: center" id="passwordHelpBlock"
-                                           class="form-text justify-content-center align-items-center text-center text-muted">
-                                         Enter the same password as before, for verification.
-                                    </small>
-                                </div>
-                                <script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email Address*</label>
+                                        <input name="email" type="email" class="form-control" id="email"
+                                               aria-describedby="emailHelp" placeholder="Enter Email" required>
+                                        <p><b id="email_result" class="mb-2 mt-1"
+                                              style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password*</label>
+                                        <input name="password1" type="password" id="myInput" class="form-control"
+                                               placeholder="Enter Password" required>
+                                        <p><b id="password1_result" class="mb-2 mt-1"
+                                              style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password Confirmation*</label>
+                                        <input name="password2" type="password" id="myInputConfirm" class="form-control"
+                                               placeholder="Confirm Password" required>
+                                        <p><b id="password2_result" class="mb-2 mt-1"
+                                              style="float: center;margin-top: 0.25rem;font-size: 80%;"></b></p>
+                                        <small style="float: center" id="passwordHelpBlock"
+                                               class="form-text justify-content-center align-items-center text-center text-muted">
+                                            Enter the same password as before, for verification.
+                                        </small>
+                                    </div>
+                                    <script>
                                     $("#username").change(function () {
                                       var username = $(this).val();
                                       //var email = $("#email").val();
@@ -292,35 +312,111 @@ a:hover{color:#fd5631}
                                       });
 
                                     });
-                                </script>
-                                <style>
 
-                                </style>
 
-                                <small class="text-muted float-left">
-                                    Show password
-                                </small>
-                                <br>
-                                <div align="left">
-                                    <label class="switch">
-                                        <input type="checkbox" class="float-left" id="togglePassword">
-                                        <span class="slider round float-left"></span>
-                                    </label>
-                                </div>
-                                <br>
-                                <button id="submit" type="submit" class="btn btn-block ">
-                                    <div class="spinner-border text-light hidden" id="spinner" role="status">
-                                        <span class="sr-only">Loading...</span>
+
+
+
+
+                                    </script>
+                                    <style>
+
+                                    </style>
+
+                                    <small class="text-muted float-left">
+                                        Show password
+                                    </small>
+                                    <br>
+                                    <div align="left">
+                                        <label class="switch">
+                                            <input type="checkbox" class="float-left" id="togglePassword">
+                                            <span class="slider round float-left"></span>
+                                        </label>
                                     </div>
-                                    <span id="button-text">SIGNUP</span>
-                                </button>
-                                <style>
-                                    .spinner-border {
-                                        width: 1.5rem;
-                                        height: 1.5rem;
-                                    }
 
-                                </style>
+                                    <br>
+                                    <a class="text-light product btn btn-block" id="show-next" style="cursor:pointer">
+                                        Continue
+                                        <svg width="2em" height="2em" viewBox="0 0 16 16"
+                                             class="bi bi-arrow-right-short"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div id="next-step">
+                                <br>
+                                <br>
+                                <h4>
+                                    <b>Select an account type</b>
+                                </h4>
+                                <br>
+                                <br>
+                                <div align="center" class="container form-check">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="box-element" style="padding: 35px;">
+                                                    <img class="mb-2" width="60" height="60"
+                                                         src="{% static 'images/computer-worker.png' %}" alt="">
+                                                    <h4><b>Client <br> </b></h4>
+                                                    <div align="center" class="mt-2">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                   name="registration_method"
+                                                                   id="inlineRadio1" value="client">
+                                                            <label class="form-check-label" for="inlineRadio1">
+                                                                <small class="mb-1">(I want to Hire)</small></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="box-element" style="padding: 35px;">
+                                                    <img class="mb-2" width="60" height="60"
+                                                         src="{% static 'images/freelancer.png' %}" alt="">
+                                                    <h4><b>Freelancer <br> </b></h4>
+                                                    <div align="center" class=" mt-2">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                   name="registration_method"
+                                                                   id="inlineRadio2" value="vendor">
+                                                            <label class="form-check-label" for="inlineRadio2">
+                                                                <small class="mb-1">(I want to Work)</small></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <br><br>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-block" id="prev-reg">
+                                            BACK
+                                        </button>
+                                    </div>
+                                    <div class="col">
+                                        <button id="submit" type="submit" class="btn btn-block ">
+                                            <div class="spinner-border text-light hidden" id="spinner" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                            <span id="button-text">SIGNUP</span>
+                                        </button>
+                                        <style>
+                                            .spinner-border {
+                                                width: 1.5rem;
+                                                height: 1.5rem;
+                                            }
+
+
+
+                                        </style>
+                                    </div>
+                                </div>
+
+                            </div>
                             </form>
                         </div>
                     </div>
@@ -336,6 +432,28 @@ a:hover{color:#fd5631}
     </div>
     <a href="javascript:history.go(-1)" class="btn mt-2 mb-4 btn-outline-info">&#x2190; Go back</a>
 </div>
+<style>
+    #next-step{display: none}
+
+
+
+</style>
+<script>
+    $("#show-next").on("click", function(e){
+        e.preventDefault();
+      $("#prev-reg, #next-step").css("display", "block");
+      $("#show-next, #reg-form").css("display", "none");
+    });
+
+    $("#prev-reg").click(function(){
+      $("#prev-reg, #next-step").css("display", "none");
+      $("#show-next, #reg-form").css("display", "block");
+    });
+
+
+
+
+</script>
 <style>
     .hidden {
         display: none;
@@ -413,7 +531,6 @@ border-radius: 14px;
 .slider.round:before {
 border-radius: 50%;
 }
-
 </style>
 <script>
     let paymentForm = document.getElementById('signup-form');
@@ -452,6 +569,7 @@ togglePassword.addEventListener('click', function (e) {
 });
 
 </script>
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"/>
 </body>

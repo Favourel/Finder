@@ -97,7 +97,7 @@ class StoreCreateForm(forms.ModelForm):
     )
     )
     about = forms.CharField(widget=forms.Textarea(attrs={
-        'placeholder': 'About',
+        'placeholder': 'Bio',
         'type': 'text',
         'name': 'about',
         'id': 'about',

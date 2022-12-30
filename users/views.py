@@ -36,6 +36,7 @@ def register(request):
         email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
+        registration_method = request.POST.get('registration_method')
         if password1 == password2:
             if User.objects.filter(username__iexact=username).exists():
                 messages.error(request, 'A user with that username already exists.')
@@ -51,12 +52,15 @@ def register(request):
                 return redirect('register')
             else:
                 user = User.objects.create_user(username=username, email=email, password=password1)
-
                 user.save()
                 auth_login = auth.authenticate(username=username, password=password1)
                 auth.login(request, auth_login)
-                messages.success(request, f"Account has been successfully created for {username}")
-                return redirect('market')
+                if registration_method == "client":
+                    messages.success(request, f"Account has been successfully created for {username}")
+                    return redirect('market')
+                elif registration_method == "vendor":
+                    messages.success(request, f"Account has been successfully created for {username}")
+                    return redirect('create_store')
         else:
             messages.error(request, "The two password fields didn’t match.")
             return redirect('register')
@@ -397,46 +401,26 @@ def update_profile(request):
 
 @login_required
 def notification_view(request):
-    followed_by = request.user.following.filter(id__in=request.user.follower.all())[:1]
-    followed_by_ = request.user.following.filter(id__in=request.user.follower.all())
-    followed_by_count = followed_by_.count()
-    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")[:7]
-    post_notification = Notification.objects.filter(user=request.user, is_seen=False)
+    notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")[:10]
 
-    if not notification:
+    vendor = request.user.vendor
+    post_notification = Notification.objects.filter(user=request.user, is_seen=False).order_by("-date_posted")
+
+    if not post_notification:
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-        notification_list = Notification.objects.filter(user=request.user).order_by("-date_posted")
+        notification_list = Notification.objects.filter(user=request.user, is_seen=True).order_by("-date_posted")
 
         context = {
             "notification_list": notification_list,
             "notification_count": notification_count,
             "notification": notification,
-            "followed_by": followed_by,
-            "followed_by_count": followed_by_count,
+            "vendor": vendor,
+            "form": StoreCreateForm(instance=vendor),
             "get_cart_items": total_cart_items(request)
 
-        }
-        return render(request, "users/notification.html", context)
-    elif not post_notification:
-        notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
-        notification_list = Notification.objects.filter(user=request.user).order_by("-date")
-
-        queryset = []
-        for let in notification_list:
-            queryset.append(let.blog)
-        context = {
-            "notification_list": notification_list,
-            "notification_count": notification_count,
-            "followed_by": followed_by,
-            "followed_by_count": followed_by_count,
-            "get_cart_items": total_cart_items(request)
-
-            # "queryset": queryset
         }
         return render(request, "users/notification.html", context)
     else:
-        notification_list = Notification.objects.filter(user=request.user).order_by("-date_posted").exclude(
-            notification_type=7)
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
         queryset = []
@@ -445,12 +429,14 @@ def notification_view(request):
             let.is_seen = True
             let.save()
 
+        notification_list = Notification.objects.filter(user=request.user, is_seen=True).order_by("-date_posted")
+
         context = {
+            "notification_count": notification_count,
             "notification_list": notification_list,
             "notification": notification,
-            "notification_count": notification_count,
-            "followed_by": followed_by,
-            "followed_by_count": followed_by_count,
+            "vendor": vendor,
+            "form": StoreCreateForm(instance=vendor),
             "get_cart_items": total_cart_items(request)
 
         }
