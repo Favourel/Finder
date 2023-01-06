@@ -154,7 +154,7 @@ LOGIN_REDIRECT_URL = "market"
 LOGOUT_REDIRECT_URL = "login"
 
 # if not DEBUG:
-CSRF_TRUSTED_ORIGINS = ['finder-production-021d.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://finder-production-021d.up.railway.app']
 
 """
 Open a paystack account and set up country as Nigeria to unable payment gateway
