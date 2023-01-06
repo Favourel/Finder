@@ -62,9 +62,15 @@
     {% if follow_notification.notification_type == 1 %}
     <a class="dropdown-item d-flex align-items-center" href="#">
         <div class="dropdown-list-image mr-2">
+            {% if follow_notification.sender.vendor %}
             <img src="{{ follow_notification.sender.image.url }}"
                  class="avatar rounded-circle" width="40px" height="40px"
                  alt="{{ follow_notification.sender.image.url }}">
+            {% else %}
+            <img src="{% static 'images/user.png' %}"
+                 class="avatar rounded-circle" width="40px" height="40px"
+                 alt="...">
+            {% endif %}
         </div>
         <div>
             <div class="small text-gray-500">
@@ -90,9 +96,15 @@
     {% if follow_notification.notification_type == 2 %}
     <a class="dropdown-item d-flex align-items-center" href="#">
         <div class="dropdown-list-image mr-2">
+            {% if follow_notification.sender.vendor %}
             <img src="{{ follow_notification.sender.image.url }}"
                  class="avatar rounded-circle" width="40px" height="40px"
                  alt="{{ follow_notification.sender.image.url }}">
+            {% else %}
+            <img src="{% static 'images/user.png' %}"
+                 class="avatar rounded-circle" width="40px" height="40px"
+                 alt="...">
+            {% endif %}
         </div>
         <div>
             <div class="small text-gray-500">
@@ -118,9 +130,15 @@
     {% if follow_notification.notification_type == 3 %}
     <a class="dropdown-item d-flex align-items-center" href="#">
         <div class="dropdown-list-image mr-2">
+            {% if follow_notification.sender.vendor %}
             <img src="{{ follow_notification.sender.image.url }}"
                  class="avatar rounded-circle" width="40px" height="40px"
                  alt="{{ follow_notification.sender.image.url }}">
+            {% else %}
+            <img src="{% static 'images/user.png' %}"
+                 class="avatar rounded-circle" width="40px" height="40px"
+                 alt="...">
+            {% endif %}
         </div>
         <div>
             <div class="small text-gray-500">

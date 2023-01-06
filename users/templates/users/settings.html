@@ -178,9 +178,9 @@
             <br>
             {% for i in page_list %}
             {% if forloop.first %}
-            <a class="btn-sm text-decoration-none btn-outline-info btn-info" href="#" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
+            <a class="btn-sm text-decoration-none btn-outline-info btn-info"  role="button" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
             {% else %}
-            <a class="btn-sm text-decoration-none btn-outline-info" href="#" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
+            <a class="btn-sm text-decoration-none btn-outline-info" role="button" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
             {% endif %}
             {% endfor %}
 
