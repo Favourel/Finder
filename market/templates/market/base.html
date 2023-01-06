@@ -81,30 +81,30 @@ $(document).ready(function(){
 })
 
 </script>
-<script>
-    let socket =new WebSocket('ws://127.0.0.1:8000/stories/notification_testing/');
-    socket.onopen =function(e){
-        //alert('Connection established');
-        $(".websocket").text(e.data);
+<!--<script>-->
+<!--    let socket =new WebSocket('ws://127.0.0.1:8000/stories/notification_testing/');-->
+<!--    socket.onopen =function(e){-->
+<!--        //alert('Connection established');-->
+<!--        $(".websocket").text(e.data);-->
 
-    };
+<!--    };-->
 
-    socket.onmessage = function(e){
-        console.log(e.data);
-        console.log(e.type);
-        var recData=JSON.parse(e.data);
-        dataObjNew=dataObj['data']['datasets'][0]['data'];
-        dataObjNew.shift();
-        dataObjNew.push(recData.value);
-        dataObj['data']['datasets'][0]['data']=dataObjNew;
-        window.myLine.update();
+<!--    socket.onmessage = function(e){-->
+<!--        console.log(e.data);-->
+<!--        console.log(e.type);-->
+<!--        var recData=JSON.parse(e.data);-->
+<!--        dataObjNew=dataObj['data']['datasets'][0]['data'];-->
+<!--        dataObjNew.shift();-->
+<!--        dataObjNew.push(recData.value);-->
+<!--        dataObj['data']['datasets'][0]['data']=dataObjNew;-->
+<!--        window.myLine.update();-->
 
-    };
+<!--    };-->
 
-    socket.onclose = function(e){
-        alert('Connection CLosed');
-    };
-</script>
+<!--    socket.onclose = function(e){-->
+<!--        alert('Connection CLosed');-->
+<!--    };-->
+<!--</script>-->
 
 <body id="page-top">
 <main id="main">

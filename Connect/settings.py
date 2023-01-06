@@ -24,7 +24,7 @@ SECRET_KEY = "5z9q4k9ytw7#qcw4*8grkdk%8%1()dr_6yxgi194+4*-6%l-$v"
 # SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'django.contrib.humanize',
-    'channels',
+    # 'channels',
     'ckeditor',
     'ckeditor_uploader',
     "djrichtextfield",
@@ -80,17 +80,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Connect.wsgi.application'
-
-ASGI_APPLICATION = 'Connect.asgi.application'
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
-    },
-}
 
 
 # Database
