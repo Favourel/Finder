@@ -20,8 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "5z9q4k9ytw7#qcw4*8grkdk%8%1()dr_6yxgi194+4*-6%l-$v"
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -160,10 +159,8 @@ CSRF_TRUSTED_ORIGINS = ['https://finder-production-021d.up.railway.app']
 Open a paystack account and set up country as Nigeria to unable payment gateway
 """
 
-# PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
-PAYSTACK_SECRET_KEY = "sk_test_c573cfadcb68e100dd6f3edf79ad8368e0ea0cb9"
-# PAYSTACK_PUBLIC_KEY = os.environ.get("PAYSTACK_PUBLIC_KEY")
-PAYSTACK_PUBLIC_KEY = "pk_test_202b2095b0d599bec5dc12e5ef4e1e01be286a44"
+PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
+PAYSTACK_PUBLIC_KEY = os.environ.get("PAYSTACK_PUBLIC_KEY")
 
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js'],
