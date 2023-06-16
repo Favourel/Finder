@@ -139,13 +139,13 @@
                                                     <div class="col-5 col-sm-3 col-md-12">
                                                         <div class="d-flex align-items-center">
                                                             {% if item.quantity > 1 %}
-                                                            <a data-product="{{ item.product.id }}"
+                                                            <a data-product="{{ item.product.id }}" onclick="disableLinkRemove(event)"
                                                                     href="{% url 'remove_from_checkout' item.product.pk %}"
                                                                     class="text-decoration-none btn-sm btn-danger update-cart">
                                                                 <b>-</b>
                                                             </a>
                                                             {% else %}
-                                                            <button disabled data-product="{{ item.product.id }}"
+                                                            <button disabled data-product="{{ item.product.id }}" onclick="disableLinkRemove(event)"
                                                                     data-href="{% url 'remove_from_checkout' item.product.pk %}"
                                                                     class="text-decoration-none btn-sm btn-danger update-cart">
                                                                 <b>-</b>
@@ -154,11 +154,33 @@
                                                             <b class="text-center border-0 border-md input-items form-control">
                                                                 {{ item.quantity }}
                                                             </b>
-                                                            <a data-product="{{ item.product.id }}"
+                                                            <a data-product="{{ item.product.id }}" onclick="disableLinkAdd(event)"
                                                                     href="{% url 'add_to_checkout' item.product.pk %}"
                                                                     class="update-cart text-decoration-none btn-sm btn-info">
                                                                 <b>+</b>
                                                             </a>
+                                                            <script>
+                                                                function disableLinkAdd(event) {
+                                                                    event.preventDefault(); // Prevent the default behavior of the anchor tag
+
+                                                                    if (!event.target.classList.contains('disabled')) {
+                                                                      window.location.href = "{% url 'add_to_checkout' item.product.pk %}"; // Navigate to the specified URL
+                                                                    }
+
+                                                                    event.target.classList.add('disabled'); // Add a class to visually indicate that the link is disabled
+                                                                    event.target.removeAttribute('href'); // Remove the href attribute to disable the link
+                                                                  }
+                                                                function disableLinkRemove(event) {
+                                                                    event.preventDefault(); // Prevent the default behavior of the anchor tag
+
+                                                                    if (!event.target.classList.contains('disabled')) {
+                                                                      window.location.href = "{% url 'remove_from_checkout' item.product.pk %}"; // Navigate to the specified URL
+                                                                    }
+
+                                                                    event.target.classList.add('disabled'); // Add a class to visually indicate that the link is disabled
+                                                                    event.target.removeAttribute('href'); // Remove the href attribute to disable the link
+                                                                  }
+                                                            </script>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -18,13 +18,17 @@ class ProductReviewInline(admin.TabularInline):
     model = ProductReview
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ["name", "vendor", "price", "product_purchase", "date_posted"]
     search_fields = ["name", "vendor__user__username"]
     list_filter = ['vendor', 'date_posted']
     actions = ['apply_discount', "remove_discount", "export_products"]
     list_per_page = 15
-    inlines = [ProductReviewInline]
+    inlines = [ProductReviewInline, ProductImageInline]
 
     def apply_discount(self, request, queryset):
         if 'apply' in request.POST:
