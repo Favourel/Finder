@@ -33,7 +33,7 @@
         </a>
 
         <h3 class="mb-1 font-shadow brand-name" id="brand-name" style="display: inline-block; font-family:
-            Florence;text-shadow: 1px 1px 1px grey;"><b>CONNECT</b>
+            Florence;text-shadow: 1px 1px 1px grey;"><b>GSE 301 - WEB DESIGN</b>
         </h3>
 
     </div>
@@ -55,7 +55,7 @@
                 <a href="{% url 'home' %}">
                     <h4 style="display: inline-block;float: left; margin-top: 7px;
         text-shadow: 2px 1px 1px grey; font-family: Florence, cursive; color: #333; font-size:2rem;">
-                        <strong>Elodimuor</strong>
+                        <strong>GSE 301 - WEB DESIGN</strong>
                     </h4>
                 </a>
                 {% endif %}
@@ -66,7 +66,7 @@
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                 <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">HOME </a></li>
-                <li class="nav-item"><a class="nav-link" href=""> ABOUT US </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"> ABOUT US </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> PRICING </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> PROFILE </a></li>
 
@@ -74,7 +74,7 @@
                     LOGOUT </a></li>
                 {% else %}
                 <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">HOME </a></li>
-                <li class="nav-item"><a class="nav-link" href=""> ABOUT US </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"> ABOUT US </a></li>
                 <li class="nav-item"><a class="nav-link" href=""> PRICING </a></li>
                 <li class="nav-item"><a class="nav-link mb-2" href="{% url 'login' %}"> LOGIN </a></li>
 
@@ -105,7 +105,7 @@
                         <a href="{% url 'home' %}"  class="nav-link nav-linkk">HOME</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">ABOUT</a>
+                        <a href="{% url 'about' %}" class="nav-link">ABOUT</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'market' %}" class="nav-link">MARKET</a>
@@ -132,7 +132,7 @@
                     </li>
                     <br>
                     <li class="nav-item">
-                        <a href="" class="nav-link">ABOUT</a>
+                        <a href="{% url 'about' %}" class="nav-link">ABOUT</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link">PRICING</a>

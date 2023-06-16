@@ -69,6 +69,28 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class StoreCreateForm(forms.ModelForm):
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #
+    #     # Customize the queryset of the foreign key field
+    #     self.fields['user'].queryset = User.objects.all()
+    #
+    #     # Add other attributes to the form
+    #     self.fields['user_username'] = forms.CharField(widget=forms.TextInput(attrs={
+    #         "class": "form-control",
+    #         'name': "username",
+    #         "id": "username",
+    #         'placeholder': 'Username',
+    #
+    #     }))
+    #     self.fields['user_email'] = forms.EmailField(widget=forms.EmailInput(attrs={
+    #         "class": "form-control",
+    #         'name': "email",
+    #         "id": "email",
+    #         'placeholder': 'Email Address',
+    #
+    #     }))
+
     full_name = forms.CharField(widget=forms.TextInput(attrs={
         'placeholder': 'Full name',
         'type': 'text',
@@ -92,7 +114,8 @@ class StoreCreateForm(forms.ModelForm):
         'type': 'text',
         'name': 'phone_number',
         'id': 'phone_number',
-        'class': 'form-control'
+        'class': 'form-control',
+        'maxlength': 11
     }
     )
     )
@@ -141,13 +164,14 @@ class StoreCreateForm(forms.ModelForm):
         'name': 'education',
 
     }))
-    withdrawal_password = forms.CharField(widget=forms.PasswordInput(
+    withdrawal_pin = forms.CharField(widget=forms.NumberInput(
         attrs={
-            'placeholder': 'Withdrawal Password',
+            'placeholder': 'Withdrawal Pin',
             'type': 'password',
-            'name': 'withdrawal_password',
-            'id': 'withdrawal_password',
-            'class': 'form-control'
+            'name': 'withdrawal_pin',
+            'id': 'withdrawal_pin',
+            'class': 'form-control',
+            'maxlength': 4
         }
     ))
 
@@ -155,5 +179,5 @@ class StoreCreateForm(forms.ModelForm):
         model = Vendor
         fields = [
             "full_name", "phone_number", "about", "location",
-            "twitter_url", "instagram_url", "education", "skills", "withdrawal_password"
+            "twitter_url", "instagram_url", "education", "skills", "withdrawal_pin", "image"
         ]

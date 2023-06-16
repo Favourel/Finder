@@ -18,5 +18,6 @@ urlpatterns = [
     path("product/<uuid:pk>/review/", market_view.product_review, name="productReview"),
     path("create/", market_view.create_view, name="create"),
     path("search/", market_view.search, name="search"),
+    path("about/", market_view.about, name="about"),
 
 ]

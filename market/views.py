@@ -35,7 +35,7 @@ def total_cart_items(request):
 
 def home(request):
     categories = Category.objects.all()
-    products = Product.objects.all().order_by("-id")[:4]
+    products = Product.objects.all().order_by("-date_posted")[:4]
 
     context = {
         "categories": categories,
@@ -595,3 +595,15 @@ def error_500(request):
     return render(request, 'market/error404.html', data)
 
 
+def about(request):
+    if request.user.is_authenticated:
+        notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
+        get_cart_items = total_cart_items(request)
+    else:
+        notification_count = 0
+        get_cart_items = 0
+    context = {
+            "notification_count": notification_count,
+            "get_cart_items": get_cart_items,
+        }
+    return render(request, 'market/about.html', context)

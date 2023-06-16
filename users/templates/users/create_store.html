@@ -19,6 +19,7 @@
         background-color: #fff;
    }
 
+
 </style>
 <div class="section">
     <div class="container py-5 mt-1">
@@ -38,7 +39,7 @@
     {% endif %}
     <div class="row mb-5">
         <div class="col-lg-9">
-            <form method="POST" action="{% url 'create_store' %}">
+            <form method="POST" action="{% url 'create_store' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label>Full name</label>
                 {{ u_form.full_name }}
@@ -79,8 +80,13 @@
                     </div>
                 </div>
                 <div class="form-row mt-3 mb-3">
-                <label>Withdrawal Password</label>
-                {{ u_form.withdrawal_password }}</div>
+                    <label>Profile Image</label>
+                    {{ u_form.image }}
+                </div>
+                <div class="form-row mt-3 mb-3">
+                    <label>Withdrawal Pin</label>
+                    {{ u_form.withdrawal_pin }}
+                </div>
                 <button class="btn btn-block" type="submit">Submit Form</button>
             </form>
         </div>

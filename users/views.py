@@ -115,16 +115,20 @@ def create_store(request):
         notification = Notification.objects.filter(user=request.user, is_seen=False)[:7]
         notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
         if request.method == 'POST':
-            u_form = StoreCreateForm(request.POST)
+            u_form = StoreCreateForm(request.POST, request.FILES)
             if u_form.is_valid():
                 u_form = u_form.save(commit=False)
                 u_form.user = request.user
                 u_form.save()
+                loggedin_user = User.objects.get(username=user.username)
+                loggedin_user.phone_number = u_form.phone_number
+                loggedin_user.location = u_form.location
+                loggedin_user.image = u_form.image
+                loggedin_user.save()
                 notification = Notification.objects.create(
                     user=user,
                     sender=User.objects.first(),
                     notification_type=4,
-                    # vendor=user
                 )
                 notification.save()
                 messages.success(request, f'Your store has been created by {user}.')
@@ -215,13 +219,16 @@ def vendor_dashboard(request):
 
         orders = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")[:4]
         today_order = Order.objects.filter(vendor=vendor, date_posted__gte=date.today())
-        monthly_order = Order.objects.filter(vendor=vendor, ordered=True, date_posted__month__gte=datetime.now().month)
+        monthly_order = Order.objects.filter(vendor=vendor, ordered=True,
+                                             date_posted__gte=datetime.now() - timedelta(days=30))
         past_monthly_order = Order.objects.filter(vendor=vendor, ordered=True,
-                                                  date_posted__month__lt=datetime.now().month)
+                                                  date_posted__gte=datetime.now() - timedelta(days=30))
+        # past_monthly_order = Order.objects.filter(vendor=vendor, ordered=True,
+        #                                           date_posted__month__lt=datetime.now().month)
         weekly_order = Order.objects.filter(vendor=vendor, ordered=True,
                                             date_posted__gte=datetime.now() - timedelta(days=7))
         yesterday_order = Order.objects.filter(vendor=vendor, ordered=True,
-                                               date_posted__gte=datetime.now() - timedelta(days=1))
+                                               date_posted__date=datetime.now().date() - timedelta(days=1))
         all_order = Order.objects.filter(vendor=vendor, ordered=True).order_by("-date_posted")
 
         current = len(all_order)
@@ -231,9 +238,13 @@ def vendor_dashboard(request):
         else:
             percentage_order = 0
 
-        previous_yesterday = current - len(yesterday_order)
-        if current & len(weekly_order) > 0:
-            percentage_order_yesterday = ((current - previous_yesterday) / previous_yesterday) * 100
+        # current_yesterday = current - len(yesterday_order)
+        # if current & len(yesterday_order) > 0:
+        #     percentage_order_yesterday = ((current_yesterday - len(yesterday_order)) / len(yesterday_order)) * 100
+        # else:
+        #     percentage_order_yesterday = 0
+        if current & len(yesterday_order) > 0:
+            percentage_order_yesterday = ((len(today_order) - len(yesterday_order)) / len(yesterday_order)) * 100
         else:
             percentage_order_yesterday = 0
 
@@ -370,7 +381,7 @@ def update_profile(request):
     notification_count = Notification.objects.filter(user=request.user, is_seen=False).count()
 
     if request.method == 'POST':
-        form = StoreCreateForm(request.POST, instance=request.user.vendor)
+        form = StoreCreateForm(request.POST, request.FILES, instance=request.user.vendor)
 
         if form.is_valid():
             form = form.save(commit=False)
@@ -390,13 +401,13 @@ def update_profile(request):
             # i changed the error popup
             messages.warning(request, 'error')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        form = StoreCreateForm(instance=request.user.vendor)
-    context = {
-        "form": form,
-        "notification_count": notification_count,
-    }
-    return render(request, 'users/update_profile.html', context)
+    # else:
+    #     form = StoreCreateForm(instance=request.user.vendor)
+    # context = {
+    #     "form": form,
+    #     "notification_count": notification_count,
+    # }
+    # return render(request, 'users/update_profile.html', context)
 
 
 @login_required
@@ -567,41 +578,86 @@ def settings(request):
     page_number = request.GET.get('page')
     reviews = paginator.get_page(page_number)
 
-    if request.method == "POST":
-        form = UserUpdateForm(request.POST, instance=user)
-        email_instance = form.instance.email
-        if form.is_valid():
-            form = form.save(commit=False)
-            email = form.email
-            if User.objects.filter(email=email).exists():
-                if request.user.email == email_instance:
+    if Vendor.objects.filter(user=request.user).exists():
+        if request.method == "POST":
+            form = StoreCreateForm(request.POST, request.FILES, instance=user.vendor)
+            # email_instance = form.instance.user.email
+            # print(email_instance)
+            if form.is_valid():
+                form = form.save(commit=False)
+                form.save()
+                loggedin_user = User.objects.get(username=user.username)
+                loggedin_user.phone_number = form.phone_number
+                loggedin_user.location = form.location
+                loggedin_user.image = form.image
+                loggedin_user.save()
+                # email = form.email
+                # if User.objects.filter(email=email).exists():
+                #     if request.user.email == email_instance:
+                #         form.save()
+                messages.success(request, 'Your account has been updated!')
+                #         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                #     messages.error(request, "A user with that email already exists.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            # else:
+            #     form.save()
+            #     messages.success(request, 'Your account has been updated!')
+            #     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        else:
+            form = StoreCreateForm(instance=request.user.vendor)
+            # form = UserUpdateForm(instance=user)
+        context = {
+            "form": form,
+            "get_cart_items": total_cart_items(request),
+            "notification_count": notification_count,
+            "notification": notification,
+            "all_order": all_order,
+            "all_order_count": all_order_count,
+            "reviews": reviews,
+            "reviews_count": reviews_count,
+            "last_order": last_order,
+            "total_spent": total_spent,
+
+            "page_list": page_list,
+            "list_orders": all_order,
+        }
+        return render(request, "users/settings.html", context)
+    else:
+        if request.method == "POST":
+            form = UserUpdateForm(request.POST, instance=user)
+            email_instance = form.instance.email
+            if form.is_valid():
+                form = form.save(commit=False)
+                email = form.email
+                if User.objects.filter(email=email).exists():
+                    if request.user.email == email_instance:
+                        form.save()
+                        messages.success(request, 'Your account has been updated!')
+                        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                    messages.error(request, "A user with that email already exists.")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                else:
                     form.save()
                     messages.success(request, 'Your account has been updated!')
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-                messages.error(request, "A user with that email already exists.")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            else:
-                form.save()
-                messages.success(request, 'Your account has been updated!')
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        form = UserUpdateForm(instance=user)
-    context = {
-        "form": form,
-        "get_cart_items": total_cart_items(request),
-        "notification_count": notification_count,
-        "notification": notification,
-        "all_order": all_order,
-        "all_order_count": all_order_count,
-        "reviews": reviews,
-        "reviews_count": reviews_count,
-        "last_order": last_order,
-        "total_spent": total_spent,
+        else:
+            form = UserUpdateForm(instance=user)
+        context = {
+            "form": form,
+            "get_cart_items": total_cart_items(request),
+            "notification_count": notification_count,
+            "notification": notification,
+            "all_order": all_order,
+            "all_order_count": all_order_count,
+            "reviews": reviews,
+            "reviews_count": reviews_count,
+            "last_order": last_order,
+            "total_spent": total_spent,
 
-        "page_list": page_list,
-        "list_orders": all_order,
-    }
-    return render(request, "users/settings.html", context)
+            "page_list": page_list,
+            "list_orders": all_order,
+        }
+        return render(request, "users/settings.html", context)
 
 
 @login_required

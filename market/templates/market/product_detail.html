@@ -199,9 +199,21 @@
                         </h5>
                         <br>
 
-                        <a href="{% url 'add_to_checkout' product.pk %}" class="float-left shadow btn mb-3 btn-block">
+                        <a href="{% url 'add_to_checkout' product.pk %}" onclick="disableLink(event)" class="float-left shadow btn mb-3 btn-block">
                             Proceed to checkout
                         </a>
+                        <script>
+                            function disableLink(event) {
+                                event.preventDefault(); // Prevent the default behavior of the anchor tag
+
+                                if (!event.target.classList.contains('disabled')) {
+                                  window.location.href = event.target.getAttribute('href'); // Navigate to the specified URL
+                                }
+
+                                event.target.classList.add('disabled'); // Add a class to visually indicate that the link is disabled
+                                event.target.removeAttribute('href'); // Remove the href attribute to disable the link
+                              }
+                        </script>
 
                         {% if product.vendor.user == request.user %}
                         <div class="mb-3 ">
@@ -857,7 +869,7 @@
                         <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                     </svg>
                     <b class="ml-1">{{ product.delivery_period }} Days Delivery</b>
-                     <a href="{% url 'add_to_checkout' product.pk %}"  class="shadow mt-2 btn btn-block" >Proceed to checkout</a>
+                     <a href="{% url 'add_to_checkout' product.pk %}" onclick="disableLink(event)" class="shadow mt-2 btn btn-block" >Proceed to checkout</a>
                 </div>
             </div>
 

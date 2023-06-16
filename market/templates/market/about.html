@@ -1,0 +1,57 @@
+{% extends 'market/base.html' %}
+{% load humanize %}
+{% load static %}
+{% load filtertags %}
+{% block title %} "{{ request.GET.q }}" | CONNECT Search {% endblock %}
+
+
+{% block content %}
+<style>
+   .section {
+      background: #fd5631;
+      border-color: #fd5631;
+      color: #fff;
+      position: relative;
+
+   }
+
+</style>
+<div class="section">
+    <div class="container py-5 mt-1">
+        <h3><b>About Us</b></h3>
+    </div>
+</div>
+<div class="container">
+    <br>
+    <div class="col-lg-10">
+        <p>We are Students of the Graduate Self Employment (GSE) 301 class, our main focus revolves around the creation and implementation of a comprehensive website that functions effectively and efficiently. To achieve this objective, we have invested our time, energy, and skills into the design and development of a freelance platform that serves as a catalyst for streamlining the hiring and collaborative processes with independent professionals.
+
+            <br>
+            <br>
+            The freelance platform we are constructing goes beyond merely connecting individuals with talented freelancers; it aims to revolutionize the way projects are executed and managed. By integrating a wide range of file formats into the website's functionality, we are fostering a seamless communication channel that allows for effortless collaboration between clients and freelancers.
+            <br>
+            <br>
+            This inclusion of diverse file formats, such as documents, images, videos, and presentations, ensures that all project-related information can be shared and accessed conveniently, maximizing productivity and minimizing potential obstacles.
+
+In addition to facilitating smooth communication, our website emphasizes effective project management.
+
+            <br>
+            <br>
+            We recognize the importance of organized workflows and transparent progress tracking in ensuring the successful completion of tasks. As a result, our platform incorporates intuitive features and tools that enable users to set project milestones, allocate resources, and monitor the overall progress in real-time. These project management functionalities aim to enhance efficiency, minimize confusion, and promote a more structured approach to project execution.
+
+By combining a user-friendly interface with robust functionalities, our freelance platform aspires to provide a seamless and rewarding experience for both clients and freelancers. It not only fosters connections but also creates an environment conducive to productive collaboration, enabling individuals to harness the talents and expertise of freelancers effectively.
+            <br>
+            <br>
+            Through this platform, clients can confidently engage with skilled professionals, knowing that their projects will be executed with precision and quality. Simultaneously, freelancers can showcase their skills, expand their networks, and find exciting opportunities to further their careers.
+
+In summary, as members of the GSE 301 class, our primary goal is to develop a fully operational website.
+            <br>
+            <br>
+            We are committed to creating a freelance platform that not only connects clients with freelancers but also incorporates diverse file formats to facilitate seamless communication. Additionally, our platform emphasizes effective project management through intuitive features and tools that enhance productivity and ensure transparent progress tracking. Through our efforts, we aim to establish an innovative platform that empowers both clients and freelancers to thrive in the evolving landscape of remote work and independent employment.
+
+Here are the list of all members of the group</p>
+    </div>
+    <br>
+</div>
+<br>
+{% endblock %}

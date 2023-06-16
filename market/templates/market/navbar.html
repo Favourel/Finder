@@ -41,7 +41,7 @@
             <div style="display:block">
             <h3 class="mb-1 font-shadow" style="color: black;display: inline-block; font-family:
             Florence;text-shadow: 1px 1px 1px grey;">
-                <b>CONNECT</b>
+                <b>GSE 301 - WEB DESIGN</b>
             </h3>
             </div>
 <!--                        <div class="ml-auto">-->
@@ -75,7 +75,7 @@
                 <a href="" class="text-decoration-none">
                     <img width="60px" height="60px" style="object-fit: cover; border-radius: 20px solid #ececec"
                          class="ml-1 border  rounded-circle account-img" alt="customer pics"
-                         src="{{ user.image.url }}">
+                         src="{{ request.user.vendor.image.url }}">
                     <small>{{user.username}}</small>
                 </a>
                 {% else %}
@@ -83,7 +83,7 @@
                     <h4 style="display: inline-block;float: left; margin-top: 7px;
                         text-shadow: 2px 1px 1px grey; font-family: Florence, cursive;
                         color: #333; font-size:2rem;">
-                        <strong>CONNECT</strong>
+                        <strong>GSE 301 - WEB DESIGN</strong>
                     </h4>
                 </a>
                 {% endif %}
@@ -131,6 +131,9 @@
                     {% if user.is_authenticated %}
                     <li class="nav-item active">
                         <a href="{% url 'home' %}" id="nav-link" class="nav-link">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'about' %}" class="nav-link">ABOUT</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'market' %}" class="nav-link">MARKET</a>
@@ -324,7 +327,9 @@
                     <li class="nav-item active">
                         <a href="{% url 'home' %}" class="nav-link">HOME</a>
                     </li>
-
+                    <li class="nav-item">
+                        <a href="{% url 'about' %}" class="nav-link">ABOUT</a>
+                    </li>
                     <li class="nav-item">
                         <a href="{% url 'checkout' %}" class="nav-link">CHECKOUT</a>
                     </li>

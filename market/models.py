@@ -23,6 +23,7 @@ class Vendor(models.Model):
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     about = models.CharField(max_length=255, null=True, blank=True)
     location = models.CharField(max_length=50, null=True, blank=True)
+    image = models.ImageField(default='profile_picture/download_EPBN0x6.jpg', upload_to='profile_picture')
     education = models.IntegerField(choices=EDUCATION_TYPES, default=6)
     follower = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='vendor_follower_list')
     following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='vendor_following_list')
@@ -35,7 +36,7 @@ class Vendor(models.Model):
     skills = models.CharField(max_length=20, default="")
     total_earnings = models.FloatField(default=0)
     current_balance = models.FloatField(default=0)
-    withdrawal_password = models.CharField(max_length=4, default="")
+    withdrawal_pin = models.CharField(max_length=4, default="")
     paid_until = models.DateField(
         null=True,
         blank=True

@@ -111,12 +111,13 @@
                 <img src="{% static 'images/checkout.png' %}" height="20" width="20" alt="">
                 Orders ({{all_order_count}})
             </button>
+            {% if request.user.vendor %}
             <button class="nav-link mr-3" id="nav-profile-tab" data-toggle="tab" data-target="#nav-profile"
                     type="button"
                     role="tab" aria-controls="nav-profile" aria-selected="false">
                 <img src="{% static 'images/feedback.png' %}" height="20" width="20" alt="">
                 Reviews ({{reviews_count}})
-            </button>
+            </button>{% endif %}
             <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-contact" type="button"
                     role="tab" aria-controls="nav-contact" aria-selected="false">
                 <img src="{% static 'images/edit.png' %}" height="20" width="20" alt="">
@@ -127,8 +128,8 @@
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-            <table class="table table-hover" >
-                <thead  style="background-color: #f8f9fa;font-size: 13px">
+            <table class="table table-hover">
+                <thead style="background-color: #f8f9fa;font-size: 13px">
                 <tr>
                     <th>ORDER ID</th>
                     <th>ORDER ITEM</th>
@@ -139,73 +140,75 @@
                 </thead>
 
                 <tbody id="all-order">
-                    {% for order in all_order %}
-                    <tr class="p-1">
-                        <td>
-                            {{order.transaction_id}}
-                        </td>
-                        <td>
-                            {% if order.order_item.all %}
-                            {% for i in order.order_item.all %}
-                            {{ i }}<br>
-                            {% endfor %}
-                            {% else %}
-                            {{ order.default_order_item }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if order.ordered %}
-                            <b><span class="badge badge-success">Completed</span></b>
-                            {% else %}
-                            <b><span class="badge badge-warning">Order incomplete</span></b>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if order.total_order_item_price %}
-                            ₦{{ order.total_order_item_price|floatformat:"2"|intcomma }}
-                            {% else %}
-                            ₦{{ order.default_price|floatformat:"2"|intcomma }}
-                            {% endif %}
-                        </td>
-                        <td>{{ order.date_posted }}</td>
-                    </tr>
-                    {% endfor %}
-<!--                    <tr id="show-more"></tr>-->
+                {% for order in all_order %}
+                <tr class="p-1">
+                    <td>
+                        {{order.transaction_id}}
+                    </td>
+                    <td>
+                        {% if order.order_item.all %}
+                        {% for i in order.order_item.all %}
+                        {{ i }}<br>
+                        {% endfor %}
+                        {% else %}
+                        {{ order.default_order_item }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.ordered %}
+                        <b><span class="badge badge-success">Completed</span></b>
+                        {% else %}
+                        <b><span class="badge badge-warning">Order incomplete</span></b>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.total_order_item_price %}
+                        ₦{{ order.total_order_item_price|floatformat:"2"|intcomma }}
+                        {% else %}
+                        ₦{{ order.default_price|floatformat:"2"|intcomma }}
+                        {% endif %}
+                    </td>
+                    <td>{{ order.date_posted }}</td>
+                </tr>
+                {% endfor %}
+                <!--                    <tr id="show-more"></tr>-->
                 </tbody>
 
-                </table>
+            </table>
 
             <br>
             {% for i in page_list %}
             {% if forloop.first %}
-            <a class="btn-sm text-decoration-none btn-outline-info btn-info"  role="button" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
+            <a class="btn-sm text-decoration-none btn-outline-info btn-info" role="button"
+               onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
             {% else %}
-            <a class="btn-sm text-decoration-none btn-outline-info" role="button" onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
+            <a class="btn-sm text-decoration-none btn-outline-info" role="button"
+               onclick="ajax_function('{{i}}','{{user.id}}')">{{i}}</a>
             {% endif %}
             {% endfor %}
 
-<!--            {% if all_order.has_other_pages %}-->
-<!--                {% if all_order.has_previous %}-->
-<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>-->
-<!--                <a class="btn-sm text-decoration-none btn-outline-info mr-1 mb-7" href="?page={{ all_order.previous_page_number }}">&laquo;-->
-<!--                    Previous-->
-<!--                </a>-->
-<!--                {% endif %}-->
-<!--                {% for num in all_order.paginator.page_range %}-->
-<!--                    {% if all_order.number == num %}-->
-<!--                    <a class="btn-sm text-decoration-none btn-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
-<!--                    {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}-->
-<!--                    <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
-<!--                    {% endif %}-->
-<!--                {% endfor %}-->
-<!--                {% if all_order.has_next %}-->
-<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}">Next-->
-<!--                    &raquo;</a>-->
-<!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}">Last-->
-<!--                    Page-->
-<!--                    &raquo;</a>-->
-<!--                {% endif %}-->
-<!--            {% endif %}-->
+            <!--            {% if all_order.has_other_pages %}-->
+            <!--                {% if all_order.has_previous %}-->
+            <!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page=1">&laquo; First Page</a>-->
+            <!--                <a class="btn-sm text-decoration-none btn-outline-info mr-1 mb-7" href="?page={{ all_order.previous_page_number }}">&laquo;-->
+            <!--                    Previous-->
+            <!--                </a>-->
+            <!--                {% endif %}-->
+            <!--                {% for num in all_order.paginator.page_range %}-->
+            <!--                    {% if all_order.number == num %}-->
+            <!--                    <a class="btn-sm text-decoration-none btn-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
+            <!--                    {% elif num > all_order.number|add:'-3' and num < all_order.number|add:'3' %}-->
+            <!--                    <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ num }}">{{ num }}</a>-->
+            <!--                    {% endif %}-->
+            <!--                {% endfor %}-->
+            <!--                {% if all_order.has_next %}-->
+            <!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.next_page_number }}">Next-->
+            <!--                    &raquo;</a>-->
+            <!--                <a class="btn-sm text-decoration-none btn-outline-info mb-7" href="?page={{ all_order.paginator.num_pages }}">Last-->
+            <!--                    Page-->
+            <!--                    &raquo;</a>-->
+            <!--                {% endif %}-->
+            <!--            {% endif %}-->
             <style>
                 .btn-outline-info {
                     color: #fd5631 !important;
@@ -228,6 +231,7 @@
                     border-color: #db3717 !important;
                     color: #fff !important;
                 }
+
             </style>
             <script type="text/javascript">
                 let thumbnails = document.getElementsByClassName('btn-outline-info')
@@ -246,6 +250,7 @@
                         this.classList.add('btn-info')
                     })
                 }
+
 
             </script>
         </div>
@@ -283,8 +288,56 @@
             </table>
         </div>
         <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-            <form action="{% url 'settings' %}" method="POST" class="mt-2">
+            <form action="{% url 'settings' %}" enctype="multipart/form-data" method="POST" class="mt-2">
                 {% csrf_token %}
+                {% if request.user.vendor %}
+                <label>Full name</label>
+                {{ form.full_name }}
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label>Phone Number</label>
+                        {{ form.phone_number }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Location</label>
+                        {{ form.location }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    {{ form.about }}
+                </div>
+
+                <div class="form-row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label>Twitter URL</label>
+                        {{ form.twitter_url }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Instagram URL</label>
+                        {{ form.instagram_url }}
+                    </div>
+
+                </div>
+                <div class="form-row mt-3 mb-3">
+                    <div class="col-md-6">
+                        <label>Education</label>
+                        {{ form.education }}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Skills</label>
+                        {{ form.skills }}
+                    </div>
+                </div>
+                <div class="form-row mt-3 mb-3">
+                    <label>Profile Image</label>
+                    {{ form.image }}
+                </div>
+                <div class="form-row mt-3 mb-3">
+                    <label>Withdrawal Pin</label>
+                    {{ form.withdrawal_pin }}
+                </div>
+                {% else %}
                 <label>Username</label>
                 {{ form.username }}
                 <div class="form-row mt-3">
@@ -306,6 +359,7 @@
                     <label>Location</label>
                     {{ form.location }}
                 </div>
+                {% endif %}
                 <div class="row">
                     <div class="col"></div>
                     <div class="col-auto">
@@ -355,6 +409,7 @@
             }
         })
     }
+
 </script>
 <style>
     .tox-notification{display: none !important;}

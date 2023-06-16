@@ -49,7 +49,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @classmethod
     def get_edited_price(cls, obj):
-        return f"${intcomma(obj.price)}0"
+        return f"₦{intcomma(obj.price)}0"
 
     def get_url(self, obj):
         request = self.context.get("request")
