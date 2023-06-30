@@ -234,3 +234,13 @@ class Payment(models.Model):
         if self.verified:
             return True
         return False
+
+
+class Visitor(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    city = models.CharField(max_length=100, null=True)
+    region = models.CharField(max_length=100, null=True)
+    country = models.CharField(max_length=100, null=True)
+    timezone = models.CharField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+

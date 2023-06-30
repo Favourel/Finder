@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "djrichtextfield",
     "rest_framework",
     'django_filters',
+    'ipware',
 
 ]
 

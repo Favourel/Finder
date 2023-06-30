@@ -4,7 +4,7 @@ from django.shortcuts import render, reverse, get_object_or_404, redirect, HttpR
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order, Payment
+from .models import Product, Category, Vendor, ProductImage, Checkout, ProductReview, Order, Payment, Visitor
 from django.db.models import Q, F, Min, Max
 from users.models import User, Notification
 import datetime
@@ -24,6 +24,8 @@ from .serializers import ProductSerializer
 from statistics import mean
 from .filters import ProductPriceFilter
 import os
+from ipware import get_client_ip
+from .utils import get_visitor_location
 
 
 # Create your views here.
@@ -36,6 +38,21 @@ def total_cart_items(request):
 def home(request):
     categories = Category.objects.all()
     products = Product.objects.all().order_by("-date_posted")[:4]
+    client_ip, _ = get_client_ip(request)
+    print(request.META.get("REMOTE_ADDR"))
+
+    if client_ip:
+        location_data = get_visitor_location(client_ip)
+        if location_data:
+            city = location_data.get('city')
+            region = location_data.get('region')
+            country = location_data.get('country')
+            timezone = location_data.get('timezone')
+            visitor, created = Visitor.objects.get_or_create(ip_address=client_ip,
+                                                             city=city, country=country,
+                                                             region=region, timezone=timezone)
+            # `visitor` represents the visitor record in the database
+            visitor.save()
 
     context = {
         "categories": categories,
@@ -603,7 +620,7 @@ def about(request):
         notification_count = 0
         get_cart_items = 0
     context = {
-            "notification_count": notification_count,
-            "get_cart_items": get_cart_items,
-        }
+        "notification_count": notification_count,
+        "get_cart_items": get_cart_items,
+    }
     return render(request, 'market/about.html', context)
